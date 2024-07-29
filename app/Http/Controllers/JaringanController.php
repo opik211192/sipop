@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+
 use App\Models\Jaringan;
 use Illuminate\Http\Request;
 use Laravolt\Indonesia\Models\City;
@@ -17,35 +18,46 @@ class JaringanController extends Controller
      * @return \Illuminate\Http\Response
      */
   public function index(Request $request)
-    {
-        $search = $request->input('search');
-        
-        // Query dengan kondisi pencarian
-        $query = Jaringan::query();
+{
+    $search = $request->input('search');
+    $tahun = $request->input('tahun');
+    $satker = $request->input('satker');
 
-        if ($search) {
-            $query->where('nama', 'like', "%{$search}%")
-                  ->orWhere('latitude', 'like', "%{$search}%")
-                  ->orWhere('longitude', 'like', "%{$search}%")
-                  ->orWhereHas('province', function($q) use ($search) {
-                      $q->where('name', 'like', "%{$search}%");
-                  })
-                  ->orWhereHas('city', function($q) use ($search) {
-                      $q->where('name', 'like', "%{$search}%");
-                  })
-                  ->orWhereHas('district', function($q) use ($search) {
-                      $q->where('name', 'like', "%{$search}%");
-                  })
-                  ->orWhereHas('village', function($q) use ($search) {
-                      $q->where('name', 'like', "%{$search}%");
-                  });
-        }
+    // Query dengan kondisi pencarian
+    $query = Jaringan::query();
 
-        $jaringan = $query->paginate(10);
-
-        return view('jaringan.index', compact('jaringan', 'search'));
+    if ($search) {
+        $query->where(function($q) use ($search) {
+            $q->where('nama', 'like', "%{$search}%")
+              ->orWhere('latitude', 'like', "%{$search}%")
+              ->orWhere('longitude', 'like', "%{$search}%")
+              ->orWhereHas('province', function($q) use ($search) {
+                  $q->where('name', 'like', "%{$search}%");
+              })
+              ->orWhereHas('city', function($q) use ($search) {
+                  $q->where('name', 'like', "%{$search}%");
+              })
+              ->orWhereHas('district', function($q) use ($search) {
+                  $q->where('name', 'like', "%{$search}%");
+              })
+              ->orWhereHas('village', function($q) use ($search) {
+                  $q->where('name', 'like', "%{$search}%");
+              });
+        });
     }
 
+    if ($tahun) {
+        $query->where('tahun', $tahun);
+    }
+
+    if ($satker) {
+        $query->where('satker', $satker);
+    }
+
+    $jaringans = $query->paginate(10)->appends($request->query());
+
+    return view('jaringan.index', compact('jaringans', 'search', 'tahun', 'satker'));
+}
     /**
      * Show the form for creating a new resource.
      *
@@ -73,10 +85,14 @@ class JaringanController extends Controller
             'city_id' => 'required',
             'district_id' => 'required',
             'village_id' => 'required',
+            'wilayah_sungai' => 'required',
+            'jenis' => 'required',
+            'tahun' => 'required',
+            'satker' => 'required',
         ]);
         
         Jaringan::create($validateData);
-        return redirect()->route('jaringan.index')->with('success', 'Jaringan Telah Ditambahkan');
+        return redirect()->route('jaringan-atab.index')->with('success', 'Jaringan Telah Ditambahkan');
     }
 
     /**
@@ -87,7 +103,7 @@ class JaringanController extends Controller
      */
     public function show(Jaringan $jaringan)
     {
-        
+        return view('jaringan.show', compact('jaringan'));
     }
 
     /**
@@ -120,10 +136,14 @@ class JaringanController extends Controller
             'city_id' => 'required',
             'district_id' => 'required',
             'village_id' => 'required',
+            'wilayah_sungai' => 'required',
+            'jenis' => 'required',
+            'tahun' => 'required',
+            'satker' => 'required',
         ]);
         
         $jaringan->update($validateData);
-        return redirect()->route('jaringan.index')->with('success', 'Jaringan Telah Diubah');
+        return redirect()->route('jaringan-atab.index')->with('success', 'Jaringan Telah Diubah');
     }
 
     /**
@@ -134,6 +154,7 @@ class JaringanController extends Controller
      */
     public function destroy(Jaringan $jaringan)
     {
-        //
+        $jaringan->delete();
+        return redirect()->route('jaringan-atab.index')->with('success', 'Jaringan Telah Dihapus');
     }
 }

@@ -56,9 +56,14 @@ Route::middleware(['auth'])->group(function () {
   Route::post('assign-users', [AssignToUserController::class, 'store'])->name('assign.users.store');
 
 
-  Route::resource('jaringan-atab', JaringanController::class);
-  Route::get('jaringan-atab/{jaringan}/edit', [JaringanController::class, 'edit'])->name('jaringan-atab.edit');
-Route::put('jaringan-atab/{jaringan}', [JaringanController::class, 'update'])->name('jaringan-atab.update');
+  //route jaringan
+  Route::get('jaringan-atab', [JaringanController::class, 'index'])->name('jaringan-atab.index');
+  Route::get('jaringan-atab/create', [JaringanController::class, 'create'])->name('jaringan-atab.create');
+  Route::post('jaringan-atab', [JaringanController::class, 'store'])->name('jaringan-atab.store');
+  Route::get('jaringan-atab/{jaringan}', [JaringanController::class, 'edit'])->name('jaringan-atab.edit');
+  Route::put('jaringan-atab/{jaringan}', [JaringanController::class, 'update'])->name('jaringan-atab.update');
+  Route::delete('jaringan-atab/{jaringan}', [JaringanController::class, 'destroy'])->name('jaringan-atab.destroy');
+  Route::get('jaringan-atab/{jaringan}/show', [JaringanController::class, 'show'])->name('jaringan-atab.show');
 
 
 });

@@ -19,7 +19,31 @@
         <form action="{{ route('jaringan-atab.index') }}" method="GET">
             <div class="row">
                 <div class="col-sm-3">
-                    <input type="text" name="search" class="form-control" placeholder="Cari..." value="{{ $search }}">
+                    <input type="text" name="search" class="form-control" placeholder="Cari nama..."
+                        value="{{ request('search') }}">
+                </div>
+                <div class="col-sm-2">
+                    <select name="tahun" class="form-control">
+                        <option value="">Pilih Tahun</option>
+                        @for ($year = 1998; $year <= date('Y'); $year++) <option value="{{ $year }}" {{
+                            request('tahun')==$year ? 'selected' : '' }}>
+                            {{ $year }}
+                            </option>
+                            @endfor
+                    </select>
+                </div>
+                <div class="col-sm-2">
+                    <select name="satker" class="form-control">
+                        <option value="">Pilih Satker</option>
+                        <option value="Satker Balai" {{ request('satker')=='Satker Balai' ? 'selected' : '' }}>Satker
+                            Balai</option>
+                        <option value="Satker PJPA" {{ request('satker')=='Satker PJPA' ? 'selected' : '' }}>Satker PJPA
+                        </option>
+                        <option value="Satker PJSA" {{ request('satker')=='Satker PJSA' ? 'selected' : '' }}>Satker PJSA
+                        </option>
+                        <option value="Satker Bendungan" {{ request('satker')=='Satker Bendungan' ? 'selected' : '' }}>
+                            Satker Bendungan</option>
+                    </select>
                 </div>
                 <div class="col-sm-1">
                     <button type="submit" class="btn btn-primary btn-block">Cari</button>
@@ -28,17 +52,15 @@
         </form>
     </div>
     <div class="card-body">
-        <table class="table table-bordered table-striped">
+        <table class="table table-bordered table-striped table-sm">
             <thead>
                 <tr>
                     <th>#</th>
                     <th>Nama</th>
-                    <th>Latitude</th>
-                    <th>Longitude</th>
-                    <th>Provinsi</th>
-                    <th>Kota/Kabupaten</th>
-                    <th>Kecamatan</th>
-                    <th>Desa</th>
+                    <th>Koordinat</th>
+                    <th>Tahun</th>
+                    <th>Satker</th>
+                    <th>Wilayah Sungai</th>
                     <th>Tahapan</th>
                     <th>Aksi</th>
                 </tr>
@@ -46,16 +68,13 @@
             <tbody>
                 @forelse($jaringans as $index => $jaringan)
                 <tr>
-                    <td>{{ $index + 1 }}</td>
-                    <td>{{ $item->nama }}</td>
-                    <td>{{ $item->latitude }}</td>
-                    <td>{{ $item->longitude }}</td>
-                    <td>{{ $item->province->name ?? '-' }}</td>
-                    <td>{{ $item->city->name ?? '-' }}</td>
-                    <td>{{ $item->district->name ?? '-' }}</td>
-                    <td>{{ $item->village->name ?? '-' }}</td>
-                    <td>{{ $item->tahapan ? $item->tahapan : 'Belum Tahapan' }}</td>
-                    </td>
+                    <td>{{ $index + 1 + ($jaringans->currentPage() - 1) * $jaringans->perPage() }}</td>
+                    <td><a href="{{ route('jaringan-atab.show', $jaringan) }}">{{ $jaringan->nama }}</a></td>
+                    <td>{{ $jaringan->latitude }}, {{ $jaringan->longitude }}</td>
+                    <td>{{ $jaringan->tahun }}</td>
+                    <td>{{ $jaringan->satker }}</td>
+                    <td>{{ $jaringan->wilayah_sungai }}</td>
+                    <td>{{ $jaringan->tahapan ? $jaringan->tahapan : 'Belum Tahapan' }}</td>
                     <td>
                         <a href="{{ route('jaringan-atab.edit', $jaringan) }}" class="btn btn-warning btn-sm">Edit</a>
                         <form action="{{ route('jaringan-atab.destroy', $jaringan) }}" method="POST"
@@ -69,13 +88,13 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="9">Tidak ada data jaringan.</td>
+                    <td colspan="8">Tidak ada data jaringan.</td>
                 </tr>
                 @endforelse
             </tbody>
         </table>
         <div class="d-flex justify-content-center">
-            {{ $jaringan->links() }}
+            {{ $jaringans->links() }}
         </div>
     </div>
 </div>
@@ -87,6 +106,6 @@
 
 @section('js')
 <script>
-    console.log('Hi!'); 
+    console.log('Hi!');
 </script>
 @stop

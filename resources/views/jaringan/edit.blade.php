@@ -11,7 +11,7 @@
 @stop
 
 @section('content')
-<div class="card col-md-8">
+<div class="card col-md-10">
     <div class="card-body">
         <form action="{{ route('jaringan-atab.update', $jaringan->id) }}" method="POST">
             @csrf
@@ -100,6 +100,77 @@
                         <option value="">==Pilih Salah Satu==</option>
                     </select>
                     @error('village_id')
+                    <div class="text-danger">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label for="wilayah_sungai" class="col-sm-2 col-form-label">Wilayah Sungai</label>
+                <div class="col-sm-10">
+                    <input type="text" name="wilayah_sungai" id="wilayah_sungai" class="form-control"
+                        value="{{ old('wilayah_sungai', $jaringan->wilayah_sungai) }}">
+                    @error('wilayah_sungai')
+                    <div class="text-danger">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label for="jenis" class="col-sm-2 col-form-label">Jenis</label>
+                <div class="col-sm-10">
+                    <select name="jenis" id="jenis" class="form-control">
+                        <option value="">Pilih Jenis</option>
+                        <option value="Irigasi" {{ old('jenis', $jaringan->jenis) == 'Irigasi' ? 'selected' : ''
+                            }}>Irigasi</option>
+                        <option value="Embung" {{ old('jenis', $jaringan->jenis) == 'Embung' ? 'selected' : '' }}>Embung
+                        </option>
+                        <option value="ATAB" {{ old('jenis', $jaringan->jenis) == 'ATAB' ? 'selected' : '' }}>ATAB
+                        </option>
+                    </select>
+                    @error('jenis')
+                    <div class="text-danger">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label for="tahun" class="col-sm-2 col-form-label">Tahun</label>
+                <div class="col-sm-10">
+                    <select name="tahun" id="tahun" class="form-control">
+                        <option value="">Pilih Tahun</option>
+                        @for ($year = 1998; $year <= date('Y'); $year++) <option value="{{ $year }}" {{ old('tahun',
+                            $jaringan->
+                            tahun) == $year ? 'selected' : '' }}>
+                            {{ $year }}
+                            </option>
+                            @endfor
+                    </select>
+                    @error('tahun')
+                    <div class="text-danger">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label for="satker" class="col-sm-2 col-form-label">Satker</label>
+                <div class="col-sm-10">
+                    <select name="satker" id="satker" class="form-control">
+                        <option value="">Pilih Satker</option>
+                        <option value="Satker Balai" {{ old('satker', $jaringan->satker) == 'Satker Balai' ? 'selected'
+                            : ''
+                            }}>Satker Balai</option>
+                        <option value="Satker PJPA" {{ old('satker', $jaringan->satker) == 'Satker PJPA' ? 'selected' :
+                            '' }}>Satker
+                            PJPA</option>
+                        <option value="Satker PJSA" {{ old('satker', $jaringan->satker) == 'Satker PJSA' ? 'selected' :
+                            '' }}>Satker
+                            PJSA</option>
+                        <option value="Satker Bendungan" {{ old('satker', $jaringan->satker) == 'Satker Bendungan' ?
+                            'selected' : ''
+                            }}>Satker Bendungan</option>
+                    </select>
+                    @error('satker')
                     <div class="text-danger">{{ $message }}</div>
                     @enderror
                 </div>

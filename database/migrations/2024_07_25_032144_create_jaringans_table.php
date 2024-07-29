@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('jaringans', function (Blueprint $table) {
+       Schema::create('jaringans', function (Blueprint $table) {
             $table->id();
             $table->string('nama');
             $table->string('latitude');
@@ -22,6 +22,10 @@ return new class extends Migration
             $table->unsignedBigInteger('city_id')->nullable();
             $table->unsignedBigInteger('district_id')->nullable();
             $table->unsignedBigInteger('village_id')->nullable();
+            $table->string('wilayah_sungai')->nullable();
+            $table->enum('jenis', ['Irigasi', 'Embung', 'ATAB'])->nullable();
+            $table->year('tahun')->nullable();
+            $table->enum('satker', ['Satker Balai', 'Satker PJPA', 'Satker PJSA', 'Satker Bendungan'])->nullable();
             $table->string('tahapan')->nullable();
             $table->timestamps();
 
