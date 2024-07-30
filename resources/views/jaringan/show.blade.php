@@ -15,7 +15,7 @@
         <div class="row">
             <!-- Kolom Kiri -->
             <div class="col-md-6">
-                <table class="table table-striped table-bordered table-sm">
+                <table class="table table-sm table-borderless">
                     <tbody>
                         <tr>
                             <th>Nama</th>
@@ -51,7 +51,7 @@
 
             <!-- Kolom Kanan -->
             <div class="col-md-6">
-                <table class="table table-striped table-bordered table-sm">
+                <table class="table table-sm table-borderless">
                     <tbody>
                         <tr>
                             <th>Wilayah Sungai</th>
@@ -69,16 +69,6 @@
                             <th>Satker</th>
                             <td>{{ $jaringan->satker }}</td>
                         </tr>
-                        <tr>
-                            <th>Tahapan</th>
-                            <td>
-                                @if($jaringan->tahapan)
-                                {{ $jaringan->tahapan }}
-                                @else
-                                <span class="badge bg-danger">Belum Tahapan</span>
-                                @endif
-                            </td>
-                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -91,34 +81,434 @@
         <h3>Persiapan Operasi Pemeliharaan</h3>
     </div>
     <div class="card-body">
-        <ul class="nav nav-tabs" id="myTab" role="tablist">
-            <li class="nav-item" role="presentation">
-                <a class="nav-link active" id="pembentukan-tim-tab" data-toggle="tab" href="#pembentukan-tim" role="tab"
-                    aria-controls="pembentukan-tim" aria-selected="true">Pembentukan Tim</a>
-            </li>
-            <li class="nav-item" role="presentation">
-                <a class="nav-link" id="rencana-kerja-tab" data-toggle="tab" href="#rencana-kerja" role="tab"
-                    aria-controls="rencana-kerja" aria-selected="false">Penyusunan Rencana Kerja</a>
-            </li>
-            <li class="nav-item" role="presentation">
-                <a class="nav-link" id="sosialisasi-tab" data-toggle="tab" href="#sosialisasi" role="tab"
-                    aria-controls="sosialisasi" aria-selected="false">Sosialisasi dan Koordinasi</a>
-            </li>
-        </ul>
-        <div class="tab-content" id="myTabContent">
-            <div class="tab-pane fade show active" id="pembentukan-tim" role="tabpanel"
-                aria-labelledby="pembentukan-tim-tab">
-                <h1>Loading...</h1>
+        <table class="table table-bordered table-sm table-hover">
+            <thead>
+                <tr>
+                    <th>Nama Tahapan</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Pembentukan Tim</td>
+                    <td>
+                        @php
+                        $tahapanPembentukanTim = $jaringan->tahapans->where('nama_tahapan', 'Pembentukan Tim')->first();
+                        $dokumenPembina = $tahapanPembentukanTim ?
+                        $tahapanPembentukanTim->dokumens->where('nama_dokumen', 'SK Tim Pembina')->first() : null;
+                        $dokumenPelaksana = $tahapanPembentukanTim ?
+                        $tahapanPembentukanTim->dokumens->where('nama_dokumen', 'SK Tim Pelaksana')->first() : null;
+                        @endphp
+
+                        @if($dokumenPembina && $dokumenPelaksana)
+                        <span class="text-success"><i class="fas fa-check-circle"></i> Selesai</span>
+                        @else
+                        <span class="text-warning"><i class="fas fa-exclamation-circle"></i> Pending</span>
+                        @endif
+                    </td>
+                    <td>
+                        @if ($dokumenPembina && $dokumenPelaksana)
+                        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
+                            data-target="#pembentukan-tim-show">
+                            <span class="fas fa-eye" title="Lihat Dokumen"></span></button>
+                        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
+                            data-target="#pembentukan-tim-edit">
+                            <span class="fas fa-edit" title="Edit"></span>
+                        </button>
+                        @else
+                        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
+                            data-target="#pembentukan-tim">
+                            <span class="fas fa-upload" title="Upload Dokumen"></span>
+                        </button>
+                        @endif
+                    </td>
+                </tr>
+                <tr>
+                    <td>Penyusunan Rencana Kerja</td>
+                    <td>
+                        @php
+                        $rencanakerja = $jaringan->tahapans->where('nama_tahapan', 'Penyusunan Rencana Kerja')->first();
+                        $dokumenPenyusunanRencanaKerja = $rencanakerja ?
+                        $rencanakerja->dokumens->where('nama_dokumen', 'Penyusunan Rencana Kerja')->first() : null;
+                        @endphp
+                        @if($dokumenPenyusunanRencanaKerja)
+                        <span class="text-success"><i class="fas fa-check-circle"></i> Selesai</span>
+                        @else
+                        <span class="text-warning"><i class="fas fa-exclamation-circle"></i> Pending</span>
+                        @endif
+                    </td>
+                    <td>
+                        @if ($dokumenPenyusunanRencanaKerja)
+                        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
+                            data-target="#penyusunan-rencana-kerja-show">
+                            <span class="fas fa-eye" title="Lihat Dokumen"></span>
+                        </button>
+                        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
+                            data-target="#penyusunan-rencana-kerja-edit">
+                            <span class="fas fa-edit" title="Edit"></span>
+                        </button>
+                        @elseif ($dokumenPembina && $dokumenPelaksana)
+                        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
+                            data-target="#penyusunan-rencana-kerja">
+                            <span class="fas fa-upload" title="Upload Dokumen"></span>
+                        </button>
+                        @else
+                        <button type="button" class="btn btn-primary btn-sm" disabled>
+                            <span class="fas fa-upload" title="Upload Dokumen"></span>
+                        </button>
+                        @endif
+                    </td>
+                </tr>
+                <tr>
+                    <td>Sosialisasi dan Koordinasi</td>
+                    <td>
+                        @php
+                        $soialisai = $jaringan->tahapans->where('nama_tahapan', 'Sosialisasi dan Koordinasi')->first();
+                        $dokumenSosialisasi = $soialisai ?
+                        $soialisai->dokumens->where('nama_dokumen', 'Sosialisasi dan Koordinasi')->first() : null;
+                        @endphp
+                        @if($dokumenSosialisasi)
+                        <span class="text-success"><i class="fas fa-check-circle"></i> Selesai</span>
+                        @else
+                        <span class="text-warning"><i class="fas fa-exclamation-circle"></i> Pending</span>
+                        @endif
+                    </td>
+                    <td>
+                        @if ($dokumenSosialisasi)
+                        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
+                            data-target="#sosialisasi-dan-koordinasi-show">
+                            <span class="fas fa-eye" title="Lihat Dokumen"></span>
+                        </button>
+                        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
+                            data-target="#sosialisasi-dan-koordinasi-edit">
+                            <span class="fas fa-edit" title="Edit"></span>
+                        </button>
+                        @elseif ($dokumenPenyusunanRencanaKerja)
+                        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
+                            data-target="#sosialisai-dan-koordiansi">
+                            <span class="fas fa-upload" title="Upload Dokumen"></span>
+                        </button>
+                        @else
+                        <button type="button" class="btn btn-primary btn-sm" disabled>
+                            <span class="fas fa-upload" title="Upload Dokumen"></span>
+                        </button>
+                        @endif
+                    </td>
+                </tr>
+                <tr>
+                    <td>Evaluasi Awal Kesiapan</td>
+                    <td>
+                        @php
+                        $evaluasi = $jaringan->tahapans->where('nama_tahapan', 'Evaluasi Awal Kesiapan')->first();
+                        $dokumenExists = $evaluasi &&
+                        $evaluasi->dokumens->isNotEmpty();
+                        @endphp
+                        @if($dokumenExists)
+                        <span class="text-success"><i class="fas fa-check-circle"></i> Selesai</span>
+                        @else
+                        <span class="text-warning"><i class="fas fa-exclamation-circle"></i> Pending</span>
+                        @endif
+                    </td>
+                    <td>
+                        @if ($dokumenSosialisasi)
+                        <button type="button" class="btn btn-primary btn-sm" id="evaluasi-awal-button">
+                            <span class="fas fa-newspaper" title="Evaluasi"></span>
+                        </button>
+                        @else
+                        <button type="button" class="btn btn-primary btn-sm" disabled>
+                            <span class="fas fa-newspaper" title="Evaluasi"></span>
+                        </button>
+                        @endif
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal Pembentukan Tim -->
+<div class="modal fade" id="pembentukan-tim" tabindex="-1" aria-labelledby="pembentukanTimModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="pembentukanTimModalLabel">Upload Dokumen Pembentukan Tim</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
-            <div class="tab-pane fade" id="rencana-kerja" role="tabpanel" aria-labelledby="rencana-kerja-tab">
-                <h1>Loading...</h1>
-            </div>
-            <div class="tab-pane fade" id="sosialisasi" role="tabpanel" aria-labelledby="sosialisasi-tab">
-                <h1>Loading...</h1>
+            <div class="modal-body">
+                <div class="container">
+                    <form id="formPembentukanTim" action="{{ route('pembentukan-tim.store', $jaringan->id) }}"
+                        method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <div class="form-group">
+                            <label for="sk_tim_pembina">SK Tim Pembina</label>
+                            <input type="file" accept="application/pdf" class="form-control" id="sk_tim_pembina"
+                                name="sk_tim_pembina">
+                        </div>
+                        <div class="form-group">
+                            <label for="sk_tim_pelaksana">SK Tim Pelaksana</label>
+                            <input type="file" accept="application/pdf" class="form-control" id="sk_tim_pelaksana"
+                                name="sk_tim_pelaksana">
+                        </div>
+                        <button type="submit" class="btn btn-secondary btn-sm">Submit</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Modal Edit Pembentukan Tim -->
+<div class="modal fade" id="pembentukan-tim-edit" tabindex="-1" aria-labelledby="pembentukanTimEditModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="pembentukanTimEditModalLabel">Edit Dokumen Pembentukan Tim</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <form id="formPembentukanTimEdit" action="{{ route('pembentukan-tim.update', $jaringan->id) }}"
+                        method="POST" enctype="multipart/form-data">
+                        @csrf
+                        @method('PUT')
+                        <label for="sk_tim_pembina">SK Tim Pembina</label>
+                        <input type="file" accept="application/pdf" class="form-control" id="sk_tim_pembina"
+                            name="sk_tim_pembina">
+                        <span class="small"><i>Kosongkan jika tidak ubah file</i></span>
+                        <div class="form-group mt-3">
+                            <label for="sk_tim_pelaksana">SK Tim Pelaksana</label>
+                            <input type="file" accept="application/pdf" class="form-control" id="sk_tim_pelaksana"
+                                name="sk_tim_pelaksana">
+                            <span class="small"><i>Kosongkan jika tidak ubah file</i></span>
+                        </div>
+                        <button type="submit" class="btn btn-secondary btn-sm">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Pembentukan Tim Show -->
+<div class="modal fade" id="pembentukan-tim-show" tabindex="-1" aria-labelledby="pembentukanTimShowModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="pembentukanTimShowModalLabel">Dokumen Pembentukan Tim</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <div class="d-flex justify-content-between">
+                        @if ($dokumenPembina)
+                        <a href="{{ asset('storage/' . substr($dokumenPembina->path_dokumen, 7)) }}" target="_blank"
+                            class="btn btn-primary btn-sm">Lihat file SK Tim Pembina</a>
+                        @endif
+                        @if ($dokumenPelaksana)
+                        <a href="{{ asset('storage/' . substr($dokumenPelaksana->path_dokumen, 7)) }}" target="_blank"
+                            class="btn btn-primary btn-sm">Lihat file SK Tim Pelaksana</a>
+                        @endif
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal Penyusunan Rencana Kerja -->
+<div class="modal fade" id="penyusunan-rencana-kerja" tabindex="-1" aria-labelledby="penyusunanRencanaKerjaModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="penyusunanRencanaKerjaModalLabel">Upload Dokumen Penyusunan Rencana Kerja
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <form id="formPenyusunanRencanaKerja"
+                        action="{{ route('penyusunan-rencana-kerja.store', $jaringan->id) }}" method="POST"
+                        enctype="multipart/form-data">
+                        @csrf
+                        <div class="form-group">
+                            <label for="penyusunan_rencana_kerja">Penyusunan Rencana Kerja</label>
+                            <input type="file" accept="application/pdf" class="form-control"
+                                id="penyusunan_rencana_kerja" name="penyusunan_rencana_kerja">
+                        </div>
+                        <button type="submit" class="btn btn-secondary btn-sm">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Edit Penyusunan Rencana Kerja -->
+<div class="modal fade" id="penyusunan-rencana-kerja-edit" tabindex="-1"
+    aria-labelledby="penyusunanRencanaKerjaEditModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="penyusunanRencanaKerjaEditModalLabel">Edit Dokumen Penyusunan Rencana Kerja
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <form id="formPenyusunanRencanaKerjaEdit"
+                        action="{{ route('penyusunan-rencana-kerja.update', $jaringan->id) }}" method="POST"
+                        enctype="multipart/form-data">
+                        @csrf
+                        @method('PUT')
+                        <div class="form-group">
+                            <label for="penyusunan_rencana_kerja">Penyusunan Rencana Kerja</label>
+                            <input type="file" accept="application/pdf" class="form-control"
+                                id="penyusunan_rencana_kerja" name="penyusunan_rencana_kerja">
+                            <span class="small"><i>Kosongkan jika tidak ubah file</i></span>
+                        </div>
+                        <button type="submit" class="btn btn-secondary btn-sm">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Show Penysunan Rencana Kerja -->
+<div class="modal fade" id="penyusunan-rencana-kerja-show" tabindex="-1"
+    aria-labelledby="penyusunanRencanaKerjaShowModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="penyusunanRencanaKerjaShowModalLabel">Dokumen Penyusunan Rencana Kerja
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <div class="d-flex justify-content-center">
+                        @if ($dokumenPenyusunanRencanaKerja)
+                        <a href="{{ asset('storage/' . substr($dokumenPenyusunanRencanaKerja->path_dokumen, 7)) }}"
+                            target="_blank" class="btn btn-primary btn-sm">Lihat
+                            file Penyusunan Rencana Kerja</a>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Sosialisasi dan Koordinasi -->
+<div class="modal fade" id="sosialisai-dan-koordiansi" tabindex="-1" aria-labelledby="sosialisasiModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="sosialisasiModalLabel">Upload Dokumen Sosialisasi dan Koordinasi</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <form id="formSosialisasiDanKoordinasi"
+                        action="{{ route('sosialisasi-koordinasi.store', $jaringan->id) }}" method="POST"
+                        enctype="multipart/form-data">
+                        @csrf
+                        <div class="form-group">
+                            <label for="dokumen_sosialisasi">Dokumen Sosialisasi dan Koordinasi</label>
+                            <input type="file" accept="application/pdf" class="form-control" id="dokumen_sosialisasi"
+                                name="dokumen_sosialisasi">
+                        </div>
+                        <button type="submit" class="btn btn-secondary btn-sm">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Edit Sosialisasi dan Koordinasi -->
+<div class="modal fade" id="sosialisasi-dan-koordinasi-edit" tabindex="-1" aria-labelledby="sosialisasiEditModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="sosialisasiEditModalLabel">Edit Dokumen Sosialisasi dan Koordinasi</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <form id="formSosialisasiDanKoordinasiEdit"
+                        action="{{ route('sosialisasi-koordinasi.update', $jaringan->id) }}" method="POST"
+                        enctype="multipart/form-data">
+                        @csrf
+                        @method('PUT')
+                        {{-- <div class="form-group">
+                            @if ($dokumenSosialisasi)
+                            <a href="{{ asset('storage/' . substr($dokumenSosialisasi->path_dokumen, 7)) }}"
+                                target="_blank" class="btn btn-primary btn-sm">Lihat file Sosialisasi dan Koordinasi</a>
+                            @endif
+                        </div> --}}
+                        <div class="form-group">
+                            <label for="dokumen_sosialisasi">Dokumen Sosialisasi dan Koordinasi</label>
+                            <input type="file" accept="application/pdf" class="form-control" id="dokumen_sosialisasi"
+                                name="dokumen_sosialisasi">
+                            <span class="small"><i>Kosongkan jika tidak ubah file</i></span>
+                        </div>
+                        <button type="submit" class="btn btn-secondary btn-sm">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Show Sosialisasi dan Koordinasi -->
+<div class="modal fade" id="sosialisasi-dan-koordinasi-show" tabindex="-1" aria-labelledby="sosialisasiShowModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="sosialisasiShowModalLabel">Dokumen Sosialisasi dan Koordinasi</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="d-flex justify-content-center">
+                    @if ($dokumenSosialisasi)
+                    <a href="{{ asset('storage/' . substr($dokumenSosialisasi->path_dokumen, 7)) }}" target="_blank"
+                        class="btn btn-primary btn-sm">Lihat file Sosialisasi dan Koordinasi</a>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <a href="{{ route('jaringan-atab.index') }}" class="btn btn-primary">Kembali ke Daftar</a>
 @stop
@@ -130,27 +520,155 @@
 @section('js')
 <script>
     $(document).ready(function () {
-        $('#myTab a').on('click', function (e) {
-            e.preventDefault();
-            var tabId = $(this).attr('href');
-            $(this).tab('show');
 
-            if ($(tabId).html() === '<h1>Loading...</h1>') {
-                $.ajax({
-                    url: tabId + '-content',
-                    method: 'GET',
-                    success: function (data) {
-                        $(tabId).html(data);
-                    },
-                    error: function (xhr, status, error) {
-                        $(tabId).html('<h1>Error loading content</h1>');
-                    }
-                });
-            }
+        //-----FORM PEMBENTUKAN TIM---------//
+        $('#formPembentukanTim').on('submit', function (e) {
+            e.preventDefault();
+
+            var formData = new FormData(this);
+
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    console.log("Success:", data);
+                    $('#pembentukan-tim').modal('hide');
+                    alert('Dokumen berhasil diupload.');
+                    location.reload();
+                },
+                error: function (xhr, status, error) {
+                    console.log("Error:", error);
+                    alert('Gagal mengupload dokumen. Silakan coba lagi.');
+                }
+            });
         });
 
-        // Load the initial tab content
-        $('#myTab a.active').trigger('click');
+        //-----FORM EDIT PEMBENTUKAN TIM---------//
+        $('#formPembentukanTimEdit').on('submit', function (e) {
+            e.preventDefault();
+
+            var formData = new FormData(this);
+
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    console.log("Success:", data);
+                    $('#pembentukan-tim-edit').modal('hide');
+                    alert('Dokumen berhasil diupdate.');
+                    location.reload();
+                },
+                error: function (xhr, status, error) {
+                    console.log("Error:", error);
+                    alert('Gagal mengupdate dokumen. Silakan coba lagi.');
+                }
+            });
+        });
+
+
+        //-----FORM PENYUSUNAN RENCANA KERJA---------//
+        $('#formPenyusunanRencanaKerja').on('submit', function (e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    $('#penyusunan-rencana-kerja').modal('hide');
+                    alert('Dokumen berhasil diupload.');
+                    location.reload();
+                },
+                error: function (xhr, status, error) {
+                    alert('Gagal mengupload dokumen. Silakan coba lagi.');
+                }
+            });
+        });
+
+        //-----FORM EDIT PENYUSUNAN RENCANA KERJA---------//
+        $('#formPenyusunanRencanaKerjaEdit').on('submit', function (e) {
+            e.preventDefault();
+
+            var formData = new FormData(this);
+
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    console.log("Success:", data);
+                    $('#penyusunan-rencana-kerja-edit').modal('hide');
+                    alert('Dokumen berhasil diperbarui.');
+                    location.reload();
+                },
+                error: function (xhr, status, error) {
+                    console.log("Error:", error);
+                    alert('Gagal memperbarui dokumen. Silakan coba lagi.');
+                }
+            });
+        });
+
+        //-----FORM SOSIALISASI DAN KOORDINASI---------//
+        $('#formSosialisasiDanKoordinasi').on('submit', function (e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    $('#sosialisai-dan-koordiansi').modal('hide');
+                    alert('Dokumen berhasil diupload.');
+                    location.reload();
+                },
+                error: function (xhr, status, error) {
+                    alert('Gagal mengupload dokumen. Silakan coba lagi.');
+                }
+            });
+        });
+
+        //-----FORM EDIT SOSIALISASI DAN KOORDINASI---------//
+        $('#formSosialisasiDanKoordinasiEdit').on('submit', function (e) {
+            e.preventDefault();
+
+            var formData = new FormData(this);
+
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    console.log("Success:", data);
+                    $('#sosialisasi-dan-koordinasi-edit').modal('hide');
+                    alert('Dokumen berhasil diperbarui.');
+                    location.reload();
+                },
+                error: function (xhr, status, error) {
+                    console.log("Error:", error);
+                    alert('Gagal memperbarui dokumen. Silakan coba lagi.');
+                }
+            });
+        });
+
+
+        document.getElementById('evaluasi-awal-button').addEventListener('click', function() {
+            var url = "{{ route('evaluasi-awal', ['jaringan' => $jaringan->id]) }}";
+            window.open(url, '_blank', 'width=800,height=600,resizable=no');
+        });
     });
 </script>
 @stop

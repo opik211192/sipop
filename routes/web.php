@@ -12,7 +12,7 @@ use App\Http\Controllers\Assign\AssignToUserController;
 use App\Http\Controllers\AssignRole\AssignRoleController;
 use App\Http\Controllers\Permission\PermissionController;
 use App\Http\Controllers\Assign\PermissionToRoleController;
-
+use App\Http\Controllers\EvaluasiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -65,6 +65,19 @@ Route::middleware(['auth'])->group(function () {
   Route::delete('jaringan-atab/{jaringan}', [JaringanController::class, 'destroy'])->name('jaringan-atab.destroy');
   Route::get('jaringan-atab/{jaringan}/show', [JaringanController::class, 'show'])->name('jaringan-atab.show');
 
+  //----------ROUTE PROSES POP-----------------//
+  Route::get('jaringan-atab/{jaringan}/pembentukan-tim', [JaringanController::class, 'pembentukanTimContent'])->name('pembentukan-tim.content');
+  Route::post('jaringan-atab/{jaringan}/pembentukan-tim', [JaringanController::class, 'pembentukanTim'])->name('pembentukan-tim.store');
+  Route::post('/jaringan-atab/{jaringan}/pembentukan-tim-update', [JaringanController::class, 'updatePembentukanTim'])->name('pembentukan-tim.update');
 
+  Route::get('jaringan-atab/{jaringan}/penyusunan-rencana-kerja', [JaringanController::class, 'penyusunanRencanaKerjaContent'])->name('penyusunan-rencana-kerja.content');
+  Route::post('jaringan-atab/{jaringan}/penyusunan-rencana-kerja', [JaringanController::class, 'penyusunanRencanaKerja'])->name('penyusunan-rencana-kerja.store');
+  Route::post('/jaringan-atab/{jaringan}/penyusunan-rencana-kerja-update', [JaringanController::class, 'updatePenyusunanRencanaKerja'])->name('penyusunan-rencana-kerja.update');
+
+  Route::get('jaringan-atab/{jaringan}/sosialisasi-koordinasi', [JaringanController::class, 'sosialisasiKoordinasiContent'])->name('sosialisasi-koordinasi.content');
+  Route::post('jaringan-atab/{jaringan}/sosialisasi-koordinasi', [JaringanController::class, 'sosialisasiKoordinasi'])->name('sosialisasi-koordinasi.store');
+  Route::post('/jaringan-atab/{jaringan}/sosialisasi-koordinasi-update', [JaringanController::class, 'updateSosialisasiKoordinasi'])->name('sosialisasi-koordinasi.update');
+
+  Route::get('/evaluasi-awal/{jaringan}', [EvaluasiController::class, 'evaluasiAwal'])->name('evaluasi-awal');
 });
     

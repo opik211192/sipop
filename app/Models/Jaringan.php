@@ -36,4 +36,9 @@ class Jaringan extends Model
     {
         return $this->belongsTo(Village::class);
     }
+
+    public function tahapans()
+    {
+        return $this->hasMany(Tahapan::class);
+    }
 }

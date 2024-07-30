@@ -74,15 +74,30 @@
                     <td>{{ $jaringan->tahun }}</td>
                     <td>{{ $jaringan->satker }}</td>
                     <td>{{ $jaringan->wilayah_sungai }}</td>
-                    <td>{{ $jaringan->tahapan ? $jaringan->tahapan : 'Belum Tahapan' }}</td>
                     <td>
-                        <a href="{{ route('jaringan-atab.edit', $jaringan) }}" class="btn btn-warning btn-sm">Edit</a>
+                        @if($jaringan->tahapan)
+                        @if($jaringan->tahapan == 'Serah Terima Hasil OP')
+                        <span class="badge badge-success">{{ $jaringan->tahapan }}</span>
+                        @else
+                        <span class="badge badge-warning">{{ $jaringan->tahapan }}</span>
+                        @endif
+                        @else
+                        <span class="badge badge-danger">Belum Tahapan</span>
+                        @endif
+                    </td>
+                    <td>
+                        <a href="{{ route('jaringan-atab.edit', $jaringan) }}" class="btn btn-secondary btn-sm"
+                            title="Edit">
+                            <i class="fas fa-edit"></i>
+                        </a>
                         <form action="{{ route('jaringan-atab.destroy', $jaringan) }}" method="POST"
                             style="display:inline-block;">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn btn-danger btn-sm"
-                                onclick="return confirm('Anda yakin ingin menghapus jaringan ini?')">Hapus</button>
+                            <button type="submit" class="btn btn-secondary btn-sm" title="Hapus"
+                                onclick="return confirm('Menghapus data ini akan menghapus seluruh data dokumen terkait dan tidak dapat dikembalikan. Apakah Anda yakin ingin melanjutkan?')">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
                         </form>
                     </td>
                 </tr>

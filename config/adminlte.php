@@ -323,7 +323,7 @@ return [
             // 'label_color' => 'success',
         ],
         [
-            'text' => 'Data ATAB',
+            'text' => 'Database',
             'url' => 'jaringan-atab',
             'icon' => 'fas fa-fw fa-briefcase',
         ],
