@@ -31,6 +31,9 @@ class EventServiceProvider extends ServiceProvider
     {
         //
          parent::boot();
-         Jaringan::created(CreateTahapansForJaringan::class);
+          // Register model events
+        Jaringan::created(function ($jaringan) {
+            app(CreateTahapansForJaringan::class)->handle($jaringan);
+        });
     }
 }

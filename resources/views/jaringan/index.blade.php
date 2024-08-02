@@ -3,7 +3,8 @@
 @section('title', 'Daftar Jaringan')
 
 @section('content_header')
-<h1>Daftar Jaringan</h1>
+{{-- <h1>Daftar Jaringan</h1> --}}
+<h1>Data</h1>
 @stop
 
 @section('content')
@@ -15,7 +16,6 @@
 
 <div class="card">
     <div class="card-header">
-        <a href="{{ route('jaringan-atab.create') }}" class="btn btn-primary mb-3">Tambah Jaringan</a>
         <form action="{{ route('jaringan-atab.index') }}" method="GET">
             <div class="row">
                 <div class="col-sm-3">
@@ -26,9 +26,7 @@
                     <select name="tahun" class="form-control">
                         <option value="">Pilih Tahun</option>
                         @for ($year = 1998; $year <= date('Y'); $year++) <option value="{{ $year }}" {{
-                            request('tahun')==$year ? 'selected' : '' }}>
-                            {{ $year }}
-                            </option>
+                            request('tahun')==$year ? 'selected' : '' }}>{{ $year }}</option>
                             @endfor
                     </select>
                 </div>
@@ -36,7 +34,8 @@
                     <select name="satker" class="form-control">
                         <option value="">Pilih Satker</option>
                         <option value="Satker Balai" {{ request('satker')=='Satker Balai' ? 'selected' : '' }}>Satker
-                            Balai</option>
+                            Balai
+                        </option>
                         <option value="Satker PJPA" {{ request('satker')=='Satker PJPA' ? 'selected' : '' }}>Satker PJPA
                         </option>
                         <option value="Satker PJSA" {{ request('satker')=='Satker PJSA' ? 'selected' : '' }}>Satker PJSA
@@ -47,6 +46,9 @@
                 </div>
                 <div class="col-sm-1">
                     <button type="submit" class="btn btn-primary btn-block">Cari</button>
+                </div>
+                <div class="col-sm-4 text-right">
+                    <a href="{{ route('jaringan-atab.create') }}" class="btn btn-primary">Tambah</a>
                 </div>
             </div>
         </form>
@@ -79,14 +81,14 @@
                         @if($jaringan->tahapan == 'Serah Terima Hasil OP')
                         <span class="badge badge-success">{{ $jaringan->tahapan }}</span>
                         @else
-                        <span class="badge badge-warning">{{ $jaringan->tahapan }}</span>
+                        <span class="badge badge-info">{{ $jaringan->tahapan }}</span>
                         @endif
                         @else
                         <span class="badge badge-danger">Belum Tahapan</span>
                         @endif
                     </td>
                     <td>
-                        <a href="{{ route('jaringan-atab.edit', $jaringan) }}" class="btn btn-secondary btn-sm"
+                        <a href="{{ route('jaringan-atab.edit', $jaringan) }}" class="btn btn-primary btn-sm"
                             title="Edit">
                             <i class="fas fa-edit"></i>
                         </a>
@@ -94,7 +96,7 @@
                             style="display:inline-block;">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn btn-secondary btn-sm" title="Hapus"
+                            <button type="submit" class="btn btn-primary btn-sm" title="Hapus"
                                 onclick="return confirm('Menghapus data ini akan menghapus seluruh data dokumen terkait dan tidak dapat dikembalikan. Apakah Anda yakin ingin melanjutkan?')">
                                 <i class="fas fa-trash-alt"></i>
                             </button>
@@ -116,11 +118,10 @@
 @stop
 
 @section('css')
-<link rel="stylesheet" href="/css/admin_custom.css">
+{{--
+<link rel="stylesheet" href="/css/admin_custom.css"> --}}
 @stop
 
 @section('js')
-<script>
-    console.log('Hi!');
-</script>
+
 @stop

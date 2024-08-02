@@ -20,4 +20,9 @@ class EvaluasiBlanko extends Model
     {
         return $this->hasMany(ItemBlanko::class);
     }
+
+    public function itemBlanko3()
+    {
+        return $this->hasMany(ItemBlanko3::class, 'evaluasi_blanko_id');
+    }
 }

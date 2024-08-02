@@ -13,6 +13,7 @@ use App\Http\Controllers\AssignRole\AssignRoleController;
 use App\Http\Controllers\Permission\PermissionController;
 use App\Http\Controllers\Assign\PermissionToRoleController;
 use App\Http\Controllers\EvaluasiController;
+use App\Http\Controllers\InventarisasiDataEvaluasiAwal;
 
 /*
 |--------------------------------------------------------------------------
@@ -79,5 +80,34 @@ Route::middleware(['auth'])->group(function () {
   Route::post('/jaringan-atab/{jaringan}/sosialisasi-koordinasi-update', [JaringanController::class, 'updateSosialisasiKoordinasi'])->name('sosialisasi-koordinasi.update');
 
   Route::get('/evaluasi-awal/{jaringan}', [EvaluasiController::class, 'evaluasiAwal'])->name('evaluasi-awal');
+
+  //blanko 1a
+  Route::get('/inventarisasi-awal-prasarana-air-tanah/{jaringan}', [InventarisasiDataEvaluasiAwal::class, 'prasaranaAirTanah'])->name('inventarisasi-awal-prasarana-air-tanah');
+  Route::put('/inventarisasi-awal-prasarana-air-tanah/{jaringan}', [InventarisasiDataEvaluasiAwal::class, 'prasaranaAirTanahProses'])->name('inventarisasi-awal-prasarana-air-tanah-proses');
+
+  //blanko 1b
+  Route::get('/inventarisasi-awal-peralatan-air-tanah/{jaringan}', [InventarisasiDataEvaluasiAwal::class, 'peralatanAirTanah'])->name('inventarisasi-awal-peralatan-air-tanah');
+
+  //blanko 1c
+  Route::get('/inventarisasi-awal-prasarana-air-baku/{jaringan}', [InventarisasiDataEvaluasiAwal::class, 'prasaranaAirBaku'])->name('inventarisasi-awal-prasarana-air-baku');
+  
+  //blanko2
+  Route::get('/inventarisaisi-awal-data-informasi-non-fisik/{jaringan}', [InventarisasiDataEvaluasiAwal::class, 'dataInformasiNonFisik'])->name('inventarisasi-awal-data-informasi-non-fisik');
+
+  //blanko3a
+  Route::get('/inventarisasi-awal-kesiapan-sarana-penunjang-op/{jaringan}', [InventarisasiDataEvaluasiAwal::class, 'kesiapanSaranaPenunjangOperasiDanPemeliharaan'])->name('inventarisasi-awal-kesiapan-sarana-penunjang-op');
+  Route::put('/inventarisasi-awal-kesiapan-sarana-penunjang-op/{jaringan}', [InventarisasiDataEvaluasiAwal::class, 'kesiapanSaranaPenunjangOperasiDanPemeliharaanProses'])->name('inventarisasi-awal-kesiapan-sarana-penunjang-op-proses');
+
+  //blanko3b
+  Route::get('/inventarisasi-awal-kesiapan-kelembagaan-sdm/{jaringan}', [InventarisasiDataEvaluasiAwal::class, 'kesiapanKelembagaanDanSumberDayaManusia'])->name('inventarisasi-awal-kesiapan-kelembagaan-sdm');
+  Route::put('/inventarisasi-awal-kesiapan-kelembagaan-sdm/{jaringan}', [InventarisasiDataEvaluasiAwal::class, 'kesiapanKelembagaanDanSumberDayaManusiaProses'])->name('inventarisasi-awal-kesiapan-kelembagaan-sdm-proses');
+  
+  //blanko3c
+  Route::get('/inventarisasi-awal-kesiapan-manajemen/{jaringan}', [InventarisasiDataEvaluasiAwal::class, 'kesiapanManajemen'])->name('inventarisasi-awal-kesiapan-manajemen');
+  Route::put('/inventarisasi-awal-kesiapan-manajemen/{jaringan}', [InventarisasiDataEvaluasiAwal::class, 'kesiapanManajemenProses'])->name('inventarisasi-awal-kesiapan-manajemen-proses');
+  
+  //blanko3d
+  Route::get('/inventarisasi-awal-kesiapan-konservasi/{jaringan}', [InventarisasiDataEvaluasiAwal::class, 'kesiapanKonservasi'])->name('inventarisasi-awal-kesiapan-konservasi');
+  Route::put('/inventarisasi-awal-kesiapan-konservasi/{jaringan}', [InventarisasiDataEvaluasiAwal::class, 'kesiapanKonservasiProses'])->name('inventarisasi-awal-kesiapan-konservasi-proses');
 });
     
