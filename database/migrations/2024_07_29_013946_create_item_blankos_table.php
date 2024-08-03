@@ -17,10 +17,10 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('evaluasi_blanko_id');
             $table->string('nama_item');
-            $table->integer('ada_tidak_ada')->nullable(); // Ubah ke integer
-            $table->integer('bobot')->nullable();
-            $table->integer('kondisi')->nullable();
-            $table->integer('fungsi')->nullable();
+            $table->decimal('ada_tidak_ada', 5, 2)->nullable();
+            $table->decimal('bobot', 5, 2)->nullable();
+            $table->decimal('kondisi', 5, 2)->nullable();
+            $table->decimal('fungsi', 5, 2)->nullable();
             $table->text('keterangan')->nullable();
             $table->timestamps();
 

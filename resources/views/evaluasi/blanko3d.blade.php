@@ -53,22 +53,24 @@
                                 <td>{{ $alphas[$rincianIndex] }}. {{ $rincian->rincian }}</td>
                                 <td>
                                     <select name="items[{{ $item->id }}][rincian][{{ $rincian->id }}][ada_tidak_ada]"
-                                        class="form-control" style="width: 120px">
+                                        class="form-control" style="width: 120px" onchange="calculateWeight()">
                                         <option value="1" {{ $rincian->ada_tidak_ada == 1 ? 'selected' : '' }}>Ada
                                         </option>
-                                        <option value="0" {{ $rincian->ada_tidak_ada == 0 ? 'selected' : '' }}>Tidak
-                                            Ada</option>
+                                        <option value="0" {{ $rincian->ada_tidak_ada == 0 ? 'selected' : '' }}>Tidak Ada
+                                        </option>
                                     </select>
                                 </td>
                                 <td>
-                                    <input type="number"
+                                    <input type="text"
                                         name="items[{{ $item->id }}][rincian][{{ $rincian->id }}][kondisi]"
-                                        class="form-control" value="{{ $rincian->kondisi }}">
+                                        class="form-control" value="{{ $rincian->kondisi }}" max="100"
+                                        oninput="convertCommaToDot(this)">
                                 </td>
                                 <td>
-                                    <input type="number"
+                                    <input type="text"
                                         name="items[{{ $item->id }}][rincian][{{ $rincian->id }}][fungsi]"
-                                        class="form-control" value="{{ $rincian->fungsi }}">
+                                        class="form-control" value="{{ $rincian->fungsi }}" max="100"
+                                        oninput="convertCommaToDot(this)">
                                 </td>
                                 <td>
                                     <input type="text"
@@ -83,8 +85,8 @@
                             <tr>
                                 <td colspan="3">Bobot (%)</td>
                                 <td><input type="text" class="form-control" id="bobot-ada-tidak-ada" disabled></td>
-                                <td></td>
-                                <td></td>
+                                <td><input type="text" class="form-control" id="bobot-kondisi" disabled></td>
+                                <td><input type="text" class="form-control" id="bobot-fungsi" disabled></td>
                                 <td></td>
                             </tr>
                         </tfoot>
@@ -100,15 +102,45 @@
     </div>
 
     <script>
-        // Function to calculate the total weight
+        // Function menghitung ada tidak ada
         function calculateWeight() {
-            let totalWeight = 0;
-            $('select[name^="items"]').each(function () {
-                if ($(this).val() == '1') {
-                    totalWeight += 1; // or any other weight logic you want to apply
-                }
+            let totalItems = $('select[name^="items"]').length;
+            let itemsPresent = $('select[name^="items"]').filter(function () {
+                return $(this).val() == '1';
+            }).length;
+            let weight = ((itemsPresent / totalItems) * 100).toFixed(2); // Calculate weight with decimals
+            $('#bobot-ada-tidak-ada').val(weight); // Update the weight input
+        }
+
+        // Function menghitung bobot kondisi dan fungsi
+        function calculateConditionAndFunction() {
+            let totalKondisi = 0;
+            let totalFungsi = 0;
+            let itemCount = $('input[name^="items"][name$="[kondisi]"]').length;
+
+            $('input[name^="items"][name$="[kondisi]"]').each(function () {
+                let value = parseFloat($(this).val().replace(/,/g, '.'));
+                totalKondisi += isNaN(value) ? 0 : value;
             });
-            $('#bobot-ada-tidak-ada').val(totalWeight);
+
+            $('input[name^="items"][name$="[fungsi]"]').each(function () {
+                let value = parseFloat($(this).val().replace(/,/g, '.'));
+                totalFungsi += isNaN(value) ? 0 : value;
+            });
+
+            let averageKondisi = (totalKondisi / itemCount).toFixed(2);
+            let averageFungsi = (totalFungsi / itemCount).toFixed(2);
+
+            $('#bobot-kondisi').val(averageKondisi);
+            $('#bobot-fungsi').val(averageFungsi);
+        }
+
+        // Function to convert comma to dot for decimal input
+        function convertCommaToDot(input) {
+            input.value = input.value.replace(/,/g, '.');
+            if (parseFloat(input.value) > 100) {
+                input.value = 100;
+            }
         }
 
         // Function to validate the form
@@ -128,10 +160,16 @@
         $(document).ready(function () {
             // Calculate the weight on page load
             calculateWeight();
+            calculateConditionAndFunction();
 
             // Recalculate the weight whenever a select value changes
             $('select[name^="items"]').change(function () {
                 calculateWeight();
+            });
+
+            // Recalculate condition and function weight whenever an input value changes
+            $('input[name^="items"][name$="[kondisi]"], input[name^="items"][name$="[fungsi]"]').on('input', function () {
+                calculateConditionAndFunction();
             });
 
             $('#blanko3d-form').on('submit', function (event) {
@@ -152,6 +190,7 @@
                     type: 'POST',
                     data: formData,
                     success: function (response) {
+                        alert('Data berhasil disimpan.');
                         // Close the current window
                         window.close();
 

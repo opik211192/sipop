@@ -16,11 +16,11 @@ return new class extends Migration
         Schema::create('item_blanko3_rincians', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('item_blanko3_id');
-             $table->string('rincian');
-            $table->boolean('ada_tidak_ada')->default(0);
-            $table->integer('bobot')->nullable();
-            $table->integer('kondisi')->nullable();
-            $table->integer('fungsi')->nullable();
+            $table->string('rincian');
+            $table->decimal('ada_tidak_ada', 5, 2)->nullable();
+            $table->decimal('bobot', 5, 2)->nullable();
+            $table->decimal('kondisi', 5, 2)->nullable();
+            $table->decimal('fungsi', 5, 2)->nullable();
             $table->text('keterangan')->nullable();
             $table->timestamps();
 

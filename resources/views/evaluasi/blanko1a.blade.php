@@ -43,19 +43,19 @@
                                 <td>{{ $item->nama_item }}</td>
                                 <td>
                                     <select name="items[{{ $item->id }}][ada_tidak_ada]" class="form-control"
-                                        style="width: 120px" onchange="calculateWeight()">
+                                        style="width: 120px" onchange="calculateWeights()">
                                         <option value="1" {{ $item->ada_tidak_ada == 1 ? 'selected' : '' }}>Ada</option>
                                         <option value="0" {{ $item->ada_tidak_ada == 0 ? 'selected' : '' }}>Tidak Ada
                                         </option>
                                     </select>
                                 </td>
                                 <td>
-                                    <input type="number" name="items[{{ $item->id }}][kondisi]" class="form-control"
-                                        value="{{ $item->kondisi }}">
+                                    <input type="text" name="items[{{ $item->id }}][kondisi]" class="form-control"
+                                        value="{{ $item->kondisi }}" oninput="validateAndConvert(this)">
                                 </td>
                                 <td>
-                                    <input type="number" name="items[{{ $item->id }}][fungsi]" class="form-control"
-                                        value="{{ $item->fungsi }}">
+                                    <input type="text" name="items[{{ $item->id }}][fungsi]" class="form-control"
+                                        value="{{ $item->fungsi }}" oninput="validateAndConvert(this)">
                                 </td>
                                 <td>
                                     <input type="text" name="items[{{ $item->id }}][keterangan]" class="form-control"
@@ -68,8 +68,8 @@
                             <tr>
                                 <td colspan="2">Bobot (%)</td>
                                 <td><input type="text" class="form-control" id="bobot-ada-tidak-ada" disabled></td>
-                                <td></td>
-                                <td></td>
+                                <td><input type="text" class="form-control" id="bobot-kondisi" disabled></td>
+                                <td><input type="text" class="form-control" id="bobot-fungsi" disabled></td>
                                 <td></td>
                             </tr>
                         </tfoot>
@@ -85,21 +85,59 @@
     </div>
 
     <script>
-        // Function menghitung adan tidak ada
-        function bobotadatidakada() {
+        // Function menghitung ada tidak ada
+        function calculateWeights() {
             let totalItems = $('select[name^="items"]').length;
-            let itemsPresent = $('select[name^="items"]').filter(function() {
+            let itemsPresent = $('select[name^="items"]').filter(function () {
                 return $(this).val() == '1';
             }).length;
-            let weight = Math.floor((itemsPresent / totalItems) * 10) * 10; // Calculate weight without decimals
-            $('#bobot-ada-tidak-ada').val(weight); // Update the weight input
+            let weight = (itemsPresent / totalItems) * 100; // Calculate weight with decimals
+            $('#bobot-ada-tidak-ada').val(weight.toFixed(2)); // Update the weight input
+
+            let totalKondisi = 0;
+            let totalFungsi = 0;
+            let itemCount = $('input[name^="items"][name$="[kondisi]"]').length;
+
+            $('input[name^="items"][name$="[kondisi]"]').each(function () {
+                let value = parseFloat($(this).val().replace(/,/g, '.'));
+                totalKondisi += isNaN(value) ? 0 : value;
+            });
+
+            $('input[name^="items"][name$="[fungsi]"]').each(function () {
+                let value = parseFloat($(this).val().replace(/,/g, '.'));
+                totalFungsi += isNaN(value) ? 0 : value;
+            });
+
+            let averageKondisi = (totalKondisi / itemCount).toFixed(2);
+            let averageFungsi = (totalFungsi / itemCount).toFixed(2);
+
+            $('#bobot-kondisi').val(averageKondisi);
+            $('#bobot-fungsi').val(averageFungsi);
         }
 
-        $(document).ready(function() {
-            // Calculate the weight on page load
-            bobotadatidakada();
+        // Function to validate input and convert comma to dot for decimal input
+        function validateAndConvert(input) {
+            input.value = input.value.replace(/,/g, '.');
+            if (parseFloat(input.value) > 100) {
+                input.value = 100;
+            }
+        }
 
-            $('#evaluasi-awal-form').on('submit', function(event) {
+        $(document).ready(function () {
+            // Calculate the weights on page load
+            calculateWeights();
+
+            // Recalculate the weights whenever a select value changes
+            $('select[name^="items"]').change(function () {
+                calculateWeights();
+            });
+
+            // Recalculate weights whenever an input value changes
+            $('input[name^="items"][name$="[kondisi]"], input[name^="items"][name$="[fungsi]"]').on('input', function () {
+                calculateWeights();
+            });
+
+            $('#evaluasi-awal-form').on('submit', function (event) {
                 event.preventDefault(); // Prevent the form from submitting normally
 
                 // Get the form data
@@ -110,7 +148,7 @@
                     url: $(this).attr('action'),
                     type: 'POST',
                     data: formData,
-                    success: function(response) {
+                    success: function (response) {
                         if (response.success) {
                             alert(response.message);
                         } else {
@@ -123,7 +161,7 @@
                         // Refresh the parent window
                         window.opener.location.reload();
                     },
-                    error: function(xhr, status, error) {
+                    error: function (xhr, status, error) {
                         alert('Terjadi kesalahan. Silakan coba lagi.');
                     }
                 });

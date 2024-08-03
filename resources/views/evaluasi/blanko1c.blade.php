@@ -41,19 +41,19 @@
                                 <td>{{ $item->nama_item }}</td>
                                 <td>
                                     <select name="items[{{ $item->id }}][ada_tidak_ada]" class="form-control"
-                                        style="width: 120px">
+                                        style="width: 120px" onchange="calculateWeight()">
                                         <option value="1" {{ $item->ada_tidak_ada == 1 ? 'selected' : '' }}>Ada</option>
                                         <option value="0" {{ $item->ada_tidak_ada == 0 ? 'selected' : '' }}>Tidak Ada
                                         </option>
                                     </select>
                                 </td>
                                 <td>
-                                    <input type="number" name="items[{{ $item->id }}][kondisi]" class="form-control"
-                                        value="{{ $item->kondisi }}">
+                                    <input type="text" name="items[{{ $item->id }}][kondisi]" class="form-control"
+                                        value="{{ $item->kondisi }}" oninput="convertCommaToDot(this)">
                                 </td>
                                 <td>
-                                    <input type="number" name="items[{{ $item->id }}][fungsi]" class="form-control"
-                                        value="{{ $item->fungsi }}">
+                                    <input type="text" name="items[{{ $item->id }}][fungsi]" class="form-control"
+                                        value="{{ $item->fungsi }}" oninput="convertCommaToDot(this)">
                                 </td>
                                 <td>
                                     <input type="text" name="items[{{ $item->id }}][keterangan]" class="form-control"
@@ -66,8 +66,8 @@
                             <tr>
                                 <td colspan="2">Bobot (%)</td>
                                 <td><input type="text" class="form-control" id="bobot-ada-tidak-ada" disabled></td>
-                                <td></td>
-                                <td></td>
+                                <td><input type="text" class="form-control" id="bobot-kondisi" disabled></td>
+                                <td><input type="text" class="form-control" id="bobot-fungsi" disabled></td>
                                 <td></td>
                             </tr>
                         </tfoot>
@@ -83,38 +83,60 @@
     </div>
 
     <script>
-        // Function to calculate the total weight
+        // Function menghitung ada tidak ada
         function calculateWeight() {
-            let totalWeight = 0;
-            $('select[name^="items"]').each(function () {
-                if ($(this).val() == '1') {
-                    totalWeight += 1; // or any other weight logic you want to apply
-                }
-            });
-            $('#bobot-ada-tidak-ada').val(totalWeight);
+            let totalItems = $('select[name^="items"]').length;
+            let itemsPresent = $('select[name^="items"]').filter(function () {
+                return $(this).val() == '1';
+            }).length;
+            let weight = (itemsPresent / totalItems) * 100; // Calculate weight with decimals
+            $('#bobot-ada-tidak-ada').val(weight.toFixed(2)); // Update the weight input
         }
 
-        // Function to validate the form
-        function validateForm() {
-            let isValid = true;
-            $('select[name^="items"], input[name^="items"]').each(function () {
-                if ($(this).val() === '' || $(this).val() === null) {
-                    isValid = false;
-                    $(this).addClass('is-invalid');
-                } else {
-                    $(this).removeClass('is-invalid');
-                }
+        // Function menghitung bobot kondisi dan fungsi
+        function calculateConditionAndFunction() {
+            let totalKondisi = 0;
+            let totalFungsi = 0;
+            let itemCount = $('input[name^="items"][name$="[kondisi]"]').length;
+
+            $('input[name^="items"][name$="[kondisi]"]').each(function () {
+                let value = parseFloat($(this).val().replace(/,/g, '.'));
+                totalKondisi += isNaN(value) ? 0 : value;
             });
-            return isValid;
+
+            $('input[name^="items"][name$="[fungsi]"]').each(function () {
+                let value = parseFloat($(this).val().replace(/,/g, '.'));
+                totalFungsi += isNaN(value) ? 0 : value;
+            });
+
+            let averageKondisi = (totalKondisi / itemCount).toFixed(2);
+            let averageFungsi = (totalFungsi / itemCount).toFixed(2);
+
+            $('#bobot-kondisi').val(averageKondisi);
+            $('#bobot-fungsi').val(averageFungsi);
+        }
+
+        // Function to convert comma to dot for decimal input
+        function convertCommaToDot(input) {
+            input.value = input.value.replace(/,/g, '.');
+            if (parseFloat(input.value) > 100) {
+                input.value = 100;
+            }
         }
 
         $(document).ready(function () {
             // Calculate the weight on page load
             calculateWeight();
+            calculateConditionAndFunction();
 
             // Recalculate the weight whenever a select value changes
             $('select[name^="items"]').change(function () {
                 calculateWeight();
+            });
+
+            // Recalculate condition and function weight whenever an input value changes
+            $('input[name^="items"][name$="[kondisi]"], input[name^="items"][name$="[fungsi]"]').on('input', function () {
+                calculateConditionAndFunction();
             });
 
             $('#evaluasi-awal-form').on('submit', function (event) {

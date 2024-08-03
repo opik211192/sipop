@@ -1091,7 +1091,7 @@
     if (kesiapanSaranaPenunjangOperasiDanPemeliharaanButton) {
         kesiapanSaranaPenunjangOperasiDanPemeliharaanButton.addEventListener('click', function() {
             var url = "{{ route('inventarisasi-awal-kesiapan-sarana-penunjang-op', ['jaringan' => $jaringan->id]) }}";
-            window.open(url, '_blank', 'width=800,height=600,resizable=no');
+            window.open(url, '_blank', 'width=900,height=600,resizable=no');
         });
     }
 
@@ -1100,7 +1100,7 @@
     if (kesiapanKelembagaanDanSumberDayaManusiaButton) {
         kesiapanKelembagaanDanSumberDayaManusiaButton.addEventListener('click', function() {
             var url = "{{ route('inventarisasi-awal-kesiapan-kelembagaan-sdm', ['jaringan' => $jaringan->id]) }}";
-            window.open(url, '_blank', 'width=800,height=600,resizable=no');
+            window.open(url, '_blank', 'width=900,height=600,resizable=no');
         });
     }
     
@@ -1109,7 +1109,7 @@
     if (kesiapanManajemenButton) {
         kesiapanManajemenButton.addEventListener('click', function() {
             var url = "{{ route('inventarisasi-awal-kesiapan-manajemen', ['jaringan' => $jaringan->id]) }}";
-            window.open(url, '_blank', 'width=800,height=600,resizable=no');
+            window.open(url, '_blank', 'width=950,height=600,resizable=no');
         });
     }
 
@@ -1118,7 +1118,7 @@
     if (kesiapanKonservasiButton) {
         kesiapanKonservasiButton.addEventListener('click', function() {
             var url = "{{ route('inventarisasi-awal-kesiapan-konservasi', ['jaringan' => $jaringan->id]) }}";
-            window.open(url, '_blank', 'width=800,height=600,resizable=no');
+            window.open(url, '_blank', 'width=900,height=600,resizable=no');
         });
     }
 
