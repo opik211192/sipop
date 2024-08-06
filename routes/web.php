@@ -87,12 +87,17 @@ Route::middleware(['auth'])->group(function () {
 
   //blanko 1b
   Route::get('/inventarisasi-awal-peralatan-air-tanah/{jaringan}', [InventarisasiDataEvaluasiAwal::class, 'peralatanAirTanah'])->name('inventarisasi-awal-peralatan-air-tanah');
+  Route::put('/inventarisasi-awal-peralatan-air-tanah/{jaringan}', [InventarisasiDataEvaluasiAwal::class, 'peralatanAirTanahProses'])->name('inventarisasi-awal-peralatan-air-tanah-proses');
+
 
   //blanko 1c
   Route::get('/inventarisasi-awal-prasarana-air-baku/{jaringan}', [InventarisasiDataEvaluasiAwal::class, 'prasaranaAirBaku'])->name('inventarisasi-awal-prasarana-air-baku');
-  
+  Route::put('/inventarisasi-awal-prasarana-air-baku/{jaringan}', [InventarisasiDataEvaluasiAwal::class, 'prasaranaAirBakuProses'])->name('inventarisasi-awal-prasarana-air-baku-proses');
+  Route::post('/inventarisasi-awal-prasarana-air-baku/{jaringan}/uji-pengaliran', [InventarisasiDataEvaluasiAwal::class, 'ujiPengaliran'])->name('inventarisasi-awal-prasarana-air-baku-uji-pengaliran');
+
   //blanko2
   Route::get('/inventarisaisi-awal-data-informasi-non-fisik/{jaringan}', [InventarisasiDataEvaluasiAwal::class, 'dataInformasiNonFisik'])->name('inventarisasi-awal-data-informasi-non-fisik');
+  Route::put('/inventarisaisi-awal-data-informasi-non-fisik/{jaringan}', [InventarisasiDataEvaluasiAwal::class, 'dataInformasiNonFisikProses'])->name('inventarisasi-awal-data-informasi-non-fisik-proses');
 
   //blanko3a
   Route::get('/inventarisasi-awal-kesiapan-sarana-penunjang-op/{jaringan}', [InventarisasiDataEvaluasiAwal::class, 'kesiapanSaranaPenunjangOperasiDanPemeliharaan'])->name('inventarisasi-awal-kesiapan-sarana-penunjang-op');

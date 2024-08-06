@@ -13,11 +13,16 @@
 
 <body>
     <div class="container-fluid">
-        <div class="d-flex justify-content-between mt-2 mb-2">
+        <div class="d-flex justify-content-between mt-2 mb-2 align-items-center">
             <h1>Blanko 1B</h1>
-            <h1 class="font-weight-light">{{ $jaringan->nama }}</h1>
+            <div class="d-flex ">
+                <h1 class="font-weight-light">{{ $jaringan->nama }}</h1>
+                <h5 class="font-weight-light">{{ $jaringan->tahun }}</h5>
+            </div>
         </div>
-        <form id="evaluasi-awal-form" action="" method="POST">
+        <form id="evaluasi-awal-form"
+            action="{{ route('inventarisasi-awal-peralatan-air-tanah-proses', ['jaringan' => $jaringan->id]) }}"
+            method="POST">
             @csrf
             @method('PUT')
 
@@ -41,7 +46,7 @@
                                 <td>{{ $item->nama_item }}</td>
                                 <td>
                                     <select name="items[{{ $item->id }}][ada_tidak_ada]" class="form-control"
-                                        style="width: 120px" onchange="calculateWeight()">
+                                        style="width: 120px" onchange="calculateWeights()">
                                         <option value="1" {{ $item->ada_tidak_ada == 1 ? 'selected' : '' }}>Ada</option>
                                         <option value="0" {{ $item->ada_tidak_ada == 0 ? 'selected' : '' }}>Tidak Ada
                                         </option>
@@ -49,11 +54,11 @@
                                 </td>
                                 <td>
                                     <input type="text" name="items[{{ $item->id }}][kondisi]" class="form-control"
-                                        value="{{ $item->kondisi }}" oninput="convertCommaToDot(this)">
+                                        value="{{ $item->kondisi }}" oninput="validateAndConvert(this)">
                                 </td>
                                 <td>
                                     <input type="text" name="items[{{ $item->id }}][fungsi]" class="form-control"
-                                        value="{{ $item->fungsi }}" oninput="convertCommaToDot(this)">
+                                        value="{{ $item->fungsi }}" oninput="validateAndConvert(this)">
                                 </td>
                                 <td>
                                     <input type="text" name="items[{{ $item->id }}][keterangan]" class="form-control"
@@ -75,6 +80,11 @@
                 </div>
             </div>
 
+            <!-- Input tersembunyi untuk mengirim bobot ke backend -->
+            <input type="hidden" name="hasil_ada_tidak_ada" id="hasil-ada-tidak-ada">
+            <input type="hidden" name="hasil_kondisi" id="hasil-kondisi">
+            <input type="hidden" name="hasil_fungsi" id="hasil-fungsi">
+
             <div class="form-group">
                 <button type="submit" class="btn btn-primary mt-3 mb-2">Simpan</button>
                 <button type="button" class="btn btn-secondary mt-3 mb-2" onclick="window.close()">Batal</button>
@@ -84,17 +94,15 @@
 
     <script>
         // Function menghitung ada tidak ada
-        function calculateWeight() {
+        function calculateWeights() {
             let totalItems = $('select[name^="items"]').length;
             let itemsPresent = $('select[name^="items"]').filter(function () {
                 return $(this).val() == '1';
             }).length;
-            let weight = (itemsPresent / totalItems) * 100; // Calculate weight with decimals
-            $('#bobot-ada-tidak-ada').val(weight.toFixed(2)); // Update the weight input
-        }
+            let weight = (itemsPresent / totalItems) * 100;
+            $('#bobot-ada-tidak-ada').val(weight.toFixed(2));
+            $('#hasil-ada-tidak-ada').val(weight.toFixed(2));
 
-        // Function menghitung bobot kondisi dan fungsi
-        function calculateConditionAndFunction() {
             let totalKondisi = 0;
             let totalFungsi = 0;
             let itemCount = $('input[name^="items"][name$="[kondisi]"]').length;
@@ -113,11 +121,13 @@
             let averageFungsi = (totalFungsi / itemCount).toFixed(2);
 
             $('#bobot-kondisi').val(averageKondisi);
+            $('#hasil-kondisi').val(averageKondisi);
             $('#bobot-fungsi').val(averageFungsi);
+            $('#hasil-fungsi').val(averageFungsi);
         }
 
-        // Function to convert comma to dot for decimal input
-        function convertCommaToDot(input) {
+        // Function to validate input and convert comma to dot for decimal input
+        function validateAndConvert(input) {
             input.value = input.value.replace(/,/g, '.');
             if (parseFloat(input.value) > 100) {
                 input.value = 100;
@@ -125,47 +135,39 @@
         }
 
         $(document).ready(function () {
-            // Calculate the weight on page load
-            calculateWeight();
-            calculateConditionAndFunction();
+            calculateWeights();
 
-            // Recalculate the weight whenever a select value changes
             $('select[name^="items"]').change(function () {
-                calculateWeight();
+                calculateWeights();
             });
 
-            // Recalculate condition and function weight whenever an input value changes
             $('input[name^="items"][name$="[kondisi]"], input[name^="items"][name$="[fungsi]"]').on('input', function () {
-                calculateConditionAndFunction();
+                calculateWeights();
             });
 
             $('#evaluasi-awal-form').on('submit', function (event) {
-                event.preventDefault(); // Prevent the form from submitting normally
-
-                // Validate the form
-                if (!validateForm()) {
-                    alert('Harap isi semua kolom.');
-                    return false;
-                }
-
-                // Get the form data
+                event.preventDefault();
                 var formData = $(this).serialize();
 
-                // Submit the form data via AJAX
                 $.ajax({
                     url: $(this).attr('action'),
                     type: 'POST',
                     data: formData,
                     success: function (response) {
-                        alert('Data berhasil disimpan.');
-                        // Close the current window
-                        window.close();
+                        console.log(response); // Tambahkan ini untuk melihat respons di konsol
+                        if (response.success) {
+                            console.log(response.message);
+                            alert(response.message);
+                        } else {
+                            alert('Terjadi kesalahan. Silakan coba lagi.');
+                        }
 
-                        // Refresh the parent window
+                        window.close();
                         window.opener.location.reload();
                     },
                     error: function (xhr, status, error) {
                         alert('Terjadi kesalahan. Silakan coba lagi.');
+                        console.log(xhr.responseText); // Tambahkan ini untuk melihat pesan kesalahan di konsol
                     }
                 });
             });

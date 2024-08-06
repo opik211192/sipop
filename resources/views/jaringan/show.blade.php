@@ -500,16 +500,17 @@
                     <td>Kontrak</td>
                     <td></td>
                     <td>
-                        <button class="btn btn-sm btn-primary" id="kontrak-button">
+                        <button class="btn btn-sm btn-primary" id="kontrak-button" data-toggle="modal"
+                            data-target="#dokumen-kontrak">
                             <span class="fas fa-upload" title="Upload Dokumen"></span>
                         </button>
-                    </td>
                 </tr>
                 <tr>
                     <td>As Build Drawing</td>
                     <td></td>
                     <td>
-                        <button class="btn btn-sm btn-primary" id="as-build-drawing-button">
+                        <button class="btn btn-sm btn-primary" id="as-build-drawing-button" data-toggle="modal"
+                            data-target="#as-build-drawing">
                             <span class="fas fa-upload" title="Upload Dokumen"></span>
                         </button>
                     </td>
@@ -518,7 +519,8 @@
                     <td>PHO/FHO</td>
                     <td></td>
                     <td>
-                        <button class="btn btn-sm btn-primary" id="pho-fho-button">
+                        <button class="btn btn-sm btn-primary" id="pho-fho-button" data-toggle="modal"
+                            data-target="#pho-fho">
                             <span class="fas fa-upload" title="Upload Dokumen"></span>
                         </button>
                     </td>
@@ -527,7 +529,8 @@
                     <td>Manual OP</td>
                     <td></td>
                     <td>
-                        <button class="btn btn-sm btn-primary" id="manual-op-button">
+                        <button class="btn btn-sm btn-primary" id="manual-op-button" data-toggle="modal"
+                            data-target="#manual-op">
                             <span class="fas fa-upload" title="Upload Dokumen"></span>
                         </button>
                     </td>
@@ -536,7 +539,8 @@
                     <td>Dokumentasi</td>
                     <td></td>
                     <td>
-                        <button class="btn btn-sm btn-primary" id="dokumentasi-button">
+                        <button class="btn btn-sm btn-primary" id="dokumentasi-button" data-toggle="modal"
+                            data-target="#dokumentasi">
                             <span class="fas fa-upload" title="Upload Dokumen"></span>
                         </button>
                     </td>
@@ -840,7 +844,9 @@
             <div class="modal-body">
                 <div class="container">
                     <!-- Upload form uji pengaliran -->
-                    <form id="formUjiPengaliran" action="" method="POST" enctype="multipart/form-data">
+                    <form id="formUjiPengaliran"
+                        action="{{ route('inventarisasi-awal-prasarana-air-baku-uji-pengaliran', $jaringan->id) }}"
+                        method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="form-group">
                             <label for="dokumen_uji_pengaliran">Dokumen Berita Acara Uji Pengaliran</label>
@@ -884,6 +890,13 @@
         </div>
     </div>
 </div>
+
+{{-- modal dokumen tambahan --}}
+@include('dokumen-tambahan.modal-kontrak')
+@include('dokumen-tambahan.as-build-draw')
+@include('dokumen-tambahan.pho-fho')
+@include('dokumen-tambahan.manual-op')
+@include('dokumen-tambahan.dokumentasi')
 
 
 <a href="{{ route('jaringan-atab.index') }}" class="btn btn-primary mb-3 btn-sm"><i class="fas fa-arrow-left"></i>

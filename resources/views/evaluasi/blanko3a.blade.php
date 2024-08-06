@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>Blanko 3A</title>
+    <title>Blanko 3B</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -13,13 +13,15 @@
 
 <body>
     <div class="container-fluid">
-        <div class="d-flex justify-content-between mt-2 mb-2">
+        <div class="d-flex justify-content-between mt-2 mb-2 align-items-center">
             <h1>Blanko 3A</h1>
-            <h1 class="font-weight-light">{{ $jaringan->nama }}</h1>
+            <div class="d-flex ">
+                <h1 class="font-weight-light">{{ $jaringan->nama }}</h1>
+                <h5 class="font-weight-light">{{ $jaringan->tahun }}</h5>
+            </div>
         </div>
         <form id="blanko3a-form"
-            action="{{ route('inventarisasi-awal-kesiapan-sarana-penunjang-op-proses', ['jaringan' => $jaringan->id]) }}"
-            method="POST">
+            action="{{ route('inventarisasi-awal-kesiapan-sarana-penunjang-op-proses', $jaringan->id) }}" method="POST">
             @csrf
             @method('PUT')
 
@@ -29,7 +31,7 @@
                         <thead>
                             <tr>
                                 <th>No.</th>
-                                <th>Jenis Sarana Penunjang</th>
+                                <th>Jenis Kelembagaan dan SDM</th>
                                 <th>Rincian</th>
                                 <th>Ada/Tidak Ada</th>
                                 <th>Kondisi (%)</th>
@@ -43,8 +45,8 @@
                             $alphas = range('a', 'z');
                             @endphp
                             <tr>
-                                <td rowspan="{{ $item->rincians->count() }}">{{ $index + 1 }}</td>
-                                <td rowspan="{{ $item->rincians->count() }}">{{ $item->nama_item }}</td>
+                                <td rowspan="{{ count($item->rincians) }}">{{ $index + 1 }}</td>
+                                <td rowspan="{{ count($item->rincians) }}">{{ $item->nama_item }}</td>
                                 @foreach($item->rincians as $rincianIndex => $rincian)
                                 @if($rincianIndex > 0)
                             </tr>
@@ -68,7 +70,7 @@
                                 </td>
                                 <td>
                                     <input type="text"
-                                        name="items[{{ $item->id }}][rincian][{{ $rincian->id }}][fungsi }}"
+                                        name="items[{{ $item->id }}][rincian][{{ $rincian->id }}][fungsi]"
                                         class="form-control" value="{{ $rincian->fungsi }}" max="100"
                                         oninput="convertCommaToDot(this)">
                                 </td>
@@ -94,6 +96,11 @@
                 </div>
             </div>
 
+            <!-- Input tersembunyi untuk mengirim bobot ke backend -->
+            <input type="hidden" name="hasil_ada_tidak_ada" id="hasil-ada-tidak-ada">
+            <input type="hidden" name="hasil_kondisi" id="hasil-kondisi">
+            <input type="hidden" name="hasil_fungsi" id="hasil-fungsi">
+
             <div class="form-group">
                 <button type="submit" class="btn btn-primary mt-3 mb-2">Simpan</button>
                 <button type="button" class="btn btn-secondary mt-3 mb-2" onclick="window.close()">Batal</button>
@@ -103,106 +110,90 @@
 
     <script>
         // Function menghitung ada tidak ada
-        function calculateWeight() {
-            let totalItems = $('select[name^="items"]').length;
-            let itemsPresent = $('select[name^="items"]').filter(function () {
-                return $(this).val() == '1';
-            }).length;
-            let weight = ((itemsPresent / totalItems) * 100).toFixed(2); // Calculate weight with decimals
-            $('#bobot-ada-tidak-ada').val(weight); // Update the weight input
-        }
-
-        // Function menghitung bobot kondisi dan fungsi
-        function calculateConditionAndFunction() {
-            let totalKondisi = 0;
-            let totalFungsi = 0;
-            let itemCount = $('input[name^="items"][name$="[kondisi]"]').length;
-
-            $('input[name^="items"][name$="[kondisi]"]').each(function () {
-                let value = parseFloat($(this).val().replace(/,/g, '.'));
-                totalKondisi += isNaN(value) ? 0 : value;
-            });
-
-            $('input[name^="items"][name$="[fungsi]"]').each(function () {
-                let value = parseFloat($(this).val().replace(/,/g, '.'));
-                totalFungsi += isNaN(value) ? 0 : value;
-            });
-
-            let averageKondisi = (totalKondisi / itemCount).toFixed(2);
-            let averageFungsi = (totalFungsi / itemCount).toFixed(2);
-
-            $('#bobot-kondisi').val(averageKondisi);
-            $('#bobot-fungsi').val(averageFungsi);
-        }
-
-        // Function to convert comma to dot for decimal input
-        function convertCommaToDot(input) {
-            input.value = input.value.replace(/,/g, '.');
-            if (parseFloat(input.value) > 100) {
-                input.value = 100;
+            function calculateWeights() {
+                let totalItems = $('select[name^="items"]').length;
+                let itemsPresent = $('select[name^="items"]').filter(function () {
+                    return $(this).val() == '1';
+                }).length;
+                let weight = (itemsPresent / totalItems) * 100; // Calculate weight with decimals
+                $('#bobot-ada-tidak-ada').val(weight.toFixed(2)); // Update the weight input
+                $('#hasil-ada-tidak-ada').val(weight.toFixed(2)); // Update the hidden input
+    
+                let totalKondisi = 0;
+                let totalFungsi = 0;
+                let itemCount = $('input[name^="items"][name$="[kondisi]"]').length;
+    
+                $('input[name^="items"][name$="[kondisi]"]').each(function () {
+                    let value = parseFloat($(this).val().replace(/,/g, '.'));
+                    totalKondisi += isNaN(value) ? 0 : value;
+                });
+    
+                $('input[name^="items"][name$="[fungsi]"]').each(function () {
+                    let value = parseFloat($(this).val().replace(/,/g, '.'));
+                    totalFungsi += isNaN(value) ? 0 : value;
+                });
+    
+                let averageKondisi = (totalKondisi / itemCount).toFixed(2);
+                let averageFungsi = (totalFungsi / itemCount).toFixed(2);
+    
+                $('#bobot-kondisi').val(averageKondisi);
+                $('#hasil-kondisi').val(averageKondisi);
+                $('#bobot-fungsi').val(averageFungsi);
+                $('#hasil-fungsi').val(averageFungsi);
             }
-        }
-
-        // Function to validate the form
-        function validateForm() {
-            let isValid = true;
-            $('select[name^="items"], input[name^="items"]').each(function () {
-                if ($(this).val() === '' || $(this).val() === null) {
-                    isValid = false;
-                    $(this).addClass('is-invalid');
-                } else {
-                    $(this).removeClass('is-invalid');
+    
+            // Function to validate input and convert comma to dot for decimal input
+            function validateAndConvert(input) {
+                input.value = input.value.replace(/,/g, '.');
+                if (parseFloat(input.value) > 100) {
+                    input.value = 100;
                 }
-            });
-            return isValid;
-        }
-
-        $(document).ready(function () {
-            // Calculate the weight on page load
-            calculateWeight();
-            calculateConditionAndFunction();
-
-            // Recalculate the weight whenever a select value changes
-            $('select[name^="items"]').change(function () {
-                calculateWeight();
-            });
-
-            // Recalculate condition and function weight whenever an input value changes
-            $('input[name^="items"][name$="[kondisi]"], input[name^="items"][name$="[fungsi]"]').on('input', function () {
-                calculateConditionAndFunction();
-            });
-
-            $('#blanko3a-form').on('submit', function (event) {
-                event.preventDefault(); // Prevent the form from submitting normally
-
-                // Validate the form
-                if (!validateForm()) {
-                    alert('Harap isi semua kolom.');
-                    return false;
-                }
-
-                // Get the form data
-                var formData = $(this).serialize();
-
-                // Submit the form data via AJAX
-                $.ajax({
-                    url: $(this).attr('action'),
-                    type: 'POST',
-                    data: formData,
-                    success: function (response) {
-                        alert('Data berhasil disimpan.');
-                        // Close the current window
-                        window.close();
-
-                        // Refresh the parent window
-                        window.opener.location.reload();
-                    },
-                    error: function (xhr, status, error) {
-                        alert('Terjadi kesalahan. Silakan coba lagi.');
-                    }
+            }
+    
+            $(document).ready(function () {
+                // Calculate the weights on page load
+                calculateWeights();
+    
+                // Recalculate the weights whenever a select value changes
+                $('select[name^="items"]').change(function () {
+                    calculateWeights();
+                });
+    
+                // Recalculate weights whenever an input value changes
+                $('input[name^="items"][name$="[kondisi]"], input[name^="items"][name$="[fungsi]"]').on('input', function () {
+                    calculateWeights();
+                });
+    
+                $('#blanko3a-form').on('submit', function (event) {
+                    event.preventDefault(); // Prevent the form from submitting normally
+    
+                    // Get the form data
+                    var formData = $(this).serialize();
+    
+                    // Submit the form data via AJAX
+                    $.ajax({
+                        url: $(this).attr('action'),
+                        type: 'POST',
+                        data: formData,
+                        success: function (response) {
+                            if (response.success) {
+                                alert(response.message);
+                            } else {
+                                alert('Terjadi kesalahan. Silakan coba lagi.');
+                            }
+    
+                            // Close the current window
+                            window.close();
+    
+                            // Refresh the parent window
+                            window.opener.location.reload();
+                        },
+                        error: function (xhr, status, error) {
+                            alert('Terjadi kesalahan. Silakan coba lagi.');
+                        }
+                    });
                 });
             });
-        });
     </script>
 </body>
 

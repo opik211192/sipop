@@ -13,9 +13,12 @@
 
 <body>
     <div class="container-fluid">
-        <div class="d-flex justify-content-between mt-2 mb-2">
+        <div class="d-flex justify-content-between mt-2 mb-2 align-items-center">
             <h1>Blanko 1A</h1>
-            <h1 class="font-weight-light">{{ $jaringan->nama }}</h1>
+            <div class="d-flex ">
+                <h1 class="font-weight-light">{{ $jaringan->nama }}</h1>
+                <h5 class="font-weight-light">{{ $jaringan->tahun }}</h5>
+            </div>
         </div>
         <form id="evaluasi-awal-form"
             action="{{ route('inventarisasi-awal-prasarana-air-tanah-proses', ['jaringan' => $jaringan->id]) }}"
@@ -77,6 +80,11 @@
                 </div>
             </div>
 
+            <!-- Hidden inputs to send weights to the backend -->
+            <input type="hidden" name="hasil_ada_tidak_ada" id="hasil-ada-tidak-ada">
+            <input type="hidden" name="hasil_kondisi" id="hasil-kondisi">
+            <input type="hidden" name="hasil_fungsi" id="hasil-fungsi">
+
             <div class="form-group">
                 <button type="submit" class="btn btn-primary mt-3 mb-2">Simpan</button>
                 <button type="button" class="btn btn-secondary mt-3 mb-2" onclick="window.close()">Batal</button>
@@ -93,6 +101,7 @@
             }).length;
             let weight = (itemsPresent / totalItems) * 100; // Calculate weight with decimals
             $('#bobot-ada-tidak-ada').val(weight.toFixed(2)); // Update the weight input
+            $('#hasil-ada-tidak-ada').val(weight.toFixed(2)); // Update the hidden input
 
             let totalKondisi = 0;
             let totalFungsi = 0;
@@ -112,7 +121,9 @@
             let averageFungsi = (totalFungsi / itemCount).toFixed(2);
 
             $('#bobot-kondisi').val(averageKondisi);
+            $('#hasil-kondisi').val(averageKondisi);
             $('#bobot-fungsi').val(averageFungsi);
+            $('#hasil-fungsi').val(averageFungsi);
         }
 
         // Function to validate input and convert comma to dot for decimal input

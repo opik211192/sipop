@@ -176,7 +176,7 @@ class JaringanController extends Controller
 
         return redirect()->route('jaringan-atab.index')->with('success', 'Jaringan Telah Dihapus beserta dokumen terkait.');
     }
-
+    
 
     //------------------------------------CONTROLLER PROSES POP---------------------------------------------------------//
     public function pembentukanTimContent(Jaringan $jaringan)
