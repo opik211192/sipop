@@ -328,6 +328,11 @@ return [
             'icon' => 'fas fa-fw fa-briefcase',
         ],
         [
+            'text' => 'Peta',
+            'url' => 'peta',
+            'icon' => 'fas fa-fw fa-map',
+        ],
+        [
             'text' => 'Management Users',
             'icon' => 'fas fa-fw fa-user',
             'submenu' => [

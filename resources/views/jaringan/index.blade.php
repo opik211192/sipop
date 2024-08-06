@@ -61,6 +61,7 @@
                     <th>Nama</th>
                     <th>Koordinat</th>
                     <th>Tahun</th>
+                    <th>Jenis</th>
                     <th>Satker</th>
                     <th>Wilayah Sungai</th>
                     <th>Tahapan</th>
@@ -74,6 +75,7 @@
                     <td><a href="{{ route('jaringan-atab.show', $jaringan) }}">{{ $jaringan->nama }}</a></td>
                     <td>{{ $jaringan->latitude }}, {{ $jaringan->longitude }}</td>
                     <td>{{ $jaringan->tahun }}</td>
+                    <td><span class="badge badge-info">{{ $jaringan->jenis }}</span></td>
                     <td>{{ $jaringan->satker }}</td>
                     <td>{{ $jaringan->wilayah_sungai }}</td>
                     <td>

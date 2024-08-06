@@ -143,8 +143,8 @@
                     <td>
                         @php
                         $rencanakerja = $jaringan->tahapans->where('nama_tahapan', 'Penyusunan Rencana Kerja')->first();
-                        $dokumenPenyusunanRencanaKerja = $rencanakerja ?
-                        $rencanakerja->dokumens->where('nama_dokumen', 'Penyusunan Rencana Kerja')->first() : null;
+                        $dokumenPenyusunanRencanaKerja = $rencanakerja ? $rencanakerja->dokumens->where('nama_dokumen',
+                        'Penyusunan Rencana Kerja')->first() : null;
                         @endphp
                         @if($dokumenPenyusunanRencanaKerja)
                         <span class="text-success"><i class="fas fa-check-circle"></i> Selesai</span>
@@ -179,8 +179,8 @@
                     <td>
                         @php
                         $soialisai = $jaringan->tahapans->where('nama_tahapan', 'Sosialisasi dan Koordinasi')->first();
-                        $dokumenSosialisasi = $soialisai ?
-                        $soialisai->dokumens->where('nama_dokumen', 'Sosialisasi dan Koordinasi')->first() : null;
+                        $dokumenSosialisasi = $soialisai ? $soialisai->dokumens->where('nama_dokumen', 'Sosialisasi dan
+                        Koordinasi')->first() : null;
                         @endphp
                         @if($dokumenSosialisasi)
                         <span class="text-success"><i class="fas fa-check-circle"></i> Selesai</span>
@@ -227,16 +227,13 @@
                                                 aria-orientation="vertical">
                                                 <a class="nav-link active" id="v-tabs-home-tab" data-toggle="pill"
                                                     href="#v-tabs-home" role="tab" aria-controls="v-tabs-home"
-                                                    aria-selected="true">Data dan Informasi
-                                                    Pekerjaan Fisik</a>
+                                                    aria-selected="true">Data dan Informasi Pekerjaan Fisik</a>
                                                 <a class="nav-link" id="v-tabs-profile-tab" data-toggle="pill"
                                                     href="#v-tabs-profile" role="tab" aria-controls="v-tabs-profile"
-                                                    aria-selected="false">Data dan Informasi
-                                                    Non-Fisik</a>
+                                                    aria-selected="false">Data dan Informasi Non-Fisik</a>
                                                 <a class="nav-link" id="v-tabs-messages-tab" data-toggle="pill"
                                                     href="#v-tabs-messages" role="tab" aria-controls="v-tabs-messages"
-                                                    aria-selected="false">Sarana dan
-                                                    Prasarana Pendukung</a>
+                                                    aria-selected="false">Sarana dan Prasarana Pendukung</a>
                                             </div>
                                         </div>
                                         <div class="col-md-8">
@@ -254,19 +251,23 @@
                                                         <tbody>
                                                             <?php
                                                                 $evaluasiAwal = $jaringan->tahapans->where('nama_tahapan', 'Evaluasi Awal Kesiapan')->first();
-        
-                                                                // Evaluasi Blanko 1A (Prasarana Air Tanah)
-                                                                $evaluasiBlanko1 = $evaluasiAwal ? $evaluasiAwal->evaluasiBlankos->where('jenis_blanko', 'Blanko 1A')->first() : null;
-                                                                $allPrasaranaAirTanahFilled = $evaluasiBlanko1 && $evaluasiBlanko1->items->every(function ($item) {
+                                                                // Evaluasi Blanko berdasarkan jenis jaringan
+                                                                $evaluasiBlanko1A = $evaluasiAwal ? $evaluasiAwal->evaluasiBlankos->where('jenis_blanko', 'Blanko 1A')->first() : null;
+                                                                $allPrasaranaAirTanahFilled = $evaluasiBlanko1A && $evaluasiBlanko1A->items->every(function ($item) {
                                                                     return !empty($item->ada_tidak_ada) && !empty($item->kondisi) && !empty($item->fungsi) && !empty($item->keterangan);
                                                                 });
 
-                                                                // Evaluasi Blanko 1B (Peralatan Air Tanah)
-                                                                $evaluasiBlanko2 = $evaluasiAwal ? $evaluasiAwal->evaluasiBlankos->where('jenis_blanko', 'Blanko 1B')->first() : null;
-                                                                $allPeralatanAirTanahFilled = $evaluasiBlanko2 && $evaluasiBlanko2->items->isNotEmpty() && $evaluasiBlanko2->items->every(function ($item) {
+                                                                $evaluasiBlanko1B = $evaluasiAwal ? $evaluasiAwal->evaluasiBlankos->where('jenis_blanko', 'Blanko 1B')->first() : null;
+                                                                $allPeralatanAirTanahFilled = $evaluasiBlanko1B && $evaluasiBlanko1B->items->isNotEmpty() && $evaluasiBlanko1B->items->every(function ($item) {
+                                                                    return !empty($item->ada_tidak_ada) && !empty($item->kondisi) && !empty($item->fungsi) && !empty($item->keterangan);
+                                                                });
+
+                                                                $evaluasiBlanko1C = $evaluasiAwal ? $evaluasiAwal->evaluasiBlankos->where('jenis_blanko', 'Blanko 1C')->first() : null;
+                                                                $allPrasaranaAirBakuEmbungFilled = $evaluasiBlanko1C && $evaluasiBlanko1C->items->isNotEmpty() && $evaluasiBlanko1C->items->every(function ($item) {
                                                                     return !empty($item->ada_tidak_ada) && !empty($item->kondisi) && !empty($item->fungsi) && !empty($item->keterangan);
                                                                 });
                                                             ?>
+                                                            @if ($jaringan->jenis == 'Air Tanah')
                                                             <tr>
                                                                 <td>Prasarana Air Tanah</td>
                                                                 <td>
@@ -282,17 +283,14 @@
                                                                 </td>
                                                                 <td>
                                                                     <button class="btn btn-sm btn-primary"
-                                                                        id="prasarana-air-tanah-button"
-                                                                        @if(!$dokumenSosialisasi) disabled @endif>
+                                                                        id="prasarana-air-tanah-button">
                                                                         <span class="fas fa-newspaper"
                                                                             title="Proses"></span>
                                                                     </button>
                                                                 </td>
                                                             </tr>
                                                             <tr>
-                                                                <td>
-                                                                    Peralatan Air Tanah
-                                                                </td>
+                                                                <td>Peralatan Air Tanah</td>
                                                                 <td>
                                                                     @if ($allPeralatanAirTanahFilled)
                                                                     <span class="text-success"><i
@@ -305,44 +303,49 @@
                                                                     @endif
                                                                 </td>
                                                                 <td>
-
-                                                                    {{-- <button class="btn btn-sm btn-primary"
-                                                                        id="peralatan-air-tanah-button"
-                                                                        @if(!$allPrasaranaAirTanahFilled) disabled
-                                                                        @endif><span class="fas fa-newspaper"
-                                                                            title="Proses"></span></button> --}}
                                                                     <button class="btn btn-sm btn-primary"
-                                                                        id="peralatan-air-tanah-button"><span
-                                                                            class="fas fa-newspaper"
-                                                                            title="Proses"></span></button>
+                                                                        id="peralatan-air-tanah-button">
+                                                                        <span class="fas fa-newspaper"
+                                                                            title="Proses"></span>
+                                                                    </button>
                                                                 </td>
                                                             </tr>
+                                                            @elseif ($jaringan->jenis == 'Air Baku' || $jaringan->jenis
+                                                            == 'Embung')
                                                             <tr>
+                                                                <td>Prasarana Air Baku/Embung</td>
                                                                 <td>
-                                                                    Prasarana Air Baku
+                                                                    @if($allPrasaranaAirBakuEmbungFilled)
+                                                                    <span class="text-success"><i
+                                                                            class="fas fa-check-circle"></i>
+                                                                        Selesai</span>
+                                                                    @else
+                                                                    <span class="text-warning"><i
+                                                                            class="fas fa-exclamation-circle"></i>
+                                                                        Pending</span>
+                                                                    @endif
                                                                 </td>
-                                                                <td></td>
                                                                 <td>
                                                                     <button class="btn btn-sm btn-primary"
-                                                                        id="prasarana-air-baku-button"><span
-                                                                            class="fas fa-newspaper"
-                                                                            title="Proses"></span></button>
+                                                                        id="prasarana-air-baku-button">
+                                                                        <span class="fas fa-newspaper"
+                                                                            title="Proses"></span>
+                                                                    </button>
                                                                 </td>
                                                             </tr>
+                                                            @endif
                                                             <tr>
-                                                                <td>
-                                                                    Uji Pengaliran
-                                                                </td>
+                                                                <td>Uji Pengaliran</td>
                                                                 <td></td>
                                                                 <td>
                                                                     <button class="btn btn-sm btn-primary"
                                                                         data-toggle="modal"
-                                                                        data-target="#uji-pengaliran"><span
-                                                                            class="fas fa-upload"
-                                                                            title="Upload"></span></button>
+                                                                        data-target="#uji-pengaliran">
+                                                                        <span class="fas fa-upload"
+                                                                            title="Upload"></span>
+                                                                    </button>
                                                                 </td>
                                                             </tr>
-
                                                         </tbody>
                                                     </table>
                                                 </div>
@@ -358,15 +361,14 @@
                                                         </thead>
                                                         <tbody>
                                                             <tr>
-                                                                <td>
-                                                                    Data dan Informasi Non-Fisik
-                                                                </td>
+                                                                <td>Data dan Informasi Non-Fisik</td>
                                                                 <td></td>
                                                                 <td>
                                                                     <button class="btn btn-sm btn-primary"
-                                                                        id="data-dan-informasi-non-fisik-button"><span
-                                                                            class="fas fa-newspaper"
-                                                                            title="Proses"></span></button>
+                                                                        id="data-dan-informasi-non-fisik-button">
+                                                                        <span class="fas fa-newspaper"
+                                                                            title="Proses"></span>
+                                                                    </button>
                                                                 </td>
                                                             </tr>
                                                         </tbody>
@@ -384,51 +386,48 @@
                                                         </thead>
                                                         <tbody>
                                                             <tr>
-                                                                <td>
-                                                                    Kesiapan Sarana penunjang operasi dan pemeliharaan
+                                                                <td>Kesiapan Sarana Penunjang Operasi dan Pemeliharaan
                                                                 </td>
                                                                 <td></td>
                                                                 <td>
                                                                     <button class="btn btn-sm btn-primary"
-                                                                        id="kesiapan-sarana-penunjang-operasi-dan-pemeliharaan-button"><span
-                                                                            class="fas fa-newspaper"
-                                                                            title="Proses"></span></button>
+                                                                        id="kesiapan-sarana-penunjang-operasi-dan-pemeliharaan-button">
+                                                                        <span class="fas fa-newspaper"
+                                                                            title="Proses"></span>
+                                                                    </button>
                                                                 </td>
                                                             </tr>
                                                             <tr>
-                                                                <td>
-                                                                    Kesiapan Kelembagaan dan Sumber Daya Manusia
-                                                                </td>
+                                                                <td>Kesiapan Kelembagaan dan Sumber Daya Manusia</td>
                                                                 <td></td>
                                                                 <td>
                                                                     <button class="btn btn-sm btn-primary"
-                                                                        id="kesiapan-kelembagaan-dan-sumber-daya-manusia-button"><span
-                                                                            class="fas fa-newspaper"
-                                                                            title="Proses"></span></button>
+                                                                        id="kesiapan-kelembagaan-dan-sumber-daya-manusia-button">
+                                                                        <span class="fas fa-newspaper"
+                                                                            title="Proses"></span>
+                                                                    </button>
                                                                 </td>
                                                             </tr>
                                                             <tr>
-                                                                <td>
-                                                                    Kesiapan Manajemen
-                                                                </td>
+                                                                <td>Kesiapan Manajemen</td>
                                                                 <td></td>
                                                                 <td>
                                                                     <button class="btn btn-sm btn-primary"
-                                                                        id="kesiapan-manajemen-button"><span
-                                                                            class="fas fa-newspaper"
-                                                                            title="Proses"></span></button>
+                                                                        id="kesiapan-manajemen-button">
+                                                                        <span class="fas fa-newspaper"
+                                                                            title="Proses"></span>
+                                                                    </button>
                                                                 </td>
                                                             </tr>
                                                             <tr>
-                                                                <td>
-                                                                    Kesiapan Konservasi
-                                                                </td>
+                                                                <td>Kesiapan Konservasi</td>
                                                                 <td></td>
                                                                 <td>
                                                                     <button class="btn btn-sm btn-primary"
-                                                                        id="kesiapan-konservasi-button"><span
-                                                                            class="fas fa-newspaper"
-                                                                            title="Proses"></span></button>
+                                                                        id="kesiapan-konservasi-button">
+                                                                        <span class="fas fa-newspaper"
+                                                                            title="Proses"></span>
+                                                                    </button>
                                                                 </td>
                                                             </tr>
                                                         </tbody>
@@ -445,13 +444,7 @@
                 <tr>
                     <td>Penyusunan BA Hasil Evaluasi Awal Kesiapan OP</td>
                     <td></td>
-                    <td>
-                        {{-- <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#BA-evaluasi-awal">
-                            <span class="fas fa-upload" title="Upload Dokumen"></span>
-                        </button>
-                        <button class="btn btn-primary btn-sm"><span class="fas fa-eye"
-                                title="Lihat Hasil"></span></button> --}}
-                    </td>
+                    <td></td>
                 </tr>
                 <tr>
                     <td>Evaluasi Akhir Kesiapan OP</td>
@@ -461,12 +454,7 @@
                 <tr>
                     <td>Penyusunan BA Hasil Evaluasi Akhir Kesiapan OP</td>
                     <td></td>
-                    <td>
-                        {{-- <button class="btn btn-primary btn-sm" data-toggle="modal"
-                            data-target="#BA-evaluasi-akhir">
-                            <span class="fas fa-upload" title="Upload Dokumen"></span>
-                        </button> --}}
-                    </td>
+                    <td></td>
                 </tr>
                 <tr>
                     <td>Serah Terima Hasil OP</td>
@@ -640,14 +628,12 @@
                         <a href="{{ asset('storage/' . substr($dokumenPelaksana->path_dokumen, 7)) }}" target="_blank"
                             class="btn btn-primary btn-sm">Lihat file SK Tim Pelaksana</a>
                         @endif
-
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
 
 <!-- Modal Penyusunan Rencana Kerja -->
 <div class="modal fade" id="penyusunan-rencana-kerja" tabindex="-1" aria-labelledby="penyusunanRencanaKerjaModalLabel"
@@ -719,8 +705,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="penyusunanRencanaKerjaShowModalLabel">Dokumen Penyusunan Rencana Kerja
-                </h5>
+                <h5 class="modal-title" id="penyusunanRencanaKerjaShowModalLabel">Dokumen Penyusunan Rencana Kerja</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -730,8 +715,7 @@
                     <div class="d-flex justify-content-center">
                         @if ($dokumenPenyusunanRencanaKerja)
                         <a href="{{ asset('storage/' . substr($dokumenPenyusunanRencanaKerja->path_dokumen, 7)) }}"
-                            target="_blank" class="btn btn-primary btn-sm">Lihat
-                            file Penyusunan Rencana Kerja</a>
+                            target="_blank" class="btn btn-primary btn-sm">Lihat file Penyusunan Rencana Kerja</a>
                         @endif
                     </div>
                 </div>
@@ -788,12 +772,6 @@
                         enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
-                        {{-- <div class="form-group">
-                            @if ($dokumenSosialisasi)
-                            <a href="{{ asset('storage/' . substr($dokumenSosialisasi->path_dokumen, 7)) }}"
-                                target="_blank" class="btn btn-primary btn-sm">Lihat file Sosialisasi dan Koordinasi</a>
-                            @endif
-                        </div> --}}
                         <div class="form-group">
                             <label for="dokumen_sosialisasi">Dokumen Sosialisasi dan Koordinasi</label>
                             <input type="file" accept="application/pdf" class="form-control" id="dokumen_sosialisasi"
@@ -898,249 +876,237 @@
 @include('dokumen-tambahan.manual-op')
 @include('dokumen-tambahan.dokumentasi')
 
-
 <a href="{{ route('jaringan-atab.index') }}" class="btn btn-primary mb-3 btn-sm"><i class="fas fa-arrow-left"></i>
-    kembali ke
-    Daftar</a>
+    kembali ke Daftar</a>
 @stop
 
 @section('css')
-
 @stop
 
 @section('js')
 <script>
     $(document).ready(function () {
-    //-----FORM PEMBENTUKAN TIM---------//
-    $('#formPembentukanTim').on('submit', function (e) {
-        e.preventDefault();
+        //-----FORM PEMBENTUKAN TIM---------//
+        $('#formPembentukanTim').on('submit', function (e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    console.log("Success:", data);
+                    $('#pembentukan-tim').modal('hide');
+                    alert('Dokumen berhasil diupload.');
+                    location.reload();
+                },
+                error: function (xhr, status, error) {
+                    console.log("Error:", error);
+                    alert('Gagal mengupload dokumen. Silakan coba lagi.');
+                }
+            });
+        });
 
-        var formData = new FormData(this);
+        //-----FORM EDIT PEMBENTUKAN TIM---------//
+        $('#formPembentukanTimEdit').on('submit', function (e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    console.log("Success:", data);
+                    $('#pembentukan-tim-edit').modal('hide');
+                    alert('Dokumen berhasil diupdate.');
+                    location.reload();
+                },
+                error: function (xhr, status, error) {
+                    console.log("Error:", error);
+                    alert('Gagal mengupdate dokumen. Silakan coba lagi.');
+                }
+            });
+        });
 
-        $.ajax({
-            url: $(this).attr('action'),
-            type: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function (data) {
-                console.log("Success:", data);
-                $('#pembentukan-tim').modal('hide');
-                alert('Dokumen berhasil diupload.');
-                location.reload();
-            },
-            error: function (xhr, status, error) {
-                console.log("Error:", error);
-                alert('Gagal mengupload dokumen. Silakan coba lagi.');
-            }
+        //-----FORM PENYUSUNAN RENCANA KERJA---------//
+        $('#formPenyusunanRencanaKerja').on('submit', function (e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    $('#penyusunan-rencana-kerja').modal('hide');
+                    alert('Dokumen berhasil diupload.');
+                    location.reload();
+                },
+                error: function (xhr, status, error) {
+                    alert('Gagal mengupload dokumen. Silakan coba lagi.');
+                }
+            });
+        });
+
+        //-----FORM EDIT PENYUSUNAN RENCANA KERJA---------//
+        $('#formPenyusunanRencanaKerjaEdit').on('submit', function (e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    console.log("Success:", data);
+                    $('#penyusunan-rencana-kerja-edit').modal('hide');
+                    alert('Dokumen berhasil diperbarui.');
+                    location.reload();
+                },
+                error: function (xhr, status, error) {
+                    console.log("Error:", error);
+                    alert('Gagal memperbarui dokumen. Silakan coba lagi.');
+                }
+            });
+        });
+
+        //-----FORM SOSIALISASI DAN KOORDINASI---------//
+        $('#formSosialisasiDanKoordinasi').on('submit', function (e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    $('#sosialisai-dan-koordiansi').modal('hide');
+                    alert('Dokumen berhasil diupload.');
+                    location.reload();
+                },
+                error: function (xhr, status, error) {
+                    alert('Gagal mengupload dokumen. Silakan coba lagi.');
+                }
+            });
+        });
+
+        //-----FORM EDIT SOSIALISASI DAN KOORDINASI---------//
+        $('#formSosialisasiDanKoordinasiEdit').on('submit', function (e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    console.log("Success:", data);
+                    $('#sosialisasi-dan-koordinasi-edit').modal('hide');
+                    alert('Dokumen berhasil diperbarui.');
+                    location.reload();
+                },
+                error: function (xhr, status, error) {
+                    console.log("Error:", error);
+                    alert('Gagal memperbarui dokumen. Silakan coba lagi.');
+                }
+            });
+        });
+
+        //-----Halman FORM EVALUASI AWAL---------//
+        var evaluasiAwalButton = document.getElementById('evaluasi-awal-button');
+        if (evaluasiAwalButton) {
+            evaluasiAwalButton.addEventListener('click', function() {
+                var url = "{{ route('evaluasi-awal', ['jaringan' => $jaringan->id]) }}";
+                window.open(url, '_blank', 'width=800,height=600,resizable=no');
+            });
+        }
+
+        //-----Halaman FORM Prasarana Air Tanah---------//
+        var prasaranaAirTanahButton = document.getElementById('prasarana-air-tanah-button');
+        if (prasaranaAirTanahButton) {
+            prasaranaAirTanahButton.addEventListener('click', function() {
+                var url = "{{ route('inventarisasi-awal-prasarana-air-tanah', ['jaringan' => $jaringan->id]) }}";
+                window.open(url, '_blank', 'width=900,height=600,resizable=no');
+            });
+        }
+
+        //-----Halaman FORM Perlatan Air Tanah---------//
+        var peralatanAirTanahButton = document.getElementById('peralatan-air-tanah-button');
+        if (peralatanAirTanahButton) {
+            peralatanAirTanahButton.addEventListener('click', function() {
+                var url = "{{ route('inventarisasi-awal-peralatan-air-tanah', ['jaringan' => $jaringan->id]) }}";
+                window.open(url, '_blank', 'width=800,height=600,resizable=no');
+            });
+        }
+
+        //-----Halaman FORM Prasarana Air Baku---------//
+        var prasaranaAirBakuButton = document.getElementById('prasarana-air-baku-button');
+        if (prasaranaAirBakuButton) {
+            prasaranaAirBakuButton.addEventListener('click', function() {
+                var url = "{{ route('inventarisasi-awal-prasarana-air-baku', ['jaringan' => $jaringan->id]) }}";
+                window.open(url, '_blank', 'width=800,height=600,resizable=no');
+            });
+        }
+
+        //-----Halaman Form Data dan Informasi Non-Fisik---------//
+        var dataInformasiNonFisikButton = document.getElementById('data-dan-informasi-non-fisik-button');
+        if (dataInformasiNonFisikButton) {
+            dataInformasiNonFisikButton.addEventListener('click', function() {
+                var url = "{{ route('inventarisasi-awal-data-informasi-non-fisik', ['jaringan' => $jaringan->id]) }}";
+                window.open(url, '_blank', 'width=800,height=600,resizable=no');
+            });
+        }
+
+        //-----Halaman Kesiapan Sarana Penunjang Operasi dan Pemeliharaan---------//
+        var kesiapanSaranaPenunjangOperasiDanPemeliharaanButton = document.getElementById('kesiapan-sarana-penunjang-operasi-dan-pemeliharaan-button');
+        if (kesiapanSaranaPenunjangOperasiDanPemeliharaanButton) {
+            kesiapanSaranaPenunjangOperasiDanPemeliharaanButton.addEventListener('click', function() {
+                var url = "{{ route('inventarisasi-awal-kesiapan-sarana-penunjang-op', ['jaringan' => $jaringan->id]) }}";
+                window.open(url, '_blank', 'width=900,height=600,resizable=no');
+            });
+        }
+
+        //-----Halaman Kesiapan Kelembagaan dan Sumber Daya Manusia---------//
+        var kesiapanKelembagaanDanSumberDayaManusiaButton = document.getElementById('kesiapan-kelembagaan-dan-sumber-daya-manusia-button');
+        if (kesiapanKelembagaanDanSumberDayaManusiaButton) {
+            kesiapanKelembagaanDanSumberDayaManusiaButton.addEventListener('click', function() {
+                var url = "{{ route('inventarisasi-awal-kesiapan-kelembagaan-sdm', ['jaringan' => $jaringan->id]) }}";
+                window.open(url, '_blank', 'width=900,height=600,resizable=no');
+            });
+        }
+
+        //-----Halaman Kesiapan Manajemen---------//
+        var kesiapanManajemenButton = document.getElementById('kesiapan-manajemen-button');
+        if (kesiapanManajemenButton) {
+            kesiapanManajemenButton.addEventListener('click', function() {
+                var url = "{{ route('inventarisasi-awal-kesiapan-manajemen', ['jaringan' => $jaringan->id]) }}";
+                window.open(url, '_blank', 'width=950,height=600,resizable=no');
+            });
+        }
+
+        //-----Halaman Keisapan Konservasi---------//
+        var kesiapanKonservasiButton = document.getElementById('kesiapan-konservasi-button');
+        if (kesiapanKonservasiButton) {
+            kesiapanKonservasiButton.addEventListener('click', function() {
+                var url = "{{ route('inventarisasi-awal-kesiapan-konservasi', ['jaringan' => $jaringan->id]) }}";
+                window.open(url, '_blank', 'width=900,height=600,resizable=no');
+            });
+        }
+
+        // Toggle icon direction on collapse show/hide
+        $('.collapse').on('show.bs.collapse', function () {
+            $(this).prev().find('.fas').removeClass('fa-chevron-down').addClass('fa-chevron-up');
+        }).on('hide.bs.collapse', function () {
+            $(this).prev().find('.fas').removeClass('fa-chevron-up').addClass('fa-chevron-down');
         });
     });
-
-    //-----FORM EDIT PEMBENTUKAN TIM---------//
-    $('#formPembentukanTimEdit').on('submit', function (e) {
-        e.preventDefault();
-
-        var formData = new FormData(this);
-
-        $.ajax({
-            url: $(this).attr('action'),
-            type: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function (data) {
-                console.log("Success:", data);
-                $('#pembentukan-tim-edit').modal('hide');
-                alert('Dokumen berhasil diupdate.');
-                location.reload();
-            },
-            error: function (xhr, status, error) {
-                console.log("Error:", error);
-                alert('Gagal mengupdate dokumen. Silakan coba lagi.');
-            }
-        });
-    });
-
-
-    //-----FORM PENYUSUNAN RENCANA KERJA---------//
-    $('#formPenyusunanRencanaKerja').on('submit', function (e) {
-        e.preventDefault();
-        var formData = new FormData(this);
-        $.ajax({
-            url: $(this).attr('action'),
-            type: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function (data) {
-                $('#penyusunan-rencana-kerja').modal('hide');
-                alert('Dokumen berhasil diupload.');
-                location.reload();
-            },
-            error: function (xhr, status, error) {
-                alert('Gagal mengupload dokumen. Silakan coba lagi.');
-            }
-        });
-    });
-
-    //-----FORM EDIT PENYUSUNAN RENCANA KERJA---------//
-    $('#formPenyusunanRencanaKerjaEdit').on('submit', function (e) {
-        e.preventDefault();
-
-        var formData = new FormData(this);
-
-        $.ajax({
-            url: $(this).attr('action'),
-            type: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function (data) {
-                console.log("Success:", data);
-                $('#penyusunan-rencana-kerja-edit').modal('hide');
-                alert('Dokumen berhasil diperbarui.');
-                location.reload();
-            },
-            error: function (xhr, status, error) {
-                console.log("Error:", error);
-                alert('Gagal memperbarui dokumen. Silakan coba lagi.');
-            }
-        });
-    });
-
-    //-----FORM SOSIALISASI DAN KOORDINASI---------//
-    $('#formSosialisasiDanKoordinasi').on('submit', function (e) {
-        e.preventDefault();
-        var formData = new FormData(this);
-        $.ajax({
-            url: $(this).attr('action'),
-            type: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function (data) {
-                $('#sosialisai-dan-koordiansi').modal('hide');
-                alert('Dokumen berhasil diupload.');
-                location.reload();
-            },
-            error: function (xhr, status, error) {
-                alert('Gagal mengupload dokumen. Silakan coba lagi.');
-            }
-        });
-    });
-
-    //-----FORM EDIT SOSIALISASI DAN KOORDINASI---------//
-    $('#formSosialisasiDanKoordinasiEdit').on('submit', function (e) {
-        e.preventDefault();
-
-        var formData = new FormData(this);
-
-        $.ajax({
-            url: $(this).attr('action'),
-            type: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function (data) {
-                console.log("Success:", data);
-                $('#sosialisasi-dan-koordinasi-edit').modal('hide');
-                alert('Dokumen berhasil diperbarui.');
-                location.reload();
-            },
-            error: function (xhr, status, error) {
-                console.log("Error:", error);
-                alert('Gagal memperbarui dokumen. Silakan coba lagi.');
-            }
-        });
-    });
-
-    //-----Halman FORM EVALUASI AWAL---------//
-    var evaluasiAwalButton = document.getElementById('evaluasi-awal-button');
-    if (evaluasiAwalButton) {
-        evaluasiAwalButton.addEventListener('click', function() {
-            var url = "{{ route('evaluasi-awal', ['jaringan' => $jaringan->id]) }}";
-            window.open(url, '_blank', 'width=800,height=600,resizable=no');
-        });
-    }
-
-    //-----Halaman FORM Prasarana Air Tanah---------//
-    var prasaranaAirTanahButton = document.getElementById('prasarana-air-tanah-button');
-    if (prasaranaAirTanahButton) {
-        prasaranaAirTanahButton.addEventListener('click', function() {
-            var url = "{{ route('inventarisasi-awal-prasarana-air-tanah', ['jaringan' => $jaringan->id]) }}";
-            window.open(url, '_blank', 'width=900,height=600,resizable=no');
-        });
-    }
-
-    //-----Halaman FORM Perlatan Air Tanah---------//
-    var peralatanAirTanahButton = document.getElementById('peralatan-air-tanah-button');
-    if (peralatanAirTanahButton) {
-        peralatanAirTanahButton.addEventListener('click', function() {
-            var url = "{{ route('inventarisasi-awal-peralatan-air-tanah', ['jaringan' => $jaringan->id]) }}";
-            window.open(url, '_blank', 'width=800,height=600,resizable=no');
-        });
-    }
-
-     //-----Halaman FORM Prasarana Air Baku---------//
-    var prasaranaAirBakuButton = document.getElementById('prasarana-air-baku-button');
-    if (prasaranaAirBakuButton) {
-        prasaranaAirBakuButton.addEventListener('click', function() {
-            var url = "{{ route('inventarisasi-awal-prasarana-air-baku', ['jaringan' => $jaringan->id]) }}";
-            window.open(url, '_blank', 'width=800,height=600,resizable=no');
-        });
-    }
-
-    //-----Halaman Form Data dan Informasi Non-Fisik---------//
-    var dataInformasiNonFisikButton = document.getElementById('data-dan-informasi-non-fisik-button');
-    if (dataInformasiNonFisikButton) {
-        dataInformasiNonFisikButton.addEventListener('click', function() {
-            var url = "{{ route('inventarisasi-awal-data-informasi-non-fisik', ['jaringan' => $jaringan->id]) }}";
-            window.open(url, '_blank', 'width=800,height=600,resizable=no');
-        });
-    }
-
-    //-----Halaman Kesiapan Sarana Penunjang Operasi dan Pemeliharaan---------//
-    var kesiapanSaranaPenunjangOperasiDanPemeliharaanButton = document.getElementById('kesiapan-sarana-penunjang-operasi-dan-pemeliharaan-button');
-    if (kesiapanSaranaPenunjangOperasiDanPemeliharaanButton) {
-        kesiapanSaranaPenunjangOperasiDanPemeliharaanButton.addEventListener('click', function() {
-            var url = "{{ route('inventarisasi-awal-kesiapan-sarana-penunjang-op', ['jaringan' => $jaringan->id]) }}";
-            window.open(url, '_blank', 'width=900,height=600,resizable=no');
-        });
-    }
-
-    //-----Halaman Kesiapan Kelembagaan dan Sumber Daya Manusia---------//
-    var kesiapanKelembagaanDanSumberDayaManusiaButton = document.getElementById('kesiapan-kelembagaan-dan-sumber-daya-manusia-button');
-    if (kesiapanKelembagaanDanSumberDayaManusiaButton) {
-        kesiapanKelembagaanDanSumberDayaManusiaButton.addEventListener('click', function() {
-            var url = "{{ route('inventarisasi-awal-kesiapan-kelembagaan-sdm', ['jaringan' => $jaringan->id]) }}";
-            window.open(url, '_blank', 'width=900,height=600,resizable=no');
-        });
-    }
-    
-    //-----Halaman Kesiapan Manajemen---------//
-    var kesiapanManajemenButton = document.getElementById('kesiapan-manajemen-button');
-    if (kesiapanManajemenButton) {
-        kesiapanManajemenButton.addEventListener('click', function() {
-            var url = "{{ route('inventarisasi-awal-kesiapan-manajemen', ['jaringan' => $jaringan->id]) }}";
-            window.open(url, '_blank', 'width=950,height=600,resizable=no');
-        });
-    }
-
-    //-----Halaman Keisapan Konservasi---------//
-    var kesiapanKonservasiButton = document.getElementById('kesiapan-konservasi-button');
-    if (kesiapanKonservasiButton) {
-        kesiapanKonservasiButton.addEventListener('click', function() {
-            var url = "{{ route('inventarisasi-awal-kesiapan-konservasi', ['jaringan' => $jaringan->id]) }}";
-            window.open(url, '_blank', 'width=900,height=600,resizable=no');
-        });
-    }
-
-     // Toggle icon direction on collapse show/hide
-    $('.collapse').on('show.bs.collapse', function () {
-        $(this).prev().find('.fas').removeClass('fa-chevron-down').addClass('fa-chevron-up');
-    }).on('hide.bs.collapse', function () {
-        $(this).prev().find('.fas').removeClass('fa-chevron-up').addClass('fa-chevron-down');
-    });
-});
 </script>
 @stop

@@ -121,11 +121,11 @@
                 <div class="col-sm-10">
                     <select name="jenis" id="jenis" class="form-control">
                         <option value="">Pilih Jenis</option>
-                        <option value="Irigasi" {{ old('jenis', $jaringan->jenis) == 'Irigasi' ? 'selected' : ''
-                            }}>Irigasi</option>
+                        <option value="Air Tanah" {{ old('jenis', $jaringan->jenis) == 'Air Tanah' ? 'selected' : ''
+                            }}>Air Tanah</option>
+                        <option value="Air Baku" {{ old('jenis', $jaringan->jenis) == 'Air Baku' ? 'selected' : ''
+                            }}>Air Baku</option>
                         <option value="Embung" {{ old('jenis', $jaringan->jenis) == 'Embung' ? 'selected' : '' }}>Embung
-                        </option>
-                        <option value="ATAB" {{ old('jenis', $jaringan->jenis) == 'ATAB' ? 'selected' : '' }}>ATAB
                         </option>
                     </select>
                     @error('jenis')
@@ -140,8 +140,7 @@
                     <select name="tahun" id="tahun" class="form-control">
                         <option value="">Pilih Tahun</option>
                         @for ($year = 1998; $year <= date('Y'); $year++) <option value="{{ $year }}" {{ old('tahun',
-                            $jaringan->
-                            tahun) == $year ? 'selected' : '' }}>
+                            $jaringan->tahun) == $year ? 'selected' : '' }}>
                             {{ $year }}
                             </option>
                             @endfor
@@ -155,21 +154,14 @@
             <div class="form-group row">
                 <label for="satker" class="col-sm-2 col-form-label">Satker</label>
                 <div class="col-sm-10">
-                    <select name="satker" id="satker" class="form-control">
-                        <option value="">Pilih Satker</option>
-                        <option value="Satker Balai" {{ old('satker', $jaringan->satker) == 'Satker Balai' ? 'selected'
-                            : ''
-                            }}>Satker Balai</option>
-                        <option value="Satker PJPA" {{ old('satker', $jaringan->satker) == 'Satker PJPA' ? 'selected' :
-                            '' }}>Satker
-                            PJPA</option>
-                        <option value="Satker PJSA" {{ old('satker', $jaringan->satker) == 'Satker PJSA' ? 'selected' :
-                            '' }}>Satker
-                            PJSA</option>
-                        <option value="Satker Bendungan" {{ old('satker', $jaringan->satker) == 'Satker Bendungan' ?
-                            'selected' : ''
-                            }}>Satker Bendungan</option>
+                    <!-- Display read-only select input -->
+                    <select name="satker_display" id="satker_display" class="form-control" disabled>
+                        <option value="Satker PJPA" selected>Satker PJPA</option>
                     </select>
+
+                    <!-- Hidden input field to ensure value is sent -->
+                    <input type="hidden" name="satker" value="Satker PJPA">
+
                     @error('satker')
                     <div class="text-danger">{{ $message }}</div>
                     @enderror

@@ -23,7 +23,7 @@ return new class extends Migration
             $table->unsignedBigInteger('district_id')->nullable();
             $table->unsignedBigInteger('village_id')->nullable();
             $table->string('wilayah_sungai')->nullable();
-            $table->enum('jenis', ['Irigasi', 'Embung', 'ATAB'])->nullable();
+            $table->enum('jenis', ['Air Tanah', 'Air Baku', 'Embung'])->nullable();
             $table->year('tahun')->nullable();
             $table->enum('satker', ['Satker Balai', 'Satker PJPA', 'Satker PJSA', 'Satker Bendungan'])->nullable();
             $table->string('tahapan')->nullable();

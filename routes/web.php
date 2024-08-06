@@ -14,6 +14,7 @@ use App\Http\Controllers\Permission\PermissionController;
 use App\Http\Controllers\Assign\PermissionToRoleController;
 use App\Http\Controllers\EvaluasiController;
 use App\Http\Controllers\InventarisasiDataEvaluasiAwal;
+use App\Http\Controllers\PetaJaringan;
 
 /*
 |--------------------------------------------------------------------------
@@ -115,4 +116,7 @@ Route::middleware(['auth'])->group(function () {
   Route::get('/inventarisasi-awal-kesiapan-konservasi/{jaringan}', [InventarisasiDataEvaluasiAwal::class, 'kesiapanKonservasi'])->name('inventarisasi-awal-kesiapan-konservasi');
   Route::put('/inventarisasi-awal-kesiapan-konservasi/{jaringan}', [InventarisasiDataEvaluasiAwal::class, 'kesiapanKonservasiProses'])->name('inventarisasi-awal-kesiapan-konservasi-proses');
 });
-    
+
+
+Route::get('/peta', [PetaJaringan::class, 'index'])->name('peta');
+Route::get('/data-peta', [PetaJaringan::class, 'dataPeta'])->name('data-peta');
