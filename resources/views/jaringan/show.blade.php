@@ -1043,7 +1043,7 @@
         if (peralatanAirTanahButton) {
             peralatanAirTanahButton.addEventListener('click', function() {
                 var url = "{{ route('inventarisasi-awal-peralatan-air-tanah', ['jaringan' => $jaringan->id]) }}";
-                window.open(url, '_blank', 'width=800,height=600,resizable=no');
+                window.open(url, '_blank', 'width=900,height=600,resizable=no');
             });
         }
 
@@ -1052,7 +1052,7 @@
         if (prasaranaAirBakuButton) {
             prasaranaAirBakuButton.addEventListener('click', function() {
                 var url = "{{ route('inventarisasi-awal-prasarana-air-baku', ['jaringan' => $jaringan->id]) }}";
-                window.open(url, '_blank', 'width=800,height=600,resizable=no');
+                window.open(url, '_blank', 'width=900,height=600,resizable=no');
             });
         }
 
@@ -1061,7 +1061,7 @@
         if (dataInformasiNonFisikButton) {
             dataInformasiNonFisikButton.addEventListener('click', function() {
                 var url = "{{ route('inventarisasi-awal-data-informasi-non-fisik', ['jaringan' => $jaringan->id]) }}";
-                window.open(url, '_blank', 'width=800,height=600,resizable=no');
+                window.open(url, '_blank', 'width=900,height=600,resizable=no');
             });
         }
 
@@ -1070,7 +1070,7 @@
         if (kesiapanSaranaPenunjangOperasiDanPemeliharaanButton) {
             kesiapanSaranaPenunjangOperasiDanPemeliharaanButton.addEventListener('click', function() {
                 var url = "{{ route('inventarisasi-awal-kesiapan-sarana-penunjang-op', ['jaringan' => $jaringan->id]) }}";
-                window.open(url, '_blank', 'width=900,height=600,resizable=no');
+                window.open(url, '_blank', 'width=950,height=600,resizable=no');
             });
         }
 
@@ -1079,7 +1079,7 @@
         if (kesiapanKelembagaanDanSumberDayaManusiaButton) {
             kesiapanKelembagaanDanSumberDayaManusiaButton.addEventListener('click', function() {
                 var url = "{{ route('inventarisasi-awal-kesiapan-kelembagaan-sdm', ['jaringan' => $jaringan->id]) }}";
-                window.open(url, '_blank', 'width=900,height=600,resizable=no');
+                window.open(url, '_blank', 'width=950,height=600,resizable=no');
             });
         }
 
@@ -1088,7 +1088,7 @@
         if (kesiapanManajemenButton) {
             kesiapanManajemenButton.addEventListener('click', function() {
                 var url = "{{ route('inventarisasi-awal-kesiapan-manajemen', ['jaringan' => $jaringan->id]) }}";
-                window.open(url, '_blank', 'width=950,height=600,resizable=no');
+                window.open(url, '_blank', 'width=1100,height=600,resizable=no');
             });
         }
 
@@ -1097,7 +1097,7 @@
         if (kesiapanKonservasiButton) {
             kesiapanKonservasiButton.addEventListener('click', function() {
                 var url = "{{ route('inventarisasi-awal-kesiapan-konservasi', ['jaringan' => $jaringan->id]) }}";
-                window.open(url, '_blank', 'width=900,height=600,resizable=no');
+                window.open(url, '_blank', 'width=1100,height=600,resizable=no');
             });
         }
 

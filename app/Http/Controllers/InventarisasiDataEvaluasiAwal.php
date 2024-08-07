@@ -9,74 +9,75 @@ use App\Models\ItemBlanko3;
 use Illuminate\Http\Request;
 use App\Models\EvaluasiBlanko;
 use App\Models\ItemBlanko3Rincian;
+use Illuminate\Support\Facades\Log;
 
 class InventarisasiDataEvaluasiAwal extends Controller
 {
     //----------------------------Data dan Informasi  Pekerjaan Fisik------------------------------------------------------
     //----------------------------Blanko 1A-----------------------------------------------------
-    public function prasaranaAirTanah(Jaringan $jaringan)
-    {
-        // Temukan tahapan Evaluasi Awal Kesiapan
-        $tahapan = $jaringan->tahapans()->where('nama_tahapan', 'Evaluasi Awal Kesiapan')->first();
-        
-        if (!$tahapan) {
-            return redirect()->back()->with('error', 'Tahapan Evaluasi Awal Kesiapan tidak ditemukan.');
-        }
+ public function prasaranaAirTanah(Jaringan $jaringan)
+{
+    // Temukan tahapan Evaluasi Awal Kesiapan
+    $tahapan = $jaringan->tahapans()->where('nama_tahapan', 'Evaluasi Awal Kesiapan')->first();
+    
+    if (!$tahapan) {
+        return redirect()->back()->with('error', 'Tahapan Evaluasi Awal Kesiapan tidak ditemukan.');
+    }
 
-        // Temukan evaluasi blanko
+    // Temukan evaluasi blanko
+    $evaluasiBlanko = EvaluasiBlanko::where('tahapan_id', $tahapan->id)->where('jenis_blanko', 'Blanko 1A')->first();
+    
+    if (!$evaluasiBlanko) {
+        return redirect()->back()->with('error', 'Evaluasi Blanko 1A tidak ditemukan.');
+    }
+
+    // Ambil items dari evaluasi blanko
+    $items = ItemBlanko::where('evaluasi_blanko_id', $evaluasiBlanko->id)->get();
+
+    //dd($evaluasiBlanko);
+
+    return view('evaluasi.blanko1a', compact('jaringan', 'items', 'evaluasiBlanko'));
+}
+
+public function prasaranaAirTanahProses(Request $request, Jaringan $jaringan)
+{
+    $request->validate([
+        'items.*.ada_tidak_ada' => 'nullable|boolean',
+        'items.*.bobot' => 'nullable|numeric|min:0|max:100',
+        'items.*.kondisi' => 'nullable|numeric|min:0|max:100',
+        'items.*.fungsi' => 'nullable|numeric|min:0|max:100',
+        'items.*.keterangan' => 'nullable|string|max:255',
+        'hasil_ada_tidak_ada' => 'nullable|numeric|min:0|max:100',
+        'hasil_kondisi' => 'nullable|numeric|min:0|max:100',
+        'hasil_fungsi' => 'nullable|numeric|min:0|max:100',
+    ]);
+
+    foreach ($request->items as $itemId => $itemData) {
+        $item = ItemBlanko::findOrFail($itemId);
+        $item->ada_tidak_ada = $itemData['ada_tidak_ada'];
+        $item->bobot = $itemData['bobot'];
+        $item->kondisi = $itemData['kondisi'];
+        $item->fungsi = $itemData['fungsi'];
+        $item->keterangan = $itemData['keterangan'];
+        $item->save();
+    }
+
+    $tahapan = $jaringan->tahapans()->where('nama_tahapan', 'Evaluasi Awal Kesiapan')->first();
+    if ($tahapan) {
         $evaluasiBlanko = EvaluasiBlanko::where('tahapan_id', $tahapan->id)->where('jenis_blanko', 'Blanko 1A')->first();
-        
-        if (!$evaluasiBlanko) {
-            return redirect()->back()->with('error', 'Evaluasi Blanko 1A tidak ditemukan.');
+        if ($evaluasiBlanko) {
+            $evaluasiBlanko->hasil_ada_tidak_ada = $request->input('hasil_ada_tidak_ada');
+            $evaluasiBlanko->hasil_kondisi = $request->input('hasil_kondisi');
+            $evaluasiBlanko->hasil_fungsi = $request->input('hasil_fungsi');
+            $evaluasiBlanko->save();
         }
-
-        $items = ItemBlanko::where('evaluasi_blanko_id', $evaluasiBlanko->id)->get();
-
-        return view('evaluasi.blanko1a', compact('jaringan', 'items'));
     }
 
-  public function prasaranaAirTanahProses(Request $request, Jaringan $jaringan)
-    {
-        // Validasi data dari form
-        $request->validate([
-            'items.*.ada_tidak_ada' => 'required|boolean',
-            'items.*.kondisi' => 'required|numeric|min:0|max:100',
-            'items.*.fungsi' => 'required|numeric|min:0|max:100',
-            'items.*.keterangan' => 'nullable|string|max:255',
-            'hasil_ada_tidak_ada' => 'required|numeric|min:0|max:100',
-            'hasil_kondisi' => 'required|numeric|min:0|max:100',
-            'hasil_fungsi' => 'required|numeric|min:0|max:100',
-        ]);
-
-        // Update items with data from the form
-        foreach ($request->items as $itemId => $itemData) {
-            $item = ItemBlanko::findOrFail($itemId);
-            $item->ada_tidak_ada = $itemData['ada_tidak_ada'];
-            $item->kondisi = $itemData['kondisi'];
-            $item->fungsi = $itemData['fungsi'];
-            $item->keterangan = $itemData['keterangan'];
-            $item->save();
-        }
-
-        // Update evaluasi_blankos with calculated weights
-        $tahapan = $jaringan->tahapans()->where('nama_tahapan', 'Evaluasi Awal Kesiapan')->first();
-        if ($tahapan) {
-            $evaluasiBlanko = EvaluasiBlanko::where('tahapan_id', $tahapan->id)
-                                            ->where('jenis_blanko', 'Blanko 1A')
-                                            ->first();
-            if ($evaluasiBlanko) {
-                $evaluasiBlanko->hasil_ada_tidak_ada = $request->input('hasil_ada_tidak_ada');
-                $evaluasiBlanko->hasil_kondisi = $request->input('hasil_kondisi');
-                $evaluasiBlanko->hasil_fungsi = $request->input('hasil_fungsi');
-                $evaluasiBlanko->save();
-            }
-        }
-
-        return response()->json(['success' => true, 'message' => 'Data berhasil diperbarui.']);
-    }
+    return redirect()->back()->with('success', 'Data evaluasi blanko 1A berhasil disimpan.');
+}
 
     //--------------------------------------------Blanko 1B---------------------------------------
-  public function peralatanAirTanah(Jaringan $jaringan)
+    public function peralatanAirTanah(Jaringan $jaringan)
     {
         $tahapan = $jaringan->tahapans()->where('nama_tahapan', 'Evaluasi Awal Kesiapan')->first();
 
@@ -86,22 +87,20 @@ class InventarisasiDataEvaluasiAwal extends Controller
 
         $evaluasiBlanko = EvaluasiBlanko::where('tahapan_id', $tahapan->id)->where('jenis_blanko', 'Blanko 1B')->first();
 
-
         if (!$evaluasiBlanko) {
             return redirect()->back()->with('error', 'Evaluasi Blanko 1B tidak ditemukan.');
         }
 
         $items = ItemBlanko::where('evaluasi_blanko_id', $evaluasiBlanko->id)->get();
 
-        return view('evaluasi.blanko1b', compact('jaringan', 'items'));
+        return view('evaluasi.blanko1b', compact('jaringan', 'items', 'evaluasiBlanko'));
     }
 
-   public function peralatanAirTanahProses(Request $request, Jaringan $jaringan)
+    public function peralatanAirTanahProses(Request $request, Jaringan $jaringan)
     {
-
-        // Validasi data dari form
         $request->validate([
             'items.*.ada_tidak_ada' => 'required|boolean',
+            'items.*.bobot' => 'required|numeric|min:0|max:100',
             'items.*.kondisi' => 'required|numeric|min:0|max:100',
             'items.*.fungsi' => 'required|numeric|min:0|max:100',
             'items.*.keterangan' => 'nullable|string|max:255',
@@ -110,23 +109,19 @@ class InventarisasiDataEvaluasiAwal extends Controller
             'hasil_fungsi' => 'required|numeric|min:0|max:100',
         ]);
 
-   
-
         foreach ($request->items as $itemId => $itemData) {
             $item = ItemBlanko::findOrFail($itemId);
             $item->ada_tidak_ada = $itemData['ada_tidak_ada'];
+            $item->bobot = $itemData['bobot'];
             $item->kondisi = $itemData['kondisi'];
             $item->fungsi = $itemData['fungsi'];
             $item->keterangan = $itemData['keterangan'];
             $item->save();
         }
 
-        // Update evaluasi_blankos with calculated weights
         $tahapan = $jaringan->tahapans()->where('nama_tahapan', 'Evaluasi Awal Kesiapan')->first();
         if ($tahapan) {
-            $evaluasiBlanko = EvaluasiBlanko::where('tahapan_id', $tahapan->id)
-                                            ->where('jenis_blanko', 'Blanko 1B')
-                                            ->first();
+            $evaluasiBlanko = EvaluasiBlanko::where('tahapan_id', $tahapan->id)->where('jenis_blanko', 'Blanko 1B')->first();
             if ($evaluasiBlanko) {
                 $evaluasiBlanko->hasil_ada_tidak_ada = $request->input('hasil_ada_tidak_ada');
                 $evaluasiBlanko->hasil_kondisi = $request->input('hasil_kondisi');
@@ -135,70 +130,65 @@ class InventarisasiDataEvaluasiAwal extends Controller
             }
         }
 
-        return response()->json(['success' => true, 'message' => 'Data berhasil disimpan.']);
+        return redirect()->back()->with('success', 'Data evaluasi blanko 1B berhasil disimpan.');
     }
-
 
     //--------------------------------------------Blanko 1C---------------------------------------
-    public function prasaranaAirBaku(Jaringan $jaringan)
-    {
-        $tahapan = $jaringan->tahapans()->where('nama_tahapan', 'Evaluasi Awal Kesiapan')->first();
+   public function prasaranaAirBaku(Jaringan $jaringan)
+{
+    $tahapan = $jaringan->tahapans()->where('nama_tahapan', 'Evaluasi Awal Kesiapan')->first();
 
-        if (!$tahapan) {
-            return redirect()->back()->with('error', 'Tahapan Evaluasi Awal Kesiapan tidak ditemukan.');
-        }
-
-        $evaluasiBlanko = $tahapan->evaluasiBlankos()->where('jenis_blanko', 'Blanko 1C')->first();
-
-        if (!$evaluasiBlanko) {
-            return redirect()->back()->with('error', 'Evaluasi Blanko 1C tidak ditemukan.');
-        }
-
-        $items = $evaluasiBlanko->items;
-
-        return view('evaluasi.blanko1c', compact('jaringan', 'items'));
+    if (!$tahapan) {
+        return redirect()->back()->with('error', 'Tahapan Evaluasi Awal Kesiapan tidak ditemukan.');
     }
 
-    public function prasaranaAirBakuProses(Request $request, Jaringan $jaringan)
-    {
-        $request->validate([
-            'items.*.ada_tidak_ada' => 'required|boolean',
-            'items.*.kondisi' => 'required|numeric|min:0|max:100',
-            'items.*.fungsi' => 'required|numeric|min:0|max:100',
-            'items.*.keterangan' => 'nullable|string|max:255',
-            'hasil_ada_tidak_ada' => 'required|numeric|min:0|max:100',
-            'hasil_kondisi' => 'required|numeric|min:0|max:100',
-            'hasil_fungsi' => 'required|numeric|min:0|max:100',
-        ]);
+    $evaluasiBlanko = EvaluasiBlanko::where('tahapan_id', $tahapan->id)->where('jenis_blanko', 'Blanko 1C')->first();
 
-        $tahapan = $jaringan->tahapans()->where('nama_tahapan', 'Evaluasi Awal Kesiapan')->first();
-
-        if (!$tahapan) {
-            return response()->json(['error' => 'Tahapan Evaluasi Awal Kesiapan tidak ditemukan.'], 404);
-        }
-
-        $evaluasiBlanko = $tahapan->evaluasiBlankos()->where('jenis_blanko', 'Blanko 1C')->first();
-
-        if (!$evaluasiBlanko) {
-            return response()->json(['error' => 'Evaluasi Blanko 1C tidak ditemukan.'], 404);
-        }
-
-        foreach ($request->items as $itemId => $itemData) {
-            $item = ItemBlanko::findOrFail($itemId);
-            $item->ada_tidak_ada = $itemData['ada_tidak_ada'];
-            $item->kondisi = $itemData['kondisi'];
-            $item->fungsi = $itemData['fungsi'];
-            $item->keterangan = $itemData['keterangan'];
-            $item->save();
-        }
-
-        $evaluasiBlanko->hasil_ada_tidak_ada = $request->input('hasil_ada_tidak_ada');
-        $evaluasiBlanko->hasil_kondisi = $request->input('hasil_kondisi');
-        $evaluasiBlanko->hasil_fungsi = $request->input('hasil_fungsi');
-        $evaluasiBlanko->save();
-
-        return response()->json(['success' => 'Data berhasil disimpan.']);
+    if (!$evaluasiBlanko) {
+        return redirect()->back()->with('error', 'Evaluasi Blanko 1C tidak ditemukan.');
     }
+
+    $items = ItemBlanko::where('evaluasi_blanko_id', $evaluasiBlanko->id)->get();
+
+    return view('evaluasi.blanko1c', compact('jaringan', 'items', 'evaluasiBlanko'));
+}
+
+public function prasaranaAirBakuProses(Request $request, Jaringan $jaringan)
+{
+    $request->validate([
+        'items.*.ada_tidak_ada' => 'required|boolean',
+        'items.*.bobot' => 'required|numeric|min:0|max:100',
+        'items.*.kondisi' => 'required|numeric|min:0|max:100',
+        'items.*.fungsi' => 'required|numeric|min:0|max:100',
+        'items.*.keterangan' => 'nullable|string|max:255',
+        'hasil_ada_tidak_ada' => 'required|numeric|min:0|max:100',
+        'hasil_kondisi' => 'required|numeric|min:0|max:100',
+        'hasil_fungsi' => 'required|numeric|min:0|max:100',
+    ]);
+
+    foreach ($request->items as $itemId => $itemData) {
+        $item = ItemBlanko::findOrFail($itemId);
+        $item->ada_tidak_ada = $itemData['ada_tidak_ada'];
+        $item->bobot = $itemData['bobot'];
+        $item->kondisi = $itemData['kondisi'];
+        $item->fungsi = $itemData['fungsi'];
+        $item->keterangan = $itemData['keterangan'];
+        $item->save();
+    }
+
+    $tahapan = $jaringan->tahapans()->where('nama_tahapan', 'Evaluasi Awal Kesiapan')->first();
+    if ($tahapan) {
+        $evaluasiBlanko = EvaluasiBlanko::where('tahapan_id', $tahapan->id)->where('jenis_blanko', 'Blanko 1C')->first();
+        if ($evaluasiBlanko) {
+            $evaluasiBlanko->hasil_ada_tidak_ada = $request->input('hasil_ada_tidak_ada');
+            $evaluasiBlanko->hasil_kondisi = $request->input('hasil_kondisi');
+            $evaluasiBlanko->hasil_fungsi = $request->input('hasil_fungsi');
+            $evaluasiBlanko->save();
+        }
+    }
+
+    return redirect()->back()->with('success', 'Data evaluasi blanko 1C berhasil disimpan.');
+}
 
     public function ujiPengaliran(Request $request, Jaringan $jaringan)
     {
@@ -290,7 +280,7 @@ class InventarisasiDataEvaluasiAwal extends Controller
     //-----------------------------------Blanko 3----------------------------------------//
     //----------------------------Sarana dan Prasarana Pendukung-------------------------//
     //----------------------------Blanko3A-----------------------------//
-    public function kesiapanSaranaPenunjangOperasiDanPemeliharaan(Jaringan $jaringan)
+   public function kesiapanSaranaPenunjangOperasiDanPemeliharaan(Jaringan $jaringan)
     {
         $items = ItemBlanko3::whereHas('evaluasiBlanko', function ($query) use ($jaringan) {
             $query->where('jenis_blanko', 'Blanko 3A')->whereHas('tahapan', function ($query) use ($jaringan) {
@@ -305,6 +295,7 @@ class InventarisasiDataEvaluasiAwal extends Controller
     {
         // Validasi data dari form
         $request->validate([
+            'items.*.rincian.*.bobot' => 'nullable|numeric|min:0|max:100',
             'items.*.rincian.*.ada_tidak_ada' => 'nullable|boolean',
             'items.*.rincian.*.kondisi' => 'nullable|numeric|min:0|max:100',
             'items.*.rincian.*.fungsi' => 'nullable|numeric|min:0|max:100',
@@ -317,6 +308,7 @@ class InventarisasiDataEvaluasiAwal extends Controller
         foreach ($request->items as $itemId => $itemData) {
             foreach ($itemData['rincian'] as $rincianId => $rincianData) {
                 $rincian = ItemBlanko3Rincian::findOrFail($rincianId);
+                $rincian->bobot = $rincianData['bobot'];
                 $rincian->ada_tidak_ada = $rincianData['ada_tidak_ada'];
                 $rincian->kondisi = $rincianData['kondisi'];
                 $rincian->fungsi = $rincianData['fungsi'];
@@ -338,7 +330,7 @@ class InventarisasiDataEvaluasiAwal extends Controller
             }
         }
 
-        return response()->json(['success' => true, 'message' => 'Data berhasil disimpan']);
+        return redirect()->back()->with('success', 'Data evaluasi blanko 3A berhasil disimpan.');
     }
 
 
@@ -357,9 +349,9 @@ class InventarisasiDataEvaluasiAwal extends Controller
 
     public function kesiapanKelembagaanDanSumberDayaManusiaProses(Request $request, Jaringan $jaringan)
     {
-
         // Validasi data dari form
         $request->validate([
+            'items.*.rincian.*.bobot' => 'nullable|numeric|min:0|max:100',
             'items.*.rincian.*.ada_tidak_ada' => 'nullable|boolean',
             'items.*.rincian.*.kondisi' => 'nullable|numeric|min:0|max:100',
             'items.*.rincian.*.fungsi' => 'nullable|numeric|min:0|max:100',
@@ -372,6 +364,7 @@ class InventarisasiDataEvaluasiAwal extends Controller
         foreach ($request->items as $itemId => $itemData) {
             foreach ($itemData['rincian'] as $rincianId => $rincianData) {
                 $rincian = ItemBlanko3Rincian::findOrFail($rincianId);
+                $rincian->bobot = $rincianData['bobot'];
                 $rincian->ada_tidak_ada = $rincianData['ada_tidak_ada'];
                 $rincian->kondisi = $rincianData['kondisi'];
                 $rincian->fungsi = $rincianData['fungsi'];
@@ -393,12 +386,13 @@ class InventarisasiDataEvaluasiAwal extends Controller
             }
         }
 
-        return response()->json(['success' => true, 'message' => 'Data berhasil disimpan']);
+        return redirect()->back()->with('success', 'Data evaluasi blanko 3B berhasil disimpan.');
+
     }
 
 
     //----------------------------Blanko3C-----------------------------//
-   public function kesiapanManajemen(Jaringan $jaringan)
+    public function kesiapanManajemen(Jaringan $jaringan)
     {
         $items = ItemBlanko3::whereHas('evaluasiBlanko', function ($query) use ($jaringan) {
             $query->where('jenis_blanko', 'Blanko 3C')->whereHas('tahapan', function ($query) use ($jaringan) {
@@ -413,6 +407,7 @@ class InventarisasiDataEvaluasiAwal extends Controller
     {
         // Validasi data dari form
         $request->validate([
+            'items.*.rincian.*.bobot' => 'nullable|numeric|min:0|max:100',
             'items.*.rincian.*.ada_tidak_ada' => 'nullable|boolean',
             'items.*.rincian.*.kondisi' => 'nullable|numeric|min:0|max:100',
             'items.*.rincian.*.fungsi' => 'nullable|numeric|min:0|max:100',
@@ -425,6 +420,7 @@ class InventarisasiDataEvaluasiAwal extends Controller
         foreach ($request->items as $itemId => $itemData) {
             foreach ($itemData['rincian'] as $rincianId => $rincianData) {
                 $rincian = ItemBlanko3Rincian::findOrFail($rincianId);
+                $rincian->bobot = $rincianData['bobot'];
                 $rincian->ada_tidak_ada = $rincianData['ada_tidak_ada'];
                 $rincian->kondisi = $rincianData['kondisi'];
                 $rincian->fungsi = $rincianData['fungsi'];
@@ -446,12 +442,12 @@ class InventarisasiDataEvaluasiAwal extends Controller
             }
         }
 
-        return response()->json(['success' => true, 'message' => 'Data berhasil disimpan']);
+        return redirect()->back()->with('success', 'Data evaluasi blanko 3C berhasil disimpan.');
     }
 
 
     //----------------------------Blanko3D-----------------------------//
-    public function kesiapanKonservasi(Jaringan $jaringan)
+      public function kesiapanKonservasi(Jaringan $jaringan)
     {
         $items = ItemBlanko3::whereHas('evaluasiBlanko', function ($query) use ($jaringan) {
             $query->where('jenis_blanko', 'Blanko 3D')->whereHas('tahapan', function ($query) use ($jaringan) {
@@ -464,8 +460,9 @@ class InventarisasiDataEvaluasiAwal extends Controller
 
     public function kesiapanKonservasiProses(Request $request, Jaringan $jaringan)
     {
-         // Validasi data dari form
+        // Validasi data dari form
         $request->validate([
+            'items.*.rincian.*.bobot' => 'nullable|numeric|min:0|max:100',
             'items.*.rincian.*.ada_tidak_ada' => 'nullable|boolean',
             'items.*.rincian.*.kondisi' => 'nullable|numeric|min:0|max:100',
             'items.*.rincian.*.fungsi' => 'nullable|numeric|min:0|max:100',
@@ -478,6 +475,7 @@ class InventarisasiDataEvaluasiAwal extends Controller
         foreach ($request->items as $itemId => $itemData) {
             foreach ($itemData['rincian'] as $rincianId => $rincianData) {
                 $rincian = ItemBlanko3Rincian::findOrFail($rincianId);
+                $rincian->bobot = $rincianData['bobot'];
                 $rincian->ada_tidak_ada = $rincianData['ada_tidak_ada'];
                 $rincian->kondisi = $rincianData['kondisi'];
                 $rincian->fungsi = $rincianData['fungsi'];
@@ -499,6 +497,6 @@ class InventarisasiDataEvaluasiAwal extends Controller
             }
         }
 
-        return response()->json(['success' => true, 'message' => 'Data berhasil disimpan']);
+         return redirect()->back()->with('success', 'Data evaluasi blanko 3D berhasil disimpan.');
     }
 }
