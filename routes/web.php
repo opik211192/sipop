@@ -99,7 +99,8 @@ Route::middleware(['auth'])->group(function () {
   //blanko2
   Route::get('/inventarisaisi-awal-data-informasi-non-fisik/{jaringan}', [InventarisasiDataEvaluasiAwal::class, 'dataInformasiNonFisik'])->name('inventarisasi-awal-data-informasi-non-fisik');
   Route::put('/inventarisaisi-awal-data-informasi-non-fisik/{jaringan}', [InventarisasiDataEvaluasiAwal::class, 'dataInformasiNonFisikProses'])->name('inventarisasi-awal-data-informasi-non-fisik-proses');
-
+  Route::post('/inventarisasi-awal-data-informasi-non-fisik/upload-dokumen/{item}', [InventarisasiDataEvaluasiAwal::class, 'uploadBlanko2'])->name('inventarisasi-awal-data-informasi-non-fisik-upload-blanko'); 
+  
   //blanko3a
   Route::get('/inventarisasi-awal-kesiapan-sarana-penunjang-op/{jaringan}', [InventarisasiDataEvaluasiAwal::class, 'kesiapanSaranaPenunjangOperasiDanPemeliharaan'])->name('inventarisasi-awal-kesiapan-sarana-penunjang-op');
   Route::put('/inventarisasi-awal-kesiapan-sarana-penunjang-op/{jaringan}', [InventarisasiDataEvaluasiAwal::class, 'kesiapanSaranaPenunjangOperasiDanPemeliharaanProses'])->name('inventarisasi-awal-kesiapan-sarana-penunjang-op-proses');

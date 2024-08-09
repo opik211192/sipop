@@ -43,8 +43,8 @@
         @if(session('success'))
         <script>
             alert('{{ session("success") }}');
-                        window.close();
-                        window.opener.location.reload();
+            window.close();
+            window.opener.location.reload();
         </script>
         @endif
 
@@ -82,7 +82,7 @@
                                 <td>
                                     <input type="text" name="items[{{ $item->id }}][bobot]"
                                         class="form-control bobot-input" value="{{ $item->bobot }}"
-                                        oninput="validateAndConvert(this)" onchange="calculateWeights()">
+                                        oninput="validateAndConvert(this)" onchange="calculateWeights()" readonly>
                                 </td>
                                 <td>
                                     <select name="items[{{ $item->id }}][ada_tidak_ada]" class="form-control"
@@ -151,20 +151,16 @@
                     totalBobot += bobot;
                     if (ada == '1') {
                         totalBobotAda += bobot;
-                    }
-                    if (!isNaN(kondisi)) {
-                        totalBobotKondisi += bobot * (kondisi / 100);
-                    }
-                    if (!isNaN(fungsi)) {
-                        totalBobotFungsi += bobot * (fungsi / 100);
+                        totalBobotKondisi += (bobot * kondisi) / 100;
+                        totalBobotFungsi += (bobot * fungsi) / 100;
                     }
                 }
             });
 
             $('#total-bobot').val(totalBobot.toFixed(2));
             $('#total-ada-tidak-ada').val(totalBobotAda.toFixed(2));
-            $('#total-kondisi').val((totalBobotKondisi / totalBobot * 100).toFixed(2));
-            $('#total-fungsi').val((totalBobotFungsi / totalBobot * 100).toFixed(2));
+            $('#total-kondisi').val(totalBobotKondisi.toFixed(2));
+            $('#total-fungsi').val(totalBobotFungsi.toFixed(2));
 
             $('#hasil-ada-tidak-ada').val((totalBobotAda / totalBobot * 100).toFixed(2));
             $('#hasil-kondisi').val((totalBobotKondisi / totalBobot * 100).toFixed(2));

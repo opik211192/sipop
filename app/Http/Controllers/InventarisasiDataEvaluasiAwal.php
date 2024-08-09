@@ -6,7 +6,9 @@ use App\Models\Dokumen;
 use App\Models\Jaringan;
 use App\Models\ItemBlanko;
 use App\Models\ItemBlanko3;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Models\Blanko2Upload;
 use App\Models\EvaluasiBlanko;
 use App\Models\ItemBlanko3Rincian;
 use Illuminate\Support\Facades\Log;
@@ -216,7 +218,7 @@ public function prasaranaAirBakuProses(Request $request, Jaringan $jaringan)
 
     //-----------------------------Blanko 2-------------------------------------
     //----------------------------Data dan Informasi  Non-Fisik---------------------------
-   public function dataInformasiNonFisik(Jaringan $jaringan)
+    public function dataInformasiNonFisik(Jaringan $jaringan)
     {
         $tahapan = $jaringan->tahapans()->where('nama_tahapan', 'Evaluasi Awal Kesiapan')->first();
 
@@ -239,6 +241,7 @@ public function prasaranaAirBakuProses(Request $request, Jaringan $jaringan)
     {
         $request->validate([
             'items.*.ada_tidak_ada' => 'required|boolean',
+            'items.*.bobot' => 'required|numeric|min:0|max:100',
             'items.*.kondisi' => 'required|numeric|min:0|max:100',
             'items.*.fungsi' => 'required|numeric|min:0|max:100',
             'items.*.keterangan' => 'nullable|string|max:255',
@@ -262,6 +265,7 @@ public function prasaranaAirBakuProses(Request $request, Jaringan $jaringan)
         foreach ($request->items as $itemId => $itemData) {
             $item = ItemBlanko::findOrFail($itemId);
             $item->ada_tidak_ada = $itemData['ada_tidak_ada'];
+            $item->bobot = $itemData['bobot'];
             $item->kondisi = $itemData['kondisi'];
             $item->fungsi = $itemData['fungsi'];
             $item->keterangan = $itemData['keterangan'];
@@ -274,6 +278,49 @@ public function prasaranaAirBakuProses(Request $request, Jaringan $jaringan)
         $evaluasiBlanko->save();
 
         return response()->json(['success' => true, 'message' => 'Data berhasil disimpan.']);
+    }
+
+    public function uploadBlanko2(Request $request, $itemId)
+    {
+        $request->validate([
+            'path_blanko' => 'required|file|mimes:pdf,jpg,png,doc,docx',
+        ]);
+
+        $fileName = Str::random(10) . '.' . $request->file('path_blanko')->getClientOriginalExtension();
+        $filePath = $request->file('path_blanko')->storeAs('public/blanko2', $fileName);
+
+        // Update or create a record in Blanko2Upload
+        Blanko2Upload::updateOrCreate(
+            ['item_blanko_id' => $itemId],
+            ['path_blanko' => $filePath]
+        );
+
+        // Update ada_tidak_ada to 1 (Ada) in ItemBlanko
+        $itemBlanko = ItemBlanko::findOrFail($itemId);
+        $itemBlanko->ada_tidak_ada = 1; // Set to 1 (Ada)
+        $itemBlanko->save();
+
+        // Calculate and update bobot, kondisi, dan fungsi
+        $evaluasiBlanko = EvaluasiBlanko::whereHas('items', function ($query) use ($itemId) {
+            $query->where('id', $itemId);
+        })->first();
+
+        if ($evaluasiBlanko) {
+            $totalBobot = $evaluasiBlanko->items->sum('bobot');
+            $totalKondisi = $evaluasiBlanko->items->sum(function($item) {
+                return $item->bobot * ($item->kondisi / 100);
+            });
+            $totalFungsi = $evaluasiBlanko->items->sum(function($item) {
+                return $item->bobot * ($item->fungsi / 100);
+            });
+
+            $evaluasiBlanko->hasil_ada_tidak_ada = ($totalBobot / $evaluasiBlanko->items->count());
+            $evaluasiBlanko->hasil_kondisi = ($totalKondisi / $totalBobot) * 100;
+            $evaluasiBlanko->hasil_fungsi = ($totalFungsi / $totalBobot) * 100;
+            $evaluasiBlanko->save();
+        }
+
+        return redirect()->back()->with('success', 'File berhasil diunggah dan status diperbarui.');
     }
 
 

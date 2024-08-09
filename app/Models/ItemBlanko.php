@@ -15,4 +15,9 @@ class ItemBlanko extends Model
     {
         return $this->belongsTo(EvaluasiBlanko::class);
     }
+
+    public function uploads()
+    {
+        return $this->hasMany(Blanko2Upload::class, 'item_blanko_id');
+    }
 }

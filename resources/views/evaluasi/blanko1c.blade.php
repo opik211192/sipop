@@ -82,7 +82,7 @@
                                 <td>
                                     <input type="text" name="items[{{ $item->id }}][bobot]"
                                         class="form-control bobot-input" value="{{ $item->bobot }}"
-                                        oninput="validateAndConvert(this)" onchange="calculateWeights()">
+                                        oninput="validateAndConvert(this)" onchange="calculateWeights()" readonly>
                                 </td>
                                 <td>
                                     <select name="items[{{ $item->id }}][ada_tidak_ada]" class="form-control"

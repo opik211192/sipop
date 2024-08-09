@@ -6,16 +6,22 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <style>
+        .is-invalid {
+            border-color: #dc3545;
+        }
+    </style>
 </head>
 
 <body>
     <div class="container-fluid">
         <div class="d-flex justify-content-between mt-2 mb-2 align-items-center">
             <h1>Blanko 2</h1>
-            <div class="d-flex ">
+            <div class="d-flex">
                 <h1 class="font-weight-light">{{ $jaringan->nama }}</h1>
                 <h5 class="font-weight-light">{{ $jaringan->tahun }}</h5>
             </div>
@@ -33,46 +39,176 @@
                             <tr>
                                 <th>No.</th>
                                 <th>Dokumen Administrasi</th>
+                                <th>Bobot (%)</th>
                                 <th>Ada/Tidak ada</th>
-                                <th>Kondisi (%)</th>
-                                <th>Fungsi (%)</th>
                                 <th>Keterangan</th>
+                                <th>Upload File</th>
                             </tr>
                         </thead>
                         <tbody>
+                            @php
+                            $no = 1;
+                            $subIndex = 1;
+                            $subIndex2 = 1;
+                            $isPelaksanaanRendered = false;
+                            $isItemno5Rendered = false;
+                            $dokumenPelaksanaan = ['Kontrak', 'AS Build Drawing', 'PHO', 'Dokumentasi'];
+                            $itemno5 = [
+                            'Log book',
+                            'Gambar dinding',
+                            'Struktur organisasi P3AT/KM ATAB', 'Gambar konstruksi sumur'];
+                            @endphp
+
+                            <!-- Dokumen Perencanaan -->
                             @foreach($items as $index => $item)
+                            @if($item->nama_item == 'Dokumen Perencanaan')
                             <tr>
-                                <td>{{ $index + 1 }}</td>
+                                <td>{{ $no++ }}</td>
                                 <td>{{ $item->nama_item }}</td>
-                                <td>
-                                    <select name="items[{{ $item->id }}][ada_tidak_ada]" class="form-control"
-                                        style="width: 120px" onchange="calculateWeights()">
+                                <td><input type="text" class="form-control" name="items[{{ $item->id }}][bobot]"
+                                        value="{{ $item->bobot }}"></td>
+                                <td><select class="form-control" name="items[{{ $item->id }}][ada_tidak_ada]">
                                         <option value="1" {{ $item->ada_tidak_ada == 1 ? 'selected' : '' }}>Ada</option>
                                         <option value="0" {{ $item->ada_tidak_ada == 0 ? 'selected' : '' }}>Tidak Ada
                                         </option>
-                                    </select>
-                                </td>
+                                    </select></td>
+                                <td><input type="text" class="form-control" name="items[{{ $item->id }}][keterangan]"
+                                        value="{{ $item->keterangan }}"></td>
                                 <td>
-                                    <input type="text" name="items[{{ $item->id }}][kondisi]" class="form-control"
-                                        value="{{ $item->kondisi }}" oninput="validateAndConvert(this)">
-                                </td>
-                                <td>
-                                    <input type="text" name="items[{{ $item->id }}][fungsi]" class="form-control"
-                                        value="{{ $item->fungsi }}" oninput="validateAndConvert(this)">
-                                </td>
-                                <td>
-                                    <input type="text" name="items[{{ $item->id }}][keterangan]" class="form-control"
-                                        value="{{ $item->keterangan }}" style="width: 120px">
+                                    <button type="button" class="btn btn-primary"><i class="fa fa-upload"></i></button>
                                 </td>
                             </tr>
+                            @endif
+                            @endforeach
+
+                            <!-- Dokumen Pelaksanaan -->
+                            @if(!$isPelaksanaanRendered)
+                            <tr>
+                                <td rowspan="{{ count($dokumenPelaksanaan) + 1 }}">{{ $no++ }}</td>
+                                <td colspan="5"><strong>Dokumen Pelaksanaan</strong></td>
+                            </tr>
+                            @foreach($items as $index => $item)
+                            @if(in_array($item->nama_item, $dokumenPelaksanaan))
+                            <tr>
+                                <td>{{ chr(96 + $subIndex++) }}. {{ $item->nama_item }}</td>
+                                <td><input type="text" class="form-control" name="items[{{ $item->id }}][bobot]"
+                                        value="{{ $item->bobot }}"></td>
+                                <td><select class="form-control" name="items[{{ $item->id }}][ada_tidak_ada]">
+                                        <option value="1" {{ $item->ada_tidak_ada == 1 ? 'selected' : '' }}>Ada</option>
+                                        <option value="0" {{ $item->ada_tidak_ada == 0 ? 'selected' : '' }}>Tidak Ada
+                                        </option>
+                                    </select></td>
+                                <td><input type="text" class="form-control" name="items[{{ $item->id }}][keterangan]"
+                                        value="{{ $item->keterangan }}"></td>
+                                <td>
+                                    <button type="button" class="btn btn-primary"><i class="fa fa-upload"></i></button>
+                                </td>
+                            </tr>
+                            @endif
+                            @endforeach
+                            @php $isPelaksanaanRendered = true; @endphp
+                            @endif
+
+                            <!-- Hasil Uji Kualitas Air -->
+                            @foreach($items as $index => $item)
+                            @if($item->nama_item == 'Hasil Uji kualitas air')
+                            <tr>
+                                <td>{{ $no++ }}</td>
+                                <td>{{ $item->nama_item }}</td>
+                                <td><input type="text" class="form-control" name="items[{{ $item->id }}][bobot]"
+                                        value="{{ $item->bobot }}"></td>
+                                <td><select class="form-control" name="items[{{ $item->id }}][ada_tidak_ada]">
+                                        <option value="1" {{ $item->ada_tidak_ada == 1 ? 'selected' : '' }}>Ada</option>
+                                        <option value="0" {{ $item->ada_tidak_ada == 0 ? 'selected' : '' }}>Tidak Ada
+                                        </option>
+                                    </select></td>
+                                <td><input type="text" class="form-control" name="items[{{ $item->id }}][keterangan]"
+                                        value="{{ $item->keterangan }}"></td>
+                                <td>
+                                    <button type="button" class="btn btn-primary"><i class="fa fa-upload"></i></button>
+                                </td>
+                            </tr>
+                            @endif
+                            @endforeach
+
+                            <!-- Manual OP -->
+                            @foreach($items as $index => $item)
+                            @if($item->nama_item == 'Manual OP')
+                            <tr>
+                                <td>{{ $no++ }}</td>
+                                <td>{{ $item->nama_item }}</td>
+                                <td><input type="text" class="form-control" name="items[{{ $item->id }}][bobot]"
+                                        value="{{ $item->bobot }}"></td>
+                                <td><select class="form-control" name="items[{{ $item->id }}][ada_tidak_ada]">
+                                        <option value="1" {{ $item->ada_tidak_ada == 1 ? 'selected' : '' }}>Ada</option>
+                                        <option value="0" {{ $item->ada_tidak_ada == 0 ? 'selected' : '' }}>Tidak Ada
+                                        </option>
+                                    </select></td>
+                                <td><input type="text" class="form-control" name="items[{{ $item->id }}][keterangan]"
+                                        value="{{ $item->keterangan }}"></td>
+                                <td>
+                                    <button type="button" class="btn btn-primary"><i class="fa fa-upload"></i></button>
+                                </td>
+                            </tr>
+                            @endif
+                            @endforeach
+
+                            <!-- Item No. 5 -->
+                            @if(!$isItemno5Rendered)
+                            <tr>
+                                <td rowspan="{{ count($itemno5) + 1 }}">{{ $no++ }}</td>
+                            </tr>
+                            @foreach($items as $index => $item)
+                            @if(in_array($item->nama_item, $itemno5))
+                            <tr>
+                                <td>{{ chr(96 + $subIndex2++) }}. {{ $item->nama_item }}
+                                </td>
+                                <td><input type="text" class="form-control" name="items[{{ $item->id }}][bobot]"
+                                        value="{{ $item->bobot }}"></td>
+                                <td><select class="form-control" name="items[{{ $item->id }}][ada_tidak_ada]">
+                                        <option value="1" {{ $item->ada_tidak_ada == 1 ? 'selected' : '' }}>Ada</option>
+                                        <option value="0" {{ $item->ada_tidak_ada == 0 ? 'selected' : '' }}>Tidak Ada
+                                        </option>
+                                    </select></td>
+                                <td><input type="text" class="form-control" name="items[{{ $item->id }}][keterangan]"
+                                        value="{{ $item->keterangan }}"></td>
+                                <td>
+                                    <button type="button" class="btn btn-primary"><i class="fa fa-upload"></i></button>
+                                </td>
+                            </tr>
+                            @endif
+                            @endforeach
+                            @php $isItemno5Rendered = true; @endphp
+                            @endif
+
+                            <!-- Item lainnya -->
+                            @foreach($items as $index => $item)
+                            @if(!in_array($item->nama_item, array_merge(['Dokumen Perencanaan', 'Hasil Uji kualitas
+                            air', 'Manual OP'], $dokumenPelaksanaan, $itemno5)))
+                            <tr>
+                                <td>{{ $no++ }}</td>
+                                <td>{{ $item->nama_item }}</td>
+                                <td><input type="text" class="form-control" name="items[{{ $item->id }}][bobot]"
+                                        value="{{ $item->bobot }}"></td>
+                                <td><select class="form-control" name="items[{{ $item->id }}][ada_tidak_ada]">
+                                        <option value="1" {{ $item->ada_tidak_ada == 1 ? 'selected' : '' }}>Ada</option>
+                                        <option value="0" {{ $item->ada_tidak_ada == 0 ? 'selected' : '' }}>Tidak Ada
+                                        </option>
+                                    </select></td>
+                                <td><input type="text" class="form-control" name="items[{{ $item->id }}][keterangan]"
+                                        value="{{ $item->keterangan }}"></td>
+                                <td>
+                                    <button type="button" class="btn btn-primary"><i class="fa fa-upload"></i></button>
+                                </td>
+                            </tr>
+                            @endif
                             @endforeach
                         </tbody>
                         <tfoot>
                             <tr>
-                                <td colspan="2">Bobot (%)</td>
+                                <td colspan="2">Total Bobot (%)</td>
+                                <td><input type="text" class="form-control" id="total-bobot" disabled></td>
                                 <td><input type="text" class="form-control" id="bobot-ada-tidak-ada" disabled></td>
-                                <td><input type="text" class="form-control" id="bobot-kondisi" disabled></td>
-                                <td><input type="text" class="form-control" id="bobot-fungsi" disabled></td>
                                 <td></td>
                             </tr>
                         </tfoot>
@@ -81,9 +217,8 @@
             </div>
 
             <!-- Input tersembunyi untuk mengirim bobot ke backend -->
+            <input type="hidden" name="hasil_total_bobot" id="hasil-total-bobot">
             <input type="hidden" name="hasil_ada_tidak_ada" id="hasil-ada-tidak-ada">
-            <input type="hidden" name="hasil_kondisi" id="hasil-kondisi">
-            <input type="hidden" name="hasil_fungsi" id="hasil-fungsi">
 
             <div class="form-group">
                 <button type="submit" class="btn btn-primary mt-3 mb-2">Simpan</button>
@@ -92,41 +227,42 @@
         </form>
     </div>
 
+    {{-- modal upload --}}
+    @include('evaluasi.modal-upload-blanko2')
+
     <script>
-        // Function menghitung ada tidak ada
         function calculateWeights() {
-            let totalItems = $('select[name^="items"]').length;
-            let itemsPresent = $('select[name^="items"]').filter(function () {
-                return $(this).val() == '1';
-            }).length;
-            let weight = (itemsPresent / totalItems) * 100; // Calculate weight with decimals
-            $('#bobot-ada-tidak-ada').val(weight.toFixed(2)); // Update the weight input
-            $('#hasil-ada-tidak-ada').val(weight.toFixed(2)); // Update the hidden input
+            let totalBobot = 0;
+            let totalItems = $('input[name^="items"][name$="[bobot]"]').length;
+            let totalBobotAda = 0;
 
-            let totalKondisi = 0;
-            let totalFungsi = 0;
-            let itemCount = $('input[name^="items"][name$="[kondisi]"]').length;
+            $('input[name^="items"][name$="[bobot]"]').each(function () {
+                let bobot = parseFloat($(this).val().replace(/,/g, '.')) || 0;
+                let ada = $(this).closest('tr').find('select[name$="[ada_tidak_ada]"]').val();
 
-            $('input[name^="items"][name$="[kondisi]"]').each(function () {
-                let value = parseFloat($(this).val().replace(/,/g, '.'));
-                totalKondisi += isNaN(value) ? 0 : value;
+                if (!isNaN(bobot)) {
+                    totalBobot += bobot;
+                    if (ada == '1') {
+                        totalBobotAda += bobot;
+                    }
+                }
             });
 
-            $('input[name^="items"][name$="[fungsi]"]').each(function () {
-                let value = parseFloat($(this).val().replace(/,/g, '.'));
-                totalFungsi += isNaN(value) ? 0 : value;
-            });
+            $('#total-bobot').val(totalBobot.toFixed(2)); // Update total bobot
+            $('#bobot-ada-tidak-ada').val(totalBobotAda.toFixed(2)); // Update total ada/tidak ada
 
-            let averageKondisi = (totalKondisi / itemCount).toFixed(2);
-            let averageFungsi = (totalFungsi / itemCount).toFixed(2);
+            // Set hidden inputs for backend
+            $('#hasil-total-bobot').val(totalBobot.toFixed(2));
+            $('#hasil-ada-tidak-ada').val((totalBobotAda / totalBobot * 100).toFixed(2));
 
-            $('#bobot-kondisi').val(averageKondisi);
-            $('#hasil-kondisi').val(averageKondisi);
-            $('#bobot-fungsi').val(averageFungsi);
-            $('#hasil-fungsi').val(averageFungsi);
+            // Add or remove invalid class based on total bobot
+            if (totalBobot !== 100) {
+                $('#total-bobot').addClass('is-invalid');
+            } else {
+                $('#total-bobot').removeClass('is-invalid');
+            }
         }
 
-        // Function to validate input and convert comma to dot for decimal input
         function validateAndConvert(input) {
             input.value = input.value.replace(/,/g, '.');
             if (parseFloat(input.value) > 100) {
@@ -134,48 +270,44 @@
             }
         }
 
+        function toggleUploadButton(itemId) {
+            let bobot = $(`input[name="items[${itemId}][bobot]"]`).val();
+            let uploadBtn = $(`#upload-btn-${itemId}`);
+
+            if (bobot && parseFloat(bobot) > 0) {
+                uploadBtn.prop('disabled', false);
+            } else {
+                uploadBtn.prop('disabled', true);
+            }
+        }
+
         $(document).ready(function () {
-            // Calculate the weights on page load
             calculateWeights();
 
-            // Recalculate the weights whenever a select value changes
             $('select[name^="items"]').change(function () {
                 calculateWeights();
             });
 
-            // Recalculate weights whenever an input value changes
-            $('input[name^="items"][name$="[kondisi]"], input[name^="items"][name$="[fungsi]"]').on('input', function () {
+            $('input[name^="items"][name$="[bobot]"]').on('input change', function () {
                 calculateWeights();
             });
 
-            $('#data-informasi-non-fisik-form').on('submit', function (event) {
-                event.preventDefault(); // Prevent the form from submitting normally
+            $('#data-informasi-non-fisik-form').on('submit', function (e) {
+                let totalBobot = parseFloat($('#total-bobot').val().replace(/,/g, '.')) || 0;
 
-                // Get the form data
-                var formData = $(this).serialize();
+                if (totalBobot !== 100) {
+                    e.preventDefault();
+                    alert('Total bobot harus mencapai 100%. Mohon periksa kembali.');
+                    $('#total-bobot').addClass('is-invalid');
+                } else {
+                    $('#total-bobot').removeClass('is-invalid');
+                }
+            });
 
-                // Submit the form data via AJAX
-                $.ajax({
-                    url: $(this).attr('action'),
-                    type: 'POST',
-                    data: formData,
-                    success: function (response) {
-                        if (response.success) {
-                            alert(response.message);
-                        } else {
-                            alert('Terjadi kesalahan. Silakan coba lagi.');
-                        }
-
-                        // Close the current window
-                        window.close();
-
-                        // Refresh the parent window
-                        window.opener.location.reload();
-                    },
-                    error: function (xhr, status, error) {
-                        alert('Terjadi kesalahan. Silakan coba lagi.');
-                    }
-                });
+            // Initial check for upload buttons
+            $('input[name^="items"][name$="[bobot]"]').each(function () {
+                let itemId = $(this).attr('name').match(/\d+/)[0];
+                toggleUploadButton(itemId);
             });
         });
     </script>
