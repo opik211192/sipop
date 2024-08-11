@@ -20,6 +20,11 @@
             cursor: not-allowed;
             opacity: 0.6;
         }
+
+        .btn-icon {
+            padding: 0.3rem;
+            font-size: 1rem;
+        }
     </style>
 </head>
 
@@ -74,27 +79,34 @@
                                 <td>{{ $item->nama_item }}</td>
                                 <td><input type="text" class="form-control" name="items[{{ $item->id }}][bobot]"
                                         value="{{ $item->bobot }}" readonly></td>
-                                <td><select class="form-control" name="items[{{ $item->id }}][ada_tidak_ada]" readonly>
+                                <td>
+                                    <select class="form-control" name="items[{{ $item->id }}][ada_tidak_ada]" disabled>
                                         <option value="1" {{ $item->ada_tidak_ada == 1 ? 'selected' : '' }}>Ada</option>
                                         <option value="0" {{ $item->ada_tidak_ada == 0 ? 'selected' : '' }}>Tidak Ada
                                         </option>
-                                    </select></td>
+                                    </select>
+                                    <input type="hidden" name="items[{{ $item->id }}][ada_tidak_ada]"
+                                        value="{{ $item->ada_tidak_ada }}">
+                                </td>
                                 <td><input type="text" class="form-control" name="items[{{ $item->id }}][keterangan]"
                                         value="{{ $item->keterangan }}" readonly></td>
                                 <td>
                                     <input type="file" id="file-{{ $item->id }}" style="display:none;">
                                     @if ($item->file_uploaded)
                                     <button type="button" id="delete-btn-{{ $item->id }}"
-                                        class="btn btn-danger delete-btn" data-item-id="{{ $item->id }}">
-                                        <i class="fa fa-trash"></i> Hapus
+                                        class="btn btn-danger btn-icon delete-btn" data-item-id="{{ $item->id }}"
+                                        title="Hapus Dokumen">
+                                        <i class="fa fa-trash"></i>
                                     </button>
-                                    <a href="{{ $item->file_url }}" target="_blank" class="btn btn-info">
-                                        <i class="fa fa-eye"></i> Lihat Dokumen
+                                    <a href="{{ $item->file_url }}" target="_blank" class="btn btn-info btn-icon"
+                                        title="Lihat Dokumen">
+                                        <i class="fa fa-eye"></i>
                                     </a>
                                     @else
                                     <button type="button" id="upload-btn-{{ $item->id }}"
-                                        class="btn btn-primary upload-btn" data-item-id="{{ $item->id }}">
-                                        <i class="fa fa-upload"></i> Upload
+                                        class="btn btn-primary btn-icon upload-btn" data-item-id="{{ $item->id }}"
+                                        title="Upload Dokumen">
+                                        <i class="fa fa-upload"></i>
                                     </button>
                                     @endif
                                 </td>
@@ -114,27 +126,34 @@
                                 <td>{{ chr(96 + $subIndex++) }}. {{ $item->nama_item }}</td>
                                 <td><input type="text" class="form-control" name="items[{{ $item->id }}][bobot]"
                                         value="{{ $item->bobot }}" readonly></td>
-                                <td><select class="form-control" name="items[{{ $item->id }}][ada_tidak_ada]" readonly>
+                                <td>
+                                    <select class="form-control" name="items[{{ $item->id }}][ada_tidak_ada]" disabled>
                                         <option value="1" {{ $item->ada_tidak_ada == 1 ? 'selected' : '' }}>Ada</option>
                                         <option value="0" {{ $item->ada_tidak_ada == 0 ? 'selected' : '' }}>Tidak Ada
                                         </option>
-                                    </select></td>
+                                    </select>
+                                    <input type="hidden" name="items[{{ $item->id }}][ada_tidak_ada]"
+                                        value="{{ $item->ada_tidak_ada }}">
+                                </td>
                                 <td><input type="text" class="form-control" name="items[{{ $item->id }}][keterangan]"
                                         value="{{ $item->keterangan }}" readonly></td>
                                 <td>
                                     <input type="file" id="file-{{ $item->id }}" style="display:none;">
                                     @if ($item->file_uploaded)
                                     <button type="button" id="delete-btn-{{ $item->id }}"
-                                        class="btn btn-danger delete-btn" data-item-id="{{ $item->id }}">
-                                        <i class="fa fa-trash"></i> Hapus
+                                        class="btn btn-danger btn-icon delete-btn" data-item-id="{{ $item->id }}"
+                                        title="Hapus Dokumen">
+                                        <i class="fa fa-trash"></i>
                                     </button>
-                                    <a href="{{ $item->file_url }}" target="_blank" class="btn btn-info">
-                                        <i class="fa fa-eye"></i> Lihat Dokumen
+                                    <a href="{{ $item->file_url }}" target="_blank" class="btn btn-info btn-icon"
+                                        title="Lihat Dokumen">
+                                        <i class="fa fa-eye"></i>
                                     </a>
                                     @else
                                     <button type="button" id="upload-btn-{{ $item->id }}"
-                                        class="btn btn-primary upload-btn" data-item-id="{{ $item->id }}">
-                                        <i class="fa fa-upload"></i> Upload
+                                        class="btn btn-primary btn-icon upload-btn" data-item-id="{{ $item->id }}"
+                                        title="Upload Dokumen">
+                                        <i class="fa fa-upload"></i>
                                     </button>
                                     @endif
                                 </td>
@@ -152,27 +171,34 @@
                                 <td>{{ $item->nama_item }}</td>
                                 <td><input type="text" class="form-control" name="items[{{ $item->id }}][bobot]"
                                         value="{{ $item->bobot }}" readonly></td>
-                                <td><select class="form-control" name="items[{{ $item->id }}][ada_tidak_ada]" readonly>
+                                <td>
+                                    <select class="form-control" name="items[{{ $item->id }}][ada_tidak_ada]" disabled>
                                         <option value="1" {{ $item->ada_tidak_ada == 1 ? 'selected' : '' }}>Ada</option>
                                         <option value="0" {{ $item->ada_tidak_ada == 0 ? 'selected' : '' }}>Tidak Ada
                                         </option>
-                                    </select></td>
+                                    </select>
+                                    <input type="hidden" name="items[{{ $item->id }}][ada_tidak_ada]"
+                                        value="{{ $item->ada_tidak_ada }}">
+                                </td>
                                 <td><input type="text" class="form-control" name="items[{{ $item->id }}][keterangan]"
                                         value="{{ $item->keterangan }}" readonly></td>
                                 <td>
                                     <input type="file" id="file-{{ $item->id }}" style="display:none;">
                                     @if ($item->file_uploaded)
                                     <button type="button" id="delete-btn-{{ $item->id }}"
-                                        class="btn btn-danger delete-btn" data-item-id="{{ $item->id }}">
-                                        <i class="fa fa-trash"></i> Hapus
+                                        class="btn btn-danger btn-icon delete-btn" data-item-id="{{ $item->id }}"
+                                        title="Hapus Dokumen">
+                                        <i class="fa fa-trash"></i>
                                     </button>
-                                    <a href="{{ $item->file_url }}" target="_blank" class="btn btn-info">
-                                        <i class="fa fa-eye"></i> Lihat Dokumen
+                                    <a href="{{ $item->file_url }}" target="_blank" class="btn btn-info btn-icon"
+                                        title="Lihat Dokumen">
+                                        <i class="fa fa-eye"></i>
                                     </a>
                                     @else
                                     <button type="button" id="upload-btn-{{ $item->id }}"
-                                        class="btn btn-primary upload-btn" data-item-id="{{ $item->id }}">
-                                        <i class="fa fa-upload"></i> Upload
+                                        class="btn btn-primary btn-icon upload-btn" data-item-id="{{ $item->id }}"
+                                        title="Upload Dokumen">
+                                        <i class="fa fa-upload"></i>
                                     </button>
                                     @endif
                                 </td>
@@ -188,27 +214,34 @@
                                 <td>{{ $item->nama_item }}</td>
                                 <td><input type="text" class="form-control" name="items[{{ $item->id }}][bobot]"
                                         value="{{ $item->bobot }}" readonly></td>
-                                <td><select class="form-control" name="items[{{ $item->id }}][ada_tidak_ada]" readonly>
+                                <td>
+                                    <select class="form-control" name="items[{{ $item->id }}][ada_tidak_ada]" disabled>
                                         <option value="1" {{ $item->ada_tidak_ada == 1 ? 'selected' : '' }}>Ada</option>
                                         <option value="0" {{ $item->ada_tidak_ada == 0 ? 'selected' : '' }}>Tidak Ada
                                         </option>
-                                    </select></td>
+                                    </select>
+                                    <input type="hidden" name="items[{{ $item->id }}][ada_tidak_ada]"
+                                        value="{{ $item->ada_tidak_ada }}">
+                                </td>
                                 <td><input type="text" class="form-control" name="items[{{ $item->id }}][keterangan]"
                                         value="{{ $item->keterangan }}" readonly></td>
                                 <td>
                                     <input type="file" id="file-{{ $item->id }}" style="display:none;">
                                     @if ($item->file_uploaded)
                                     <button type="button" id="delete-btn-{{ $item->id }}"
-                                        class="btn btn-danger delete-btn" data-item-id="{{ $item->id }}">
-                                        <i class="fa fa-trash"></i> Hapus
+                                        class="btn btn-danger btn-icon delete-btn" data-item-id="{{ $item->id }}"
+                                        title="Hapus Dokumen">
+                                        <i class="fa fa-trash"></i>
                                     </button>
-                                    <a href="{{ $item->file_url }}" target="_blank" class="btn btn-info">
-                                        <i class="fa fa-eye"></i> Lihat Dokumen
+                                    <a href="{{ $item->file_url }}" target="_blank" class="btn btn-info btn-icon"
+                                        title="Lihat Dokumen">
+                                        <i class="fa fa-eye"></i>
                                     </a>
                                     @else
                                     <button type="button" id="upload-btn-{{ $item->id }}"
-                                        class="btn btn-primary upload-btn" data-item-id="{{ $item->id }}">
-                                        <i class="fa fa-upload"></i> Upload
+                                        class="btn btn-primary btn-icon upload-btn" data-item-id="{{ $item->id }}"
+                                        title="Upload Dokumen">
+                                        <i class="fa fa-upload"></i>
                                     </button>
                                     @endif
                                 </td>
@@ -220,7 +253,7 @@
                             @if(!$isItemno5Rendered)
                             <tr>
                                 <td rowspan="{{ count($itemno5) + 1 }}">{{ $no++ }}</td>
-                                <td colspan="5"><strong>Item No. 5</strong></td>
+                                {{-- <td colspan="5"><strong>Item No. 5</strong></td> --}}
                             </tr>
                             @foreach($items as $index => $item)
                             @if(in_array($item->nama_item, $itemno5))
@@ -229,27 +262,34 @@
                                 </td>
                                 <td><input type="text" class="form-control" name="items[{{ $item->id }}][bobot]"
                                         value="{{ $item->bobot }}" readonly></td>
-                                <td><select class="form-control" name="items[{{ $item->id }}][ada_tidak_ada]" readonly>
+                                <td>
+                                    <select class="form-control" name="items[{{ $item->id }}][ada_tidak_ada]" disabled>
                                         <option value="1" {{ $item->ada_tidak_ada == 1 ? 'selected' : '' }}>Ada</option>
                                         <option value="0" {{ $item->ada_tidak_ada == 0 ? 'selected' : '' }}>Tidak Ada
                                         </option>
-                                    </select></td>
+                                    </select>
+                                    <input type="hidden" name="items[{{ $item->id }}][ada_tidak_ada]"
+                                        value="{{ $item->ada_tidak_ada }}">
+                                </td>
                                 <td><input type="text" class="form-control" name="items[{{ $item->id }}][keterangan]"
                                         value="{{ $item->keterangan }}" readonly></td>
                                 <td>
                                     <input type="file" id="file-{{ $item->id }}" style="display:none;">
                                     @if ($item->file_uploaded)
                                     <button type="button" id="delete-btn-{{ $item->id }}"
-                                        class="btn btn-danger delete-btn" data-item-id="{{ $item->id }}">
-                                        <i class="fa fa-trash"></i> Hapus
+                                        class="btn btn-danger btn-icon delete-btn" data-item-id="{{ $item->id }}"
+                                        title="Hapus Dokumen">
+                                        <i class="fa fa-trash"></i>
                                     </button>
-                                    <a href="{{ $item->file_url }}" target="_blank" class="btn btn-info">
-                                        <i class="fa fa-eye"></i> Lihat Dokumen
+                                    <a href="{{ $item->file_url }}" target="_blank" class="btn btn-info btn-icon"
+                                        title="Lihat Dokumen">
+                                        <i class="fa fa-eye"></i>
                                     </a>
                                     @else
                                     <button type="button" id="upload-btn-{{ $item->id }}"
-                                        class="btn btn-primary upload-btn" data-item-id="{{ $item->id }}">
-                                        <i class="fa fa-upload"></i> Upload
+                                        class="btn btn-primary btn-icon upload-btn" data-item-id="{{ $item->id }}"
+                                        title="Upload Dokumen">
+                                        <i class="fa fa-upload"></i>
                                     </button>
                                     @endif
                                 </td>
@@ -268,27 +308,34 @@
                                 <td>{{ $item->nama_item }}</td>
                                 <td><input type="text" class="form-control" name="items[{{ $item->id }}][bobot]"
                                         value="{{ $item->bobot }}" readonly></td>
-                                <td><select class="form-control" name="items[{{ $item->id }}][ada_tidak_ada]" readonly>
+                                <td>
+                                    <select class="form-control" name="items[{{ $item->id }}][ada_tidak_ada]" disabled>
                                         <option value="1" {{ $item->ada_tidak_ada == 1 ? 'selected' : '' }}>Ada</option>
                                         <option value="0" {{ $item->ada_tidak_ada == 0 ? 'selected' : '' }}>Tidak Ada
                                         </option>
-                                    </select></td>
+                                    </select>
+                                    <input type="hidden" name="items[{{ $item->id }}][ada_tidak_ada]"
+                                        value="{{ $item->ada_tidak_ada }}">
+                                </td>
                                 <td><input type="text" class="form-control" name="items[{{ $item->id }}][keterangan]"
                                         value="{{ $item->keterangan }}" readonly></td>
                                 <td>
                                     <input type="file" id="file-{{ $item->id }}" style="display:none;">
                                     @if ($item->file_uploaded)
                                     <button type="button" id="delete-btn-{{ $item->id }}"
-                                        class="btn btn-danger delete-btn" data-item-id="{{ $item->id }}">
-                                        <i class="fa fa-trash"></i> Hapus
+                                        class="btn btn-danger btn-icon delete-btn" data-item-id="{{ $item->id }}"
+                                        title="Hapus Dokumen">
+                                        <i class="fa fa-trash"></i>
                                     </button>
-                                    <a href="{{ $item->file_url }}" target="_blank" class="btn btn-info">
-                                        <i class="fa fa-eye"></i> Lihat Dokumen
+                                    <a href="{{ $item->file_url }}" target="_blank" class="btn btn-info btn-icon"
+                                        title="Lihat Dokumen">
+                                        <i class="fa fa-eye"></i>
                                     </a>
                                     @else
                                     <button type="button" id="upload-btn-{{ $item->id }}"
-                                        class="btn btn-primary upload-btn" data-item-id="{{ $item->id }}">
-                                        <i class="fa fa-upload"></i> Upload
+                                        class="btn btn-primary btn-icon upload-btn" data-item-id="{{ $item->id }}"
+                                        title="Upload Dokumen">
+                                        <i class="fa fa-upload"></i>
                                     </button>
                                     @endif
                                 </td>
@@ -351,6 +398,12 @@
     }
 
     $(document).ready(function () {
+        window.addEventListener('beforeunload', function (event) {
+            if (window.opener && !window.opener.closed) {
+                window.opener.location.reload(); // Refresh window opener
+            }
+        });
+
         calculateWeights();
 
         $('.upload-btn').click(function () {
@@ -364,7 +417,7 @@
             formData.append('path_blanko', $(this)[0].files[0]);
 
             var uploadBtn = $('#upload-btn-' + itemId);
-            uploadBtn.html('<i class="fa fa-spinner fa-spin"></i> Uploading...');
+            uploadBtn.html('<i class="fa fa-spinner fa-spin"></i>');
             uploadBtn.addClass('uploading-btn');
             uploadBtn.prop('disabled', true);
 

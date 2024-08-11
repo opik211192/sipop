@@ -1261,14 +1261,6 @@
         </div>
     </div>
 </div>
-
-{{-- modal dokumen tambahan --}}
-@include('dokumen-tambahan.modal-kontrak')
-@include('dokumen-tambahan.as-build-draw')
-@include('dokumen-tambahan.pho-fho')
-@include('dokumen-tambahan.manual-op')
-@include('dokumen-tambahan.dokumentasi')
-
 <a href="{{ route('jaringan-atab.index') }}"
     class="btn bg-gradient-warning btn-sm mb-3 d-flex align-items-center justify-content-center"
     style="border-radius: 30px; padding: 8px 15px; font-weight: bold; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); transition: transform 0.2s ease;">
@@ -1282,6 +1274,30 @@
 @section('js')
 <script>
     $(document).ready(function () {
+        let newWindow;
+
+        function openNewWindow(url, buttonId) {
+            // Disable all buttons
+            $('button').prop('disabled', true);
+
+            // Open the new window
+            newWindow = window.open(url, '_blank', 'width=900,height=600,resizable=no');
+
+            // Check if the window was blocked
+            if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
+                alert('Please allow popups for this website');
+                $('button').prop('disabled', false); // Enable all buttons again if the window was blocked
+            } else {
+                // Monitor the newly opened window and enable buttons when it's closed
+                let windowChecker = setInterval(function () {
+                    if (newWindow.closed) {
+                        clearInterval(windowChecker);
+                        $('button').prop('disabled', false); // Enable all buttons
+                    }
+                }, 1000);
+            }
+        }
+
         //-----FORM PEMBENTUKAN TIM---------//
         $('#formPembentukanTim').on('submit', function (e) {
             e.preventDefault();
@@ -1462,85 +1478,84 @@
             });
         });
 
-
         //-----Halman FORM EVALUASI AWAL---------//
         var evaluasiAwalButton = document.getElementById('evaluasi-awal-button');
         if (evaluasiAwalButton) {
-            evaluasiAwalButton.addEventListener('click', function() {
+            evaluasiAwalButton.addEventListener('click', function () {
                 var url = "{{ route('evaluasi-awal', ['jaringan' => $jaringan->id]) }}";
-                window.open(url, '_blank', 'width=800,height=600,resizable=no');
+                openNewWindow(url, this.id);
             });
         }
 
         //-----Halaman FORM Prasarana Air Tanah---------//
         var prasaranaAirTanahButton = document.getElementById('prasarana-air-tanah-button');
         if (prasaranaAirTanahButton) {
-            prasaranaAirTanahButton.addEventListener('click', function() {
+            prasaranaAirTanahButton.addEventListener('click', function () {
                 var url = "{{ route('inventarisasi-awal-prasarana-air-tanah', ['jaringan' => $jaringan->id]) }}";
-                window.open(url, '_blank', 'width=900,height=600,resizable=no');
+                openNewWindow(url, this.id);
             });
         }
 
-        //-----Halaman FORM Perlatan Air Tanah---------//
+        //-----Halaman FORM Peralatan Air Tanah---------//
         var peralatanAirTanahButton = document.getElementById('peralatan-air-tanah-button');
         if (peralatanAirTanahButton) {
-            peralatanAirTanahButton.addEventListener('click', function() {
+            peralatanAirTanahButton.addEventListener('click', function () {
                 var url = "{{ route('inventarisasi-awal-peralatan-air-tanah', ['jaringan' => $jaringan->id]) }}";
-                window.open(url, '_blank', 'width=900,height=600,resizable=no');
+                openNewWindow(url, this.id);
             });
         }
 
         //-----Halaman FORM Prasarana Air Baku---------//
         var prasaranaAirBakuButton = document.getElementById('prasarana-air-baku-button');
         if (prasaranaAirBakuButton) {
-            prasaranaAirBakuButton.addEventListener('click', function() {
+            prasaranaAirBakuButton.addEventListener('click', function () {
                 var url = "{{ route('inventarisasi-awal-prasarana-air-baku', ['jaringan' => $jaringan->id]) }}";
-                window.open(url, '_blank', 'width=900,height=600,resizable=no');
+                openNewWindow(url, this.id);
             });
         }
 
         //-----Halaman Form Data dan Informasi Non-Fisik---------//
         var dataInformasiNonFisikButton = document.getElementById('data-dan-informasi-non-fisik-button');
         if (dataInformasiNonFisikButton) {
-            dataInformasiNonFisikButton.addEventListener('click', function() {
+            dataInformasiNonFisikButton.addEventListener('click', function () {
                 var url = "{{ route('inventarisasi-awal-data-informasi-non-fisik', ['jaringan' => $jaringan->id]) }}";
-                window.open(url, '_blank', 'width=900,height=600,resizable=no');
+                openNewWindow(url, this.id);
             });
         }
 
         //-----Halaman Kesiapan Sarana Penunjang Operasi dan Pemeliharaan---------//
         var kesiapanSaranaPenunjangOperasiDanPemeliharaanButton = document.getElementById('kesiapan-sarana-penunjang-operasi-dan-pemeliharaan-button');
         if (kesiapanSaranaPenunjangOperasiDanPemeliharaanButton) {
-            kesiapanSaranaPenunjangOperasiDanPemeliharaanButton.addEventListener('click', function() {
+            kesiapanSaranaPenunjangOperasiDanPemeliharaanButton.addEventListener('click', function () {
                 var url = "{{ route('inventarisasi-awal-kesiapan-sarana-penunjang-op', ['jaringan' => $jaringan->id]) }}";
-                window.open(url, '_blank', 'width=950,height=600,resizable=no');
+                openNewWindow(url, this.id);
             });
         }
 
         //-----Halaman Kesiapan Kelembagaan dan Sumber Daya Manusia---------//
         var kesiapanKelembagaanDanSumberDayaManusiaButton = document.getElementById('kesiapan-kelembagaan-dan-sumber-daya-manusia-button');
         if (kesiapanKelembagaanDanSumberDayaManusiaButton) {
-            kesiapanKelembagaanDanSumberDayaManusiaButton.addEventListener('click', function() {
+            kesiapanKelembagaanDanSumberDayaManusiaButton.addEventListener('click', function () {
                 var url = "{{ route('inventarisasi-awal-kesiapan-kelembagaan-sdm', ['jaringan' => $jaringan->id]) }}";
-                window.open(url, '_blank', 'width=950,height=600,resizable=no');
+                openNewWindow(url, this.id);
             });
         }
 
         //-----Halaman Kesiapan Manajemen---------//
         var kesiapanManajemenButton = document.getElementById('kesiapan-manajemen-button');
         if (kesiapanManajemenButton) {
-            kesiapanManajemenButton.addEventListener('click', function() {
+            kesiapanManajemenButton.addEventListener('click', function () {
                 var url = "{{ route('inventarisasi-awal-kesiapan-manajemen', ['jaringan' => $jaringan->id]) }}";
-                window.open(url, '_blank', 'width=1100,height=600,resizable=no');
+                openNewWindow(url, this.id);
             });
         }
 
-        //-----Halaman Keisapan Konservasi---------//
+        //-----Halaman Kesiapan Konservasi---------//
         var kesiapanKonservasiButton = document.getElementById('kesiapan-konservasi-button');
         if (kesiapanKonservasiButton) {
-            kesiapanKonservasiButton.addEventListener('click', function() {
+            kesiapanKonservasiButton.addEventListener('click', function () {
                 var url = "{{ route('inventarisasi-awal-kesiapan-konservasi', ['jaringan' => $jaringan->id]) }}";
-                window.open(url, '_blank', 'width=1100,height=600,resizable=no');
+                openNewWindow(url, this.id);
             });
         }
 

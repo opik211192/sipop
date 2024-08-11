@@ -3,7 +3,12 @@
 @section('title', 'Peta Jaringan')
 
 @section('content_header')
-<div></div>
+<div class="d-flex justify-content-between align-items-center">
+    <h1 class="m-0 text-dark">Peta Lokasi Jaringan</h1>
+    {{-- <a href="#" id="download-map" class="btn btn-sm btn-primary shadow-sm"><i
+            class="fas fa-map-marked-alt fa-sm"></i>
+        Download Peta</a> --}}
+</div>
 @stop
 
 @section('content')
@@ -13,9 +18,9 @@
 </div>
 @endif
 
-<div class="card">
-    <div class="card-header">
-        <h3 class="card-title">Peta Lokasi Jaringan</h3>
+<div class="card shadow">
+    <div class="card-header bg-gradient-primary text-white">
+        <h3 class="card-title"><i class="fas fa-map-marker-alt"></i> Lokasi Jaringan</h3>
     </div>
     <div class="card-body">
         <div id="map"></div>
@@ -30,22 +35,33 @@
     #map {
         height: 500px;
         width: 100%;
+        border-radius: 5px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
     }
 
     .legend {
-        background: white;
+        background: rgba(255, 255, 255, 0.8);
         padding: 10px;
-        border-radius: 5px;
+        border-radius: 8px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
         position: absolute;
-        bottom: 30px;
+        bottom: 20px;
         left: 10px;
         z-index: 1000;
-
     }
 
     .legend div {
+        display: flex;
+        align-items: center;
         margin: 5px 0;
+    }
+
+    .legend i {
+        width: 20px;
+        height: 20px;
+        display: inline-block;
+        margin-right: 8px;
+        border-radius: 3px;
     }
 </style>
 @stop
@@ -54,6 +70,7 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://unpkg.com/leaflet-image/leaflet-image.js"></script>
 <script>
     var map = L.map('map').setView([-7.2066386, 108.4358553], 8);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -65,15 +82,14 @@
 
     legend.onAdd = function (map) {
         var div = L.DomUtil.create('div', 'legend');
-        div.innerHTML += '<div><i style="background: blue; width: 12px; height: 12px; display: inline-block;"></i> Air Tanah</div>';
-        div.innerHTML += '<div><i style="background: red; width: 12px; height: 12px; display: inline-block;"></i> Air Baku</div>';
-        div.innerHTML += '<div><i style="background: green; width: 12px; height: 12px; display: inline-block;"></i> Embung</div>';
+        div.innerHTML += '<div><i style="background: blue;"></i> Air Tanah</div>';
+        div.innerHTML += '<div><i style="background: red;"></i> Air Baku</div>';
+        div.innerHTML += '<div><i style="background: green;"></i> Embung</div>';
         return div;
     };
 
     legend.addTo(map);
 
-    // Fungsi untuk membuat ikon dengan warna khusus
     function getColoredIcon(color) {
         return L.icon({
             iconUrl: createColoredIcon(color),
@@ -85,7 +101,6 @@
         });
     }
 
-    // Fungsi untuk membuat SVG ikon dengan warna tertentu
     function createColoredIcon(color) {
         var svgIcon = `
             <svg width="25" height="41" xmlns="http://www.w3.org/2000/svg">
@@ -98,7 +113,20 @@
         return "data:image/svg+xml;base64," + btoa(svgIcon);
     }
 
-    // Ambil data lokasi menggunakan AJAX
+    // Memuat dan menampilkan GeoJSON
+    $.getJSON('{{ asset('js/citanduy.json') }}', function(data) {
+        L.geoJSON(data, {
+            style: function(feature) {
+                return {
+                    color: 'blue',
+                    weight: 2,
+                    fillOpacity: feature.properties['fill-opacity'],
+                    opacity: feature.properties['stroke-opacity']
+                };
+            }
+        }).addTo(map);
+    });
+
     $.ajax({
         url: '{{ route('data-peta') }}',
         method: 'GET',
@@ -121,12 +149,30 @@
 
                 var marker = L.marker([location.latitude, location.longitude], {icon: getColoredIcon(iconColor)})
                     .addTo(map)
-                    .bindPopup('<b>Nama Jaringan:</b> ' + location.nama); // Popup detail
+                    .bindPopup('<b>Nama Jaringan:</b> ' + location.nama); 
             });
         },
         error: function(error) {
             console.error('Error fetching locations:', error);
         }
+    });
+
+    document.getElementById('download-map').addEventListener('click', function(e) {
+        e.preventDefault();
+        leafletImage(map, function(err, canvas) {
+            var img = document.createElement('img');
+            var dimensions = map.getSize();
+            img.width = dimensions.x;
+            img.height = dimensions.y;
+            img.src = canvas.toDataURL();
+
+            var link = document.createElement('a');
+            link.href = img.src;
+            link.download = 'map.png';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
     });
 </script>
 @stop

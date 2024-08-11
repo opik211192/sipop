@@ -3,15 +3,14 @@
 @section('title', 'Tambah Jaringan')
 
 @section('content_header')
-<h1>Tambah Jaringan</h1>
+<h1 class="font-weight-bold">Tambah Jaringan</h1>
 @stop
 
 @section('css')
-<link rel="stylesheet" href="/css/admin_custom.css">
 @stop
 
 @section('content')
-<div class="card col-md-10">
+<div class="card col-md-10 mx-auto">
     <div class="card-body">
         <form action="{{ route('jaringan-atab.store') }}" method="POST">
             @csrf
@@ -54,9 +53,8 @@
                     <select name="province_id" id="province_id" class="form-control">
                         <option value="">Pilih Provinsi</option>
                         @foreach($provinces as $province)
-                        <option value="{{ $province->id }}" {{ old('province_id')==$province->id ? 'selected' : '' }}>
-                            {{ $province->name }}
-                        </option>
+                        <option value="{{ $province->id }}" {{ old('province_id')==$province->id ? 'selected' : '' }}>{{
+                            $province->name }}</option>
                         @endforeach
                     </select>
                     @error('province_id')
@@ -105,7 +103,7 @@
                 <label for="wilayah_sungai" class="col-sm-2 col-form-label">Wilayah Sungai</label>
                 <div class="col-sm-10">
                     <input type="text" name="wilayah_sungai" id="wilayah_sungai" class="form-control"
-                        value="{{ old('wilayah_sungai', $jaringan->wilayah_sungai ?? '') }}">
+                        value="{{ old('wilayah_sungai') }}">
                     @error('wilayah_sungai')
                     <div class="text-danger">{{ $message }}</div>
                     @enderror
@@ -117,18 +115,14 @@
                 <div class="col-sm-10">
                     <select name="satker" id="satker" class="form-control">
                         <option value="">Pilih Satker</option>
-                        <option value="Satker Balai" {{ old('satker', $jaringan->satker ?? '') == 'Satker Balai' ?
-                            'selected' : ''
-                            }}>Satker Balai</option>
-                        <option value="Satker PJPA" {{ old('satker', $jaringan->satker ?? '') == 'Satker PJPA' ?
-                            'selected' : ''
-                            }}>Satker PJPA</option>
-                        <option value="Satker PJSA" {{ old('satker', $jaringan->satker ?? '') == 'Satker PJSA' ?
-                            'selected' : ''
-                            }}>Satker PJSA</option>
-                        <option value="Satker Bendungan" {{ old('satker', $jaringan->satker ?? '') == 'Satker Bendungan'
-                            ?
-                            'selected' : '' }}>Satker Bendungan</option>
+                        <option value="Satker Balai" {{ old('satker')=='Satker Balai' ? 'selected' : '' }}>Satker Balai
+                        </option>
+                        <option value="Satker PJPA" {{ old('satker')=='Satker PJPA' ? 'selected' : '' }}>Satker PJPA
+                        </option>
+                        <option value="Satker PJSA" {{ old('satker')=='Satker PJSA' ? 'selected' : '' }}>Satker PJSA
+                        </option>
+                        <option value="Satker Bendungan" {{ old('satker')=='Satker Bendungan' ? 'selected' : '' }}>
+                            Satker Bendungan</option>
                     </select>
                     @error('satker')
                     <div class="text-danger">{{ $message }}</div>
@@ -141,15 +135,9 @@
                 <div class="col-sm-10">
                     <select name="jenis" id="jenis" class="form-control">
                         <option value="">Pilih Jenis</option>
-                        <option value="Air Tanah" {{ old('jenis', $jaringan->jenis ?? '') == 'Air Tanah' ? 'selected' :
-                            '' }}>Air
-                            Tanah</option>
-                        <option value="Air Baku" {{ old('jenis', $jaringan->jenis ?? '') == 'Air Baku' ? 'selected' : ''
-                            }}>Air Baku
-                        </option>
-                        <option value="Embung" {{ old('jenis', $jaringan->jenis ?? '') == 'Embung' ? 'selected' : ''
-                            }}>Embung
-                        </option>
+                        <option value="Air Tanah" {{ old('jenis')=='Air Tanah' ? 'selected' : '' }}>Air Tanah</option>
+                        <option value="Air Baku" {{ old('jenis')=='Air Baku' ? 'selected' : '' }}>Air Baku</option>
+                        <option value="Embung" {{ old('jenis')=='Embung' ? 'selected' : '' }}>Embung</option>
                     </select>
                     @error('jenis')
                     <div class="text-danger">{{ $message }}</div>
@@ -162,11 +150,8 @@
                 <div class="col-sm-10">
                     <select name="tahun" id="tahun" class="form-control">
                         <option value="">Pilih Tahun</option>
-                        @for ($year = 1998; $year <= date('Y'); $year++) <option value="{{ $year }}" {{ old('tahun',
-                            $jaringan->tahun ?? '')
-                            == $year ? 'selected' : '' }}>
-                            {{ $year }}
-                            </option>
+                        @for ($year = 1998; $year <= date('Y'); $year++) <option value="{{ $year }}" {{
+                            old('tahun')==$year ? 'selected' : '' }}>{{ $year }}</option>
                             @endfor
                     </select>
                     @error('tahun')
@@ -174,39 +159,6 @@
                     @enderror
                 </div>
             </div>
-
-            {{-- <div class="form-group row">
-                <label for="satker" class="col-sm-2 col-form-label">Satker</label>
-                <div class="col-sm-10">
-                    <select name="satker" id="satker" class="form-control">
-                        <option value="">Pilih Satker</option>
-                        <option value="Satker Balai" {{ old('satker', $jaringan->satker ?? '') == 'Satker Balai' ?
-                            'selected' : ''
-                            }}>Satker Balai</option>
-                        <option value="Satker PJPA" {{ old('satker', $jaringan->satker ?? '') == 'Satker PJPA' ?
-                            'selected' : ''
-                            }}>Satker PJPA</option>
-                        <option value="Satker PJSA" {{ old('satker', $jaringan->satker ?? '') == 'Satker PJSA' ?
-                            'selected' : ''
-                            }}>Satker PJSA</option>
-                        <option value="Satker Bendungan" {{ old('satker', $jaringan->satker ?? '') == 'Satker Bendungan'
-                            ?
-                            'selected' : '' }}>Satker Bendungan</option>
-                    </select>
-                    @error('satker')
-                    <div class="text-danger">{{ $message }}</div>
-                    @enderror
-                </div>
-            </div> --}}
-            {{-- <div class="form-group row">
-                <label for="tahapan" class="col-sm-2 col-form-label">Tahapan</label>
-                <div class="col-sm-10">
-                    <input type="text" name="tahapan" id="tahapan" class="form-control" value="{{ old('tahapan') }}">
-                    @error('tahapan')
-                    <div class="text-danger">{{ $message }}</div>
-                    @enderror
-                </div>
-            </div> --}}
 
             <div class="form-group row">
                 <div class="col-sm-10 offset-sm-2">
@@ -222,7 +174,6 @@
 @section('js')
 <script>
     function onChangeSelect(url, id, name) {
-        // send ajax request to get the cities of the selected province and append to the select tag
         $.ajax({
             url: url,
             type: 'GET',
@@ -239,28 +190,28 @@
             }
         });
     }
+
     $(function () {
         $('#province_id').on('change', function () {
             onChangeSelect('{{ route("cities") }}', $(this).val(), 'city_id');
         });
         $('#city_id').on('change', function () {
             onChangeSelect('{{ route("districts") }}', $(this).val(), 'district_id');
-        })
+        });
         $('#district_id').on('change', function () {
             onChangeSelect('{{ route("villages") }}', $(this).val(), 'village_id');
-        })
+        });
     });
 
+    $('#satker').on('change', function() {
+        if ($(this).val() === 'Satker PJPA') {
+            $('#jenis').prop('disabled', false);
+        } else {
+            $('#jenis').prop('disabled', true);
+            $('#jenis').val(''); 
+        }
+    });
 
-     $('#satker').on('change', function() {
-            if ($(this).val() === 'Satker PJPA') {
-                $('#jenis').prop('disabled', false);
-            } else {
-                $('#jenis').prop('disabled', true);
-                $('#jenis').val(''); // Clear the selected value if not PJPA
-            }
-        });
-
-        $('#satker').trigger('change');
+    $('#satker').trigger('change');
 </script>
 @stop

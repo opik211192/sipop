@@ -46,9 +46,16 @@
             </a>
         </div>
 
+        {{-- Tambahan Tulisan --}}
+       <div class="text-center mt-2">
+        <p class="font-weight-bold" style="font-size: 16px; color: #4b4b4b; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);">
+            Sistem Informasi Pemantauan <br> Persiapan Operasi dan Pemeliharaan
+        </p>
+    </div>
+
         {{-- Card Box --}}
         <div class="card {{ config('adminlte.classes_auth_card', 'card-outline card-primary') }}">
-
+            
             {{-- Card Header --}}
             @hasSection('auth_header')
                 <div class="card-header {{ config('adminlte.classes_auth_header', '') }}">
