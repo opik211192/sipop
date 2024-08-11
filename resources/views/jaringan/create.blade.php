@@ -115,7 +115,21 @@
             <div class="form-group row">
                 <label for="satker" class="col-sm-2 col-form-label">Satker</label>
                 <div class="col-sm-10">
-                    <input type="text" name="satker" id="satker" class="form-control" value="Satker PJPA" readonly>
+                    <select name="satker" id="satker" class="form-control">
+                        <option value="">Pilih Satker</option>
+                        <option value="Satker Balai" {{ old('satker', $jaringan->satker ?? '') == 'Satker Balai' ?
+                            'selected' : ''
+                            }}>Satker Balai</option>
+                        <option value="Satker PJPA" {{ old('satker', $jaringan->satker ?? '') == 'Satker PJPA' ?
+                            'selected' : ''
+                            }}>Satker PJPA</option>
+                        <option value="Satker PJSA" {{ old('satker', $jaringan->satker ?? '') == 'Satker PJSA' ?
+                            'selected' : ''
+                            }}>Satker PJSA</option>
+                        <option value="Satker Bendungan" {{ old('satker', $jaringan->satker ?? '') == 'Satker Bendungan'
+                            ?
+                            'selected' : '' }}>Satker Bendungan</option>
+                    </select>
                     @error('satker')
                     <div class="text-danger">{{ $message }}</div>
                     @enderror
@@ -196,8 +210,8 @@
 
             <div class="form-group row">
                 <div class="col-sm-10 offset-sm-2">
-                    <button type="submit" class="btn btn-primary">Simpan</button>
-                    <a href="{{ route('jaringan-atab.index') }}" class="btn btn-secondary">Kembali</a>
+                    <button type="submit" class="btn bg-gradient-primary">Simpan</button>
+                    <a href="{{ route('jaringan-atab.index') }}" class="btn bg-gradient-secondary">Kembali</a>
                 </div>
             </div>
         </form>
@@ -236,5 +250,17 @@
             onChangeSelect('{{ route("villages") }}', $(this).val(), 'village_id');
         })
     });
+
+
+     $('#satker').on('change', function() {
+            if ($(this).val() === 'Satker PJPA') {
+                $('#jenis').prop('disabled', false);
+            } else {
+                $('#jenis').prop('disabled', true);
+                $('#jenis').val(''); // Clear the selected value if not PJPA
+            }
+        });
+
+        $('#satker').trigger('change');
 </script>
 @stop

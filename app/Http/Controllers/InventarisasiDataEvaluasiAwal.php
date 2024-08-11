@@ -12,6 +12,7 @@ use App\Models\Blanko2Upload;
 use App\Models\EvaluasiBlanko;
 use App\Models\ItemBlanko3Rincian;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class InventarisasiDataEvaluasiAwal extends Controller
 {
@@ -155,42 +156,43 @@ public function prasaranaAirTanahProses(Request $request, Jaringan $jaringan)
     return view('evaluasi.blanko1c', compact('jaringan', 'items', 'evaluasiBlanko'));
 }
 
-public function prasaranaAirBakuProses(Request $request, Jaringan $jaringan)
-{
-    $request->validate([
-        'items.*.ada_tidak_ada' => 'required|boolean',
-        'items.*.bobot' => 'required|numeric|min:0|max:100',
-        'items.*.kondisi' => 'required|numeric|min:0|max:100',
-        'items.*.fungsi' => 'required|numeric|min:0|max:100',
-        'items.*.keterangan' => 'nullable|string|max:255',
-        'hasil_ada_tidak_ada' => 'required|numeric|min:0|max:100',
-        'hasil_kondisi' => 'required|numeric|min:0|max:100',
-        'hasil_fungsi' => 'required|numeric|min:0|max:100',
-    ]);
+    public function prasaranaAirBakuProses(Request $request, Jaringan $jaringan)
+    {
+        $request->validate([
+            'items.*.ada_tidak_ada' => 'required|boolean',
+            'items.*.bobot' => 'required|numeric|min:0|max:100',
+            'items.*.kondisi' => 'required|numeric|min:0|max:100',
+            'items.*.fungsi' => 'required|numeric|min:0|max:100',
+            'items.*.keterangan' => 'nullable|string|max:255',
+            'hasil_ada_tidak_ada' => 'required|numeric|min:0|max:100',
+            'hasil_kondisi' => 'required|numeric|min:0|max:100',
+            'hasil_fungsi' => 'required|numeric|min:0|max:100',
+        ]);
 
-    foreach ($request->items as $itemId => $itemData) {
-        $item = ItemBlanko::findOrFail($itemId);
-        $item->ada_tidak_ada = $itemData['ada_tidak_ada'];
-        $item->bobot = $itemData['bobot'];
-        $item->kondisi = $itemData['kondisi'];
-        $item->fungsi = $itemData['fungsi'];
-        $item->keterangan = $itemData['keterangan'];
-        $item->save();
-    }
-
-    $tahapan = $jaringan->tahapans()->where('nama_tahapan', 'Evaluasi Awal Kesiapan')->first();
-    if ($tahapan) {
-        $evaluasiBlanko = EvaluasiBlanko::where('tahapan_id', $tahapan->id)->where('jenis_blanko', 'Blanko 1C')->first();
-        if ($evaluasiBlanko) {
-            $evaluasiBlanko->hasil_ada_tidak_ada = $request->input('hasil_ada_tidak_ada');
-            $evaluasiBlanko->hasil_kondisi = $request->input('hasil_kondisi');
-            $evaluasiBlanko->hasil_fungsi = $request->input('hasil_fungsi');
-            $evaluasiBlanko->save();
+        foreach ($request->items as $itemId => $itemData) {
+            $item = ItemBlanko::findOrFail($itemId);
+            $item->ada_tidak_ada = $itemData['ada_tidak_ada'];
+            $item->bobot = $itemData['bobot'];
+            $item->kondisi = $itemData['kondisi'];
+            $item->fungsi = $itemData['fungsi'];
+            $item->keterangan = $itemData['keterangan'];
+            $item->save();
         }
+
+        $tahapan = $jaringan->tahapans()->where('nama_tahapan', 'Evaluasi Awal Kesiapan')->first();
+        if ($tahapan) {
+            $evaluasiBlanko = EvaluasiBlanko::where('tahapan_id', $tahapan->id)->where('jenis_blanko', 'Blanko 1C')->first();
+            if ($evaluasiBlanko) {
+                $evaluasiBlanko->hasil_ada_tidak_ada = $request->input('hasil_ada_tidak_ada');
+                $evaluasiBlanko->hasil_kondisi = $request->input('hasil_kondisi');
+                $evaluasiBlanko->hasil_fungsi = $request->input('hasil_fungsi');
+                $evaluasiBlanko->save();
+            }
+        }
+
+        return redirect()->back()->with('success', 'Data evaluasi blanko 1C berhasil disimpan.');
     }
 
-    return redirect()->back()->with('success', 'Data evaluasi blanko 1C berhasil disimpan.');
-}
 
     public function ujiPengaliran(Request $request, Jaringan $jaringan)
     {
@@ -216,38 +218,67 @@ public function prasaranaAirBakuProses(Request $request, Jaringan $jaringan)
 
     }
 
+   public function updateUjiPengaliran(Request $request, Jaringan $jaringan)
+    {
+        $request->validate([
+            'dokumen_uji_pengaliran' => 'file|mimes:pdf|max:2048',
+        ]);
+
+        $evaluasiAwal = $jaringan->tahapans()->where('nama_tahapan', 'Evaluasi Awal Kesiapan')->first();
+
+        if ($request->hasFile('dokumen_uji_pengaliran')) {
+            $file = $request->file('dokumen_uji_pengaliran')->storeAs('public/uji_pengaliran', uniqid() . '.' . $request->file('dokumen_uji_pengaliran')->getClientOriginalExtension());
+            
+            Dokumen::updateOrCreate(
+                ['tahapan_id' => $evaluasiAwal->id, 'nama_dokumen' => 'Dokumen Uji Pengaliran'],
+                ['path_dokumen' => $file]
+            );
+        }
+
+        return response()->json(['success' => 'Dokumen Uji Pengaliran berhasil diupdate.']);
+    }
+
     //-----------------------------Blanko 2-------------------------------------
     //----------------------------Data dan Informasi  Non-Fisik---------------------------
     public function dataInformasiNonFisik(Jaringan $jaringan)
-    {
-        $tahapan = $jaringan->tahapans()->where('nama_tahapan', 'Evaluasi Awal Kesiapan')->first();
+{
+    $tahapan = $jaringan->tahapans()->where('nama_tahapan', 'Evaluasi Awal Kesiapan')->first();
 
-        if (!$tahapan) {
-            return redirect()->back()->with('error', 'Tahapan Evaluasi Awal Kesiapan tidak ditemukan.');
-        }
-
-        $evaluasiBlanko = $tahapan->evaluasiBlankos()->where('jenis_blanko', 'Blanko 2')->first();
-
-        if (!$evaluasiBlanko) {
-            return redirect()->back()->with('error', 'Evaluasi Blanko 2 tidak ditemukan.');
-        }
-
-        $items = $evaluasiBlanko->items;
-
-        return view('evaluasi.blanko2', compact('jaringan', 'items'));
+    if (!$tahapan) {
+        return redirect()->back()->with('error', 'Tahapan Evaluasi Awal Kesiapan tidak ditemukan.');
     }
+
+    $evaluasiBlanko = $tahapan->evaluasiBlankos()->where('jenis_blanko', 'Blanko 2')->first();
+
+    if (!$evaluasiBlanko) {
+        return redirect()->back()->with('error', 'Evaluasi Blanko 2 tidak ditemukan.');
+    }
+
+   // Ambil semua items dan cek apakah file sudah diunggah atau belum, dan ambil path dari blanko2_uploads
+    $items = $evaluasiBlanko->items->map(function($item) {
+        $upload = Blanko2Upload::where('item_blanko_id', $item->id)->first();
+        if ($upload) {
+            $item->file_uploaded = true;
+            // Hanya gunakan nama file
+            $item->path_blanko = $upload->path_blanko;
+        } else {
+            $item->file_uploaded = false;
+            $item->path_blanko = null;
+        }
+        return $item;
+    });
+    
+    //dd($items);
+    return view('evaluasi.blanko2', compact('jaringan', 'items'));
+}
 
     public function dataInformasiNonFisikProses(Request $request, Jaringan $jaringan)
     {
         $request->validate([
             'items.*.ada_tidak_ada' => 'required|boolean',
             'items.*.bobot' => 'required|numeric|min:0|max:100',
-            'items.*.kondisi' => 'required|numeric|min:0|max:100',
-            'items.*.fungsi' => 'required|numeric|min:0|max:100',
             'items.*.keterangan' => 'nullable|string|max:255',
             'hasil_ada_tidak_ada' => 'required|numeric|min:0|max:100',
-            'hasil_kondisi' => 'required|numeric|min:0|max:100',
-            'hasil_fungsi' => 'required|numeric|min:0|max:100',
         ]);
 
         $tahapan = $jaringan->tahapans()->where('nama_tahapan', 'Evaluasi Awal Kesiapan')->first();
@@ -266,15 +297,11 @@ public function prasaranaAirBakuProses(Request $request, Jaringan $jaringan)
             $item = ItemBlanko::findOrFail($itemId);
             $item->ada_tidak_ada = $itemData['ada_tidak_ada'];
             $item->bobot = $itemData['bobot'];
-            $item->kondisi = $itemData['kondisi'];
-            $item->fungsi = $itemData['fungsi'];
             $item->keterangan = $itemData['keterangan'];
             $item->save();
         }
 
         $evaluasiBlanko->hasil_ada_tidak_ada = $request->input('hasil_ada_tidak_ada');
-        $evaluasiBlanko->hasil_kondisi = $request->input('hasil_kondisi');
-        $evaluasiBlanko->hasil_fungsi = $request->input('hasil_fungsi');
         $evaluasiBlanko->save();
 
         return response()->json(['success' => true, 'message' => 'Data berhasil disimpan.']);
@@ -298,30 +325,46 @@ public function prasaranaAirBakuProses(Request $request, Jaringan $jaringan)
         // Update ada_tidak_ada to 1 (Ada) in ItemBlanko
         $itemBlanko = ItemBlanko::findOrFail($itemId);
         $itemBlanko->ada_tidak_ada = 1; // Set to 1 (Ada)
+        $itemBlanko->keterangan = 'Dokumen tersedia';
         $itemBlanko->save();
 
-        // Calculate and update bobot, kondisi, dan fungsi
-        $evaluasiBlanko = EvaluasiBlanko::whereHas('items', function ($query) use ($itemId) {
-            $query->where('id', $itemId);
-        })->first();
-
+        // Recalculate the weights, conditions, and functions
+        $evaluasiBlanko = $itemBlanko->evaluasiBlanko;
         if ($evaluasiBlanko) {
             $totalBobot = $evaluasiBlanko->items->sum('bobot');
-            $totalKondisi = $evaluasiBlanko->items->sum(function($item) {
-                return $item->bobot * ($item->kondisi / 100);
-            });
-            $totalFungsi = $evaluasiBlanko->items->sum(function($item) {
-                return $item->bobot * ($item->fungsi / 100);
-            });
+            $totalBobotAda = $evaluasiBlanko->items->where('ada_tidak_ada', 1)->sum('bobot');
 
-            $evaluasiBlanko->hasil_ada_tidak_ada = ($totalBobot / $evaluasiBlanko->items->count());
-            $evaluasiBlanko->hasil_kondisi = ($totalKondisi / $totalBobot) * 100;
-            $evaluasiBlanko->hasil_fungsi = ($totalFungsi / $totalBobot) * 100;
+            $evaluasiBlanko->hasil_ada_tidak_ada = ($totalBobotAda / $totalBobot) * 100;
             $evaluasiBlanko->save();
         }
 
-        return redirect()->back()->with('success', 'File berhasil diunggah dan status diperbarui.');
+        return response()->json([
+            'success' => true,
+            'message' => 'File berhasil diunggah dan status diperbarui.',
+            'item_id' => $itemId,
+            'new_status' => 1, // Ada
+            'new_keterangan' => 'Dokumen tersedia'
+        ]);
     }
+
+    public function deleteBlanko2(Request $request, $itemId)
+    {
+        $itemBlanko = ItemBlanko::findOrFail($itemId);
+
+        $blankoUpload = Blanko2Upload::where('item_blanko_id', $itemId)->first();
+
+        if ($blankoUpload) {
+            Storage::delete($blankoUpload->path_blanko);
+            $blankoUpload->delete();
+        }
+
+        $itemBlanko->ada_tidak_ada = 0;
+        $itemBlanko->keterangan = ''; // Set to 0 (Tidak Ada)
+        $itemBlanko->save();
+
+        return response()->json(['success' => true, 'message' => 'File berhasil dihapus.']);
+    }
+
 
 
     //-----------------------------------Blanko 3----------------------------------------//

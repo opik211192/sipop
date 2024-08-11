@@ -7,12 +7,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <style>
         .is-invalid {
             border-color: #dc3545;
+        }
+
+        .uploading-btn {
+            cursor: not-allowed;
+            opacity: 0.6;
         }
     </style>
 </head>
@@ -56,7 +62,8 @@
                             $itemno5 = [
                             'Log book',
                             'Gambar dinding',
-                            'Struktur organisasi P3AT/KM ATAB', 'Gambar konstruksi sumur'];
+                            'Struktur organisasi P3AT/KM ATAB', 'Gambar konstruksi sumur'
+                            ];
                             @endphp
 
                             <!-- Dokumen Perencanaan -->
@@ -66,16 +73,31 @@
                                 <td>{{ $no++ }}</td>
                                 <td>{{ $item->nama_item }}</td>
                                 <td><input type="text" class="form-control" name="items[{{ $item->id }}][bobot]"
-                                        value="{{ $item->bobot }}"></td>
-                                <td><select class="form-control" name="items[{{ $item->id }}][ada_tidak_ada]">
+                                        value="{{ $item->bobot }}" readonly></td>
+                                <td><select class="form-control" name="items[{{ $item->id }}][ada_tidak_ada]" readonly>
                                         <option value="1" {{ $item->ada_tidak_ada == 1 ? 'selected' : '' }}>Ada</option>
                                         <option value="0" {{ $item->ada_tidak_ada == 0 ? 'selected' : '' }}>Tidak Ada
                                         </option>
                                     </select></td>
                                 <td><input type="text" class="form-control" name="items[{{ $item->id }}][keterangan]"
-                                        value="{{ $item->keterangan }}"></td>
+                                        value="{{ $item->keterangan }}" readonly></td>
                                 <td>
-                                    <button type="button" class="btn btn-primary"><i class="fa fa-upload"></i></button>
+                                    <input type="file" id="file-{{ $item->id }}" style="display:none;">
+                                    @if ($item->file_uploaded)
+                                    <button type="button" id="delete-btn-{{ $item->id }}"
+                                        class="btn btn-danger delete-btn" data-item-id="{{ $item->id }}">
+                                        <i class="fa fa-trash"></i> Hapus
+                                    </button>
+                                    <a href="{{ asset('storage/' . substr($item->path_blanko, 7)) }}" target="_blank"
+                                        class="btn btn-info">
+                                        <i class="fa fa-eye"></i> Lihat Dokumen
+                                    </a>
+                                    @else
+                                    <button type="button" id="upload-btn-{{ $item->id }}"
+                                        class="btn btn-primary upload-btn" data-item-id="{{ $item->id }}">
+                                        <i class="fa fa-upload"></i> Upload
+                                    </button>
+                                    @endif
                                 </td>
                             </tr>
                             @endif
@@ -92,16 +114,31 @@
                             <tr>
                                 <td>{{ chr(96 + $subIndex++) }}. {{ $item->nama_item }}</td>
                                 <td><input type="text" class="form-control" name="items[{{ $item->id }}][bobot]"
-                                        value="{{ $item->bobot }}"></td>
-                                <td><select class="form-control" name="items[{{ $item->id }}][ada_tidak_ada]">
+                                        value="{{ $item->bobot }}" readonly></td>
+                                <td><select class="form-control" name="items[{{ $item->id }}][ada_tidak_ada]" readonly>
                                         <option value="1" {{ $item->ada_tidak_ada == 1 ? 'selected' : '' }}>Ada</option>
                                         <option value="0" {{ $item->ada_tidak_ada == 0 ? 'selected' : '' }}>Tidak Ada
                                         </option>
                                     </select></td>
                                 <td><input type="text" class="form-control" name="items[{{ $item->id }}][keterangan]"
-                                        value="{{ $item->keterangan }}"></td>
+                                        value="{{ $item->keterangan }}" readonly></td>
                                 <td>
-                                    <button type="button" class="btn btn-primary"><i class="fa fa-upload"></i></button>
+                                    <input type="file" id="file-{{ $item->id }}" style="display:none;">
+                                    @if ($item->file_uploaded)
+                                    <button type="button" id="delete-btn-{{ $item->id }}"
+                                        class="btn btn-danger delete-btn" data-item-id="{{ $item->id }}">
+                                        <i class="fa fa-trash"></i> Hapus
+                                    </button>
+                                    <a href="{{ asset('storage/' . substr($item->path_blanko, 7)) }}" target="_blank"
+                                        class="btn btn-info">
+                                        <i class="fa fa-eye"></i> Lihat Dokumen
+                                    </a>
+                                    @else
+                                    <button type="button" id="upload-btn-{{ $item->id }}"
+                                        class="btn btn-primary upload-btn" data-item-id="{{ $item->id }}">
+                                        <i class="fa fa-upload"></i> Upload
+                                    </button>
+                                    @endif
                                 </td>
                             </tr>
                             @endif
@@ -116,16 +153,31 @@
                                 <td>{{ $no++ }}</td>
                                 <td>{{ $item->nama_item }}</td>
                                 <td><input type="text" class="form-control" name="items[{{ $item->id }}][bobot]"
-                                        value="{{ $item->bobot }}"></td>
-                                <td><select class="form-control" name="items[{{ $item->id }}][ada_tidak_ada]">
+                                        value="{{ $item->bobot }}" readonly></td>
+                                <td><select class="form-control" name="items[{{ $item->id }}][ada_tidak_ada]" readonly>
                                         <option value="1" {{ $item->ada_tidak_ada == 1 ? 'selected' : '' }}>Ada</option>
                                         <option value="0" {{ $item->ada_tidak_ada == 0 ? 'selected' : '' }}>Tidak Ada
                                         </option>
                                     </select></td>
                                 <td><input type="text" class="form-control" name="items[{{ $item->id }}][keterangan]"
-                                        value="{{ $item->keterangan }}"></td>
+                                        value="{{ $item->keterangan }}" readonly></td>
                                 <td>
-                                    <button type="button" class="btn btn-primary"><i class="fa fa-upload"></i></button>
+                                    <input type="file" id="file-{{ $item->id }}" style="display:none;">
+                                    @if ($item->file_uploaded)
+                                    <button type="button" id="delete-btn-{{ $item->id }}"
+                                        class="btn btn-danger delete-btn" data-item-id="{{ $item->id }}">
+                                        <i class="fa fa-trash"></i> Hapus
+                                    </button>
+                                    <a href="{{ asset('storage/' . substr($item->path_blanko, 7)) }}" target="_blank"
+                                        class="btn btn-info">
+                                        <i class="fa fa-eye"></i> Lihat Dokumen
+                                    </a>
+                                    @else
+                                    <button type="button" id="upload-btn-{{ $item->id }}"
+                                        class="btn btn-primary upload-btn" data-item-id="{{ $item->id }}">
+                                        <i class="fa fa-upload"></i> Upload
+                                    </button>
+                                    @endif
                                 </td>
                             </tr>
                             @endif
@@ -138,16 +190,31 @@
                                 <td>{{ $no++ }}</td>
                                 <td>{{ $item->nama_item }}</td>
                                 <td><input type="text" class="form-control" name="items[{{ $item->id }}][bobot]"
-                                        value="{{ $item->bobot }}"></td>
-                                <td><select class="form-control" name="items[{{ $item->id }}][ada_tidak_ada]">
+                                        value="{{ $item->bobot }}" readonly></td>
+                                <td><select class="form-control" name="items[{{ $item->id }}][ada_tidak_ada]" readonly>
                                         <option value="1" {{ $item->ada_tidak_ada == 1 ? 'selected' : '' }}>Ada</option>
                                         <option value="0" {{ $item->ada_tidak_ada == 0 ? 'selected' : '' }}>Tidak Ada
                                         </option>
                                     </select></td>
                                 <td><input type="text" class="form-control" name="items[{{ $item->id }}][keterangan]"
-                                        value="{{ $item->keterangan }}"></td>
+                                        value="{{ $item->keterangan }}" readonly></td>
                                 <td>
-                                    <button type="button" class="btn btn-primary"><i class="fa fa-upload"></i></button>
+                                    <input type="file" id="file-{{ $item->id }}" style="display:none;">
+                                    @if ($item->file_uploaded)
+                                    <button type="button" id="delete-btn-{{ $item->id }}"
+                                        class="btn btn-danger delete-btn" data-item-id="{{ $item->id }}">
+                                        <i class="fa fa-trash"></i> Hapus
+                                    </button>
+                                    <a href="{{ asset('storage/' . substr($item->path_blanko, 7)) }}" target="_blank"
+                                        class="btn btn-info">
+                                        <i class="fa fa-eye"></i> Lihat Dokumen
+                                    </a>
+                                    @else
+                                    <button type="button" id="upload-btn-{{ $item->id }}"
+                                        class="btn btn-primary upload-btn" data-item-id="{{ $item->id }}">
+                                        <i class="fa fa-upload"></i> Upload
+                                    </button>
+                                    @endif
                                 </td>
                             </tr>
                             @endif
@@ -157,6 +224,7 @@
                             @if(!$isItemno5Rendered)
                             <tr>
                                 <td rowspan="{{ count($itemno5) + 1 }}">{{ $no++ }}</td>
+                                <td colspan="5"><strong>Item No. 5</strong></td>
                             </tr>
                             @foreach($items as $index => $item)
                             @if(in_array($item->nama_item, $itemno5))
@@ -164,16 +232,31 @@
                                 <td>{{ chr(96 + $subIndex2++) }}. {{ $item->nama_item }}
                                 </td>
                                 <td><input type="text" class="form-control" name="items[{{ $item->id }}][bobot]"
-                                        value="{{ $item->bobot }}"></td>
-                                <td><select class="form-control" name="items[{{ $item->id }}][ada_tidak_ada]">
+                                        value="{{ $item->bobot }}" readonly></td>
+                                <td><select class="form-control" name="items[{{ $item->id }}][ada_tidak_ada]" readonly>
                                         <option value="1" {{ $item->ada_tidak_ada == 1 ? 'selected' : '' }}>Ada</option>
                                         <option value="0" {{ $item->ada_tidak_ada == 0 ? 'selected' : '' }}>Tidak Ada
                                         </option>
                                     </select></td>
                                 <td><input type="text" class="form-control" name="items[{{ $item->id }}][keterangan]"
-                                        value="{{ $item->keterangan }}"></td>
+                                        value="{{ $item->keterangan }}" readonly></td>
                                 <td>
-                                    <button type="button" class="btn btn-primary"><i class="fa fa-upload"></i></button>
+                                    <input type="file" id="file-{{ $item->id }}" style="display:none;">
+                                    @if ($item->file_uploaded)
+                                    <button type="button" id="delete-btn-{{ $item->id }}"
+                                        class="btn btn-danger delete-btn" data-item-id="{{ $item->id }}">
+                                        <i class="fa fa-trash"></i> Hapus
+                                    </button>
+                                    <a href="{{ asset('storage/' . substr($item->path_blanko, 7)) }}" target="_blank"
+                                        class="btn btn-info">
+                                        <i class="fa fa-eye"></i> Lihat Dokumen
+                                    </a>
+                                    @else
+                                    <button type="button" id="upload-btn-{{ $item->id }}"
+                                        class="btn btn-primary upload-btn" data-item-id="{{ $item->id }}">
+                                        <i class="fa fa-upload"></i> Upload
+                                    </button>
+                                    @endif
                                 </td>
                             </tr>
                             @endif
@@ -189,16 +272,31 @@
                                 <td>{{ $no++ }}</td>
                                 <td>{{ $item->nama_item }}</td>
                                 <td><input type="text" class="form-control" name="items[{{ $item->id }}][bobot]"
-                                        value="{{ $item->bobot }}"></td>
-                                <td><select class="form-control" name="items[{{ $item->id }}][ada_tidak_ada]">
+                                        value="{{ $item->bobot }}" readonly></td>
+                                <td><select class="form-control" name="items[{{ $item->id }}][ada_tidak_ada]" readonly>
                                         <option value="1" {{ $item->ada_tidak_ada == 1 ? 'selected' : '' }}>Ada</option>
                                         <option value="0" {{ $item->ada_tidak_ada == 0 ? 'selected' : '' }}>Tidak Ada
                                         </option>
                                     </select></td>
                                 <td><input type="text" class="form-control" name="items[{{ $item->id }}][keterangan]"
-                                        value="{{ $item->keterangan }}"></td>
+                                        value="{{ $item->keterangan }}" readonly></td>
                                 <td>
-                                    <button type="button" class="btn btn-primary"><i class="fa fa-upload"></i></button>
+                                    <input type="file" id="file-{{ $item->id }}" style="display:none;">
+                                    @if ($item->file_uploaded)
+                                    <button type="button" id="delete-btn-{{ $item->id }}"
+                                        class="btn btn-danger delete-btn" data-item-id="{{ $item->id }}">
+                                        <i class="fa fa-trash"></i> Hapus
+                                    </button>
+                                    <a href="{{ asset('storage/' . substr($item->path_blanko, 7)) }}" target="_blank"
+                                        class="btn btn-info">
+                                        <i class="fa fa-eye"></i> Lihat Dokumen
+                                    </a>
+                                    @else
+                                    <button type="button" id="upload-btn-{{ $item->id }}"
+                                        class="btn btn-primary upload-btn" data-item-id="{{ $item->id }}">
+                                        <i class="fa fa-upload"></i> Upload
+                                    </button>
+                                    @endif
                                 </td>
                             </tr>
                             @endif
@@ -221,95 +319,140 @@
             <input type="hidden" name="hasil_ada_tidak_ada" id="hasil-ada-tidak-ada">
 
             <div class="form-group">
-                <button type="submit" class="btn btn-primary mt-3 mb-2">Simpan</button>
-                <button type="button" class="btn btn-secondary mt-3 mb-2" onclick="window.close()">Batal</button>
+                <div class="form-group">
+                    <button type="button" class="btn btn-secondary mt-3 mb-2" onclick="window.close()">Kembali</button>
+                </div>
             </div>
         </form>
     </div>
 
-    {{-- modal upload --}}
-    @include('evaluasi.modal-upload-blanko2')
-
     <script>
         function calculateWeights() {
-            let totalBobot = 0;
-            let totalItems = $('input[name^="items"][name$="[bobot]"]').length;
-            let totalBobotAda = 0;
+        let totalBobot = 0;
+        let totalBobotAda = 0;
 
-            $('input[name^="items"][name$="[bobot]"]').each(function () {
-                let bobot = parseFloat($(this).val().replace(/,/g, '.')) || 0;
-                let ada = $(this).closest('tr').find('select[name$="[ada_tidak_ada]"]').val();
+        $('input[name^="items"][name$="[bobot]"]').each(function () {
+            let bobot = parseFloat($(this).val().replace(/,/g, '.')) || 0;
+            let ada = $(this).closest('tr').find('select[name$="[ada_tidak_ada]"]').val();
 
-                if (!isNaN(bobot)) {
-                    totalBobot += bobot;
-                    if (ada == '1') {
-                        totalBobotAda += bobot;
+            if (!isNaN(bobot)) {
+                totalBobot += bobot;
+                if (ada == '1') {
+                    totalBobotAda += bobot;
+                }
+            }
+        });
+
+        $('#total-bobot').val(totalBobot.toFixed(2));
+        $('#bobot-ada-tidak-ada').val(totalBobotAda.toFixed(2));
+
+        $('#hasil-total-bobot').val(totalBobot.toFixed(2));
+        $('#hasil-ada-tidak-ada').val((totalBobotAda / totalBobot * 100).toFixed(2));
+
+        if (totalBobot !== 100) {
+            $('#total-bobot').addClass('is-invalid');
+        } else {
+            $('#total-bobot').removeClass('is-invalid');
+        }
+    }
+
+    $(document).ready(function () {
+        calculateWeights();
+
+        $('.upload-btn').click(function () {
+            var itemId = $(this).data('item-id');
+            $('#file-' + itemId).click();
+        });
+
+        $('input[type="file"]').change(function () {
+            var itemId = $(this).attr('id').split('-')[1];
+            var formData = new FormData();
+            formData.append('path_blanko', $(this)[0].files[0]);
+
+            var uploadBtn = $('#upload-btn-' + itemId);
+            uploadBtn.html('<i class="fa fa-spinner fa-spin"></i> Uploading...');
+            uploadBtn.addClass('uploading-btn');
+            uploadBtn.prop('disabled', true);
+
+            $.ajax({
+                url: '/inventarisasi-awal-data-informasi-non-fisik/upload-dokumen/' + itemId,
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function (response) {
+                    if (response.success) {
+                        alert('File berhasil diupload.');
+                        $('select[name="items[' + itemId + '][ada_tidak_ada]"]').val('1');
+                        $('input[name="items[' + itemId + '][keterangan]"]').val('Dokumen tersedia');
+                        calculateWeights();
+
+                        uploadBtn.html('<i class="fa fa-trash"></i> Hapus');
+                        uploadBtn.removeClass('upload-btn btn-primary').addClass('delete-btn btn-danger');
+                        uploadBtn.attr('id', 'delete-btn-' + itemId);
+
+                        // Update event handler for delete
+                        uploadBtn.off('click').on('click', function () {
+                            deleteFile(itemId);
+                        });
+
+                        // Tambahkan tombol untuk melihat dokumen
+                        uploadBtn.after('<a href="' + response.filePath + '" target="_blank" class="btn btn-info ml-2"><i class="fa fa-eye"></i> Lihat Dokumen</a>');
                     }
+                },
+                error: function (xhr, status, error) {
+                    alert('Gagal mengupload file. Silakan coba lagi.');
+                },
+                complete: function () {
+                    uploadBtn.removeClass('uploading-btn');
+                    uploadBtn.prop('disabled', false);
                 }
-            });
-
-            $('#total-bobot').val(totalBobot.toFixed(2)); // Update total bobot
-            $('#bobot-ada-tidak-ada').val(totalBobotAda.toFixed(2)); // Update total ada/tidak ada
-
-            // Set hidden inputs for backend
-            $('#hasil-total-bobot').val(totalBobot.toFixed(2));
-            $('#hasil-ada-tidak-ada').val((totalBobotAda / totalBobot * 100).toFixed(2));
-
-            // Add or remove invalid class based on total bobot
-            if (totalBobot !== 100) {
-                $('#total-bobot').addClass('is-invalid');
-            } else {
-                $('#total-bobot').removeClass('is-invalid');
-            }
-        }
-
-        function validateAndConvert(input) {
-            input.value = input.value.replace(/,/g, '.');
-            if (parseFloat(input.value) > 100) {
-                input.value = 100;
-            }
-        }
-
-        function toggleUploadButton(itemId) {
-            let bobot = $(`input[name="items[${itemId}][bobot]"]`).val();
-            let uploadBtn = $(`#upload-btn-${itemId}`);
-
-            if (bobot && parseFloat(bobot) > 0) {
-                uploadBtn.prop('disabled', false);
-            } else {
-                uploadBtn.prop('disabled', true);
-            }
-        }
-
-        $(document).ready(function () {
-            calculateWeights();
-
-            $('select[name^="items"]').change(function () {
-                calculateWeights();
-            });
-
-            $('input[name^="items"][name$="[bobot]"]').on('input change', function () {
-                calculateWeights();
-            });
-
-            $('#data-informasi-non-fisik-form').on('submit', function (e) {
-                let totalBobot = parseFloat($('#total-bobot').val().replace(/,/g, '.')) || 0;
-
-                if (totalBobot !== 100) {
-                    e.preventDefault();
-                    alert('Total bobot harus mencapai 100%. Mohon periksa kembali.');
-                    $('#total-bobot').addClass('is-invalid');
-                } else {
-                    $('#total-bobot').removeClass('is-invalid');
-                }
-            });
-
-            // Initial check for upload buttons
-            $('input[name^="items"][name$="[bobot]"]').each(function () {
-                let itemId = $(this).attr('name').match(/\d+/)[0];
-                toggleUploadButton(itemId);
             });
         });
+
+        function deleteFile(itemId) {
+            // Disable button to prevent multiple clicks
+            var deleteBtn = $('#delete-btn-' + itemId);
+            deleteBtn.prop('disabled', true);
+
+            if (confirm('Apakah Anda yakin ingin menghapus file ini?')) {
+                $.ajax({
+                    url: '/inventarisasi-awal-data-informasi-non-fisik/delete-dokumen/' + itemId,
+                    type: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            alert('File berhasil dihapus.');
+                            window.location.reload(); // Refresh halaman setelah file dihapus
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        alert('Gagal menghapus file. Silakan coba lagi.');
+                        deleteBtn.prop('disabled', false);
+                    }
+                });
+            } else {
+                // Re-enable button if cancel is pressed
+                deleteBtn.prop('disabled', false);
+            }
+        }
+
+        $(document).on('click', '.delete-btn', function () {
+            var itemId = $(this).data('item-id');
+            deleteFile(itemId);
+        });
+
+        $('select[name^="items"], input[name^="items"][name$="[bobot]"]').change(function () {
+            calculateWeights();
+        });
+
+        calculateWeights();
+    });
     </script>
 </body>
 

@@ -45,13 +45,13 @@ class MasterBobotBlanko3ASeeder extends Seeder
                 'nama_item' => 'Transportasi',
                 'rincian' => [
                     ['rincian' => 'Sepeda motor', 'bobot' => 10.00],
-                    ['rincian' => 'Mobil pick up', 'bobot' => 5.00],
+                    ['rincian' => 'Mobil pick up', 'bobot' => 0],
                 ],
             ],
             [
                 'nama_item' => 'Kelengkapan prasarana ATAB',
                 'rincian' => [
-                    ['rincian' => 'Nomenklatur', 'bobot' => 2.00],
+                    ['rincian' => 'Nomenklatur', 'bobot' => 0],
                     ['rincian' => 'Peilschal', 'bobot' => 10.00],
                     ['rincian' => 'Patok batas', 'bobot' => 10.00],
                     ['rincian' => 'Papan operasi', 'bobot' => 0],

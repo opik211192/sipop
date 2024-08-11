@@ -95,12 +95,15 @@ Route::middleware(['auth'])->group(function () {
   Route::get('/inventarisasi-awal-prasarana-air-baku/{jaringan}', [InventarisasiDataEvaluasiAwal::class, 'prasaranaAirBaku'])->name('inventarisasi-awal-prasarana-air-baku');
   Route::put('/inventarisasi-awal-prasarana-air-baku/{jaringan}', [InventarisasiDataEvaluasiAwal::class, 'prasaranaAirBakuProses'])->name('inventarisasi-awal-prasarana-air-baku-proses');
   Route::post('/inventarisasi-awal-prasarana-air-baku/{jaringan}/uji-pengaliran', [InventarisasiDataEvaluasiAwal::class, 'ujiPengaliran'])->name('inventarisasi-awal-prasarana-air-baku-uji-pengaliran');
+  Route::Put('/inventarisasi-awal-prasarana-air-baku/{jaringan}/uji-pengaliran', [InventarisasiDataEvaluasiAwal::class, 'UpdateUjiPengaliran'])->name('inventarisasi-awal-prasarana-air-baku-uji-pengaliran-update');
+
 
   //blanko2
   Route::get('/inventarisaisi-awal-data-informasi-non-fisik/{jaringan}', [InventarisasiDataEvaluasiAwal::class, 'dataInformasiNonFisik'])->name('inventarisasi-awal-data-informasi-non-fisik');
   Route::put('/inventarisaisi-awal-data-informasi-non-fisik/{jaringan}', [InventarisasiDataEvaluasiAwal::class, 'dataInformasiNonFisikProses'])->name('inventarisasi-awal-data-informasi-non-fisik-proses');
   Route::post('/inventarisasi-awal-data-informasi-non-fisik/upload-dokumen/{item}', [InventarisasiDataEvaluasiAwal::class, 'uploadBlanko2'])->name('inventarisasi-awal-data-informasi-non-fisik-upload-blanko'); 
-  
+  Route::delete('/inventarisasi-awal-data-informasi-non-fisik/delete-dokumen/{item}', [InventarisasiDataEvaluasiAwal::class, 'deleteBlanko2'])->name('inventarisasi-awal-data-informasi-non-fisik-delete-blanko');
+
   //blanko3a
   Route::get('/inventarisasi-awal-kesiapan-sarana-penunjang-op/{jaringan}', [InventarisasiDataEvaluasiAwal::class, 'kesiapanSaranaPenunjangOperasiDanPemeliharaan'])->name('inventarisasi-awal-kesiapan-sarana-penunjang-op');
   Route::put('/inventarisasi-awal-kesiapan-sarana-penunjang-op/{jaringan}', [InventarisasiDataEvaluasiAwal::class, 'kesiapanSaranaPenunjangOperasiDanPemeliharaanProses'])->name('inventarisasi-awal-kesiapan-sarana-penunjang-op-proses');

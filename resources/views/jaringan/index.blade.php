@@ -45,10 +45,10 @@
                     </select>
                 </div>
                 <div class="col-sm-1">
-                    <button type="submit" class="btn btn-primary btn-block">Cari</button>
+                    <button type="submit" class="btn bg-gradient-primary btn-block">Cari</button>
                 </div>
                 <div class="col-sm-4 text-right">
-                    <a href="{{ route('jaringan-atab.create') }}" class="btn btn-primary">Tambah</a>
+                    <a href="{{ route('jaringan-atab.create') }}" class="btn bg-gradient-primary">Tambah</a>
                 </div>
             </div>
         </form>
@@ -75,22 +75,22 @@
                     <td><a href="{{ route('jaringan-atab.show', $jaringan) }}">{{ $jaringan->nama }}</a></td>
                     <td>{{ $jaringan->latitude }}, {{ $jaringan->longitude }}</td>
                     <td>{{ $jaringan->tahun }}</td>
-                    <td><span class="badge badge-info">{{ $jaringan->jenis }}</span></td>
+                    <td><span class="badge bg-gradient-info">{{ $jaringan->jenis }}</span></td>
                     <td>{{ $jaringan->satker }}</td>
                     <td>{{ $jaringan->wilayah_sungai }}</td>
                     <td>
                         @if($jaringan->tahapan)
                         @if($jaringan->tahapan == 'Serah Terima Hasil OP')
-                        <span class="badge badge-success">{{ $jaringan->tahapan }}</span>
+                        <span class="badge bg-gradient-success">{{ $jaringan->tahapan }}</span>
                         @else
-                        <span class="badge badge-info">{{ $jaringan->tahapan }}</span>
+                        <span class="badge bg-gradient-info">{{ $jaringan->tahapan }}</span>
                         @endif
                         @else
-                        <span class="badge badge-danger">Belum Tahapan</span>
+                        <span class="badge bg-gradient-danger">Belum Tahapan</span>
                         @endif
                     </td>
                     <td>
-                        <a href="{{ route('jaringan-atab.edit', $jaringan) }}" class="btn btn-primary btn-sm"
+                        <a href="{{ route('jaringan-atab.edit', $jaringan) }}" class="btn bg-gradient-primary btn-sm"
                             title="Edit">
                             <i class="fas fa-edit"></i>
                         </a>
@@ -98,7 +98,7 @@
                             style="display:inline-block;">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn btn-primary btn-sm" title="Hapus"
+                            <button type="submit" class="btn bg-gradient-primary btn-sm" title="Hapus"
                                 onclick="return confirm('Menghapus data ini akan menghapus seluruh data dokumen terkait dan tidak dapat dikembalikan. Apakah Anda yakin ingin melanjutkan?')">
                                 <i class="fas fa-trash-alt"></i>
                             </button>
