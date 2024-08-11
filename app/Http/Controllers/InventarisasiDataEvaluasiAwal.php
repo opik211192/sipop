@@ -254,23 +254,21 @@ public function prasaranaAirTanahProses(Request $request, Jaringan $jaringan)
         return redirect()->back()->with('error', 'Evaluasi Blanko 2 tidak ditemukan.');
     }
 
-   // Ambil semua items dan cek apakah file sudah diunggah atau belum, dan ambil path dari blanko2_uploads
     $items = $evaluasiBlanko->items->map(function($item) {
         $upload = Blanko2Upload::where('item_blanko_id', $item->id)->first();
         if ($upload) {
             $item->file_uploaded = true;
-            // Hanya gunakan nama file
-            $item->path_blanko = $upload->path_blanko;
+            $item->file_url = asset('storage/blanko2/' . $upload->nama_file);
         } else {
             $item->file_uploaded = false;
-            $item->path_blanko = null;
+            $item->file_url = null;
         }
         return $item;
     });
-    
-    //dd($items);
+
     return view('evaluasi.blanko2', compact('jaringan', 'items'));
 }
+
 
     public function dataInformasiNonFisikProses(Request $request, Jaringan $jaringan)
     {
@@ -308,62 +306,62 @@ public function prasaranaAirTanahProses(Request $request, Jaringan $jaringan)
     }
 
     public function uploadBlanko2(Request $request, $itemId)
-    {
-        $request->validate([
-            'path_blanko' => 'required|file|mimes:pdf,jpg,png,doc,docx',
-        ]);
+{
+    $request->validate([
+        'path_blanko' => 'required|file|mimes:pdf,jpg,png,doc,docx',
+    ]);
 
-        $fileName = Str::random(10) . '.' . $request->file('path_blanko')->getClientOriginalExtension();
-        $filePath = $request->file('path_blanko')->storeAs('public/blanko2', $fileName);
+    $fileName = Str::random(10) . '.' . $request->file('path_blanko')->getClientOriginalExtension();
+    $filePath = $request->file('path_blanko')->storeAs('public/blanko2', $fileName);
 
-        // Update or create a record in Blanko2Upload
-        Blanko2Upload::updateOrCreate(
-            ['item_blanko_id' => $itemId],
-            ['path_blanko' => $filePath]
-        );
+    // Update or create a record in Blanko2Upload
+    Blanko2Upload::updateOrCreate(
+        ['item_blanko_id' => $itemId],
+        ['nama_file' => $fileName]
+    );
 
-        // Update ada_tidak_ada to 1 (Ada) in ItemBlanko
-        $itemBlanko = ItemBlanko::findOrFail($itemId);
-        $itemBlanko->ada_tidak_ada = 1; // Set to 1 (Ada)
-        $itemBlanko->keterangan = 'Dokumen tersedia';
-        $itemBlanko->save();
+    // Update ada_tidak_ada to 1 (Ada) in ItemBlanko
+    $itemBlanko = ItemBlanko::findOrFail($itemId);
+    $itemBlanko->ada_tidak_ada = 1; // Set to 1 (Ada)
+    $itemBlanko->keterangan = 'Dokumen tersedia';
+    $itemBlanko->save();
 
-        // Recalculate the weights, conditions, and functions
-        $evaluasiBlanko = $itemBlanko->evaluasiBlanko;
-        if ($evaluasiBlanko) {
-            $totalBobot = $evaluasiBlanko->items->sum('bobot');
-            $totalBobotAda = $evaluasiBlanko->items->where('ada_tidak_ada', 1)->sum('bobot');
+    return response()->json([
+        'success' => true,
+        'message' => 'File berhasil diunggah dan status diperbarui.',
+        'item_id' => $itemId,
+        'new_status' => 1, // Ada
+        'new_keterangan' => 'Dokumen tersedia'
+    ]);
+}
 
-            $evaluasiBlanko->hasil_ada_tidak_ada = ($totalBobotAda / $totalBobot) * 100;
-            $evaluasiBlanko->save();
+
+   public function deleteBlanko2(Request $request, $itemId)
+{
+    $itemBlanko = ItemBlanko::findOrFail($itemId);
+
+    $blankoUpload = Blanko2Upload::where('item_blanko_id', $itemId)->first();
+
+    if ($blankoUpload) {
+        // Membangun path lengkap untuk file
+        $filePath = 'public/blanko2/' . $blankoUpload->nama_file;
+
+        // Menghapus file dari storage
+        if (Storage::exists($filePath)) {
+            Storage::delete($filePath);
         }
 
-        return response()->json([
-            'success' => true,
-            'message' => 'File berhasil diunggah dan status diperbarui.',
-            'item_id' => $itemId,
-            'new_status' => 1, // Ada
-            'new_keterangan' => 'Dokumen tersedia'
-        ]);
+        // Menghapus record dari database
+        $blankoUpload->delete();
     }
 
-    public function deleteBlanko2(Request $request, $itemId)
-    {
-        $itemBlanko = ItemBlanko::findOrFail($itemId);
+    // Update status item_blanko
+    $itemBlanko->ada_tidak_ada = 0;
+    $itemBlanko->keterangan = ''; // Set to 0 (Tidak Ada)
+    $itemBlanko->save();
 
-        $blankoUpload = Blanko2Upload::where('item_blanko_id', $itemId)->first();
-
-        if ($blankoUpload) {
-            Storage::delete($blankoUpload->path_blanko);
-            $blankoUpload->delete();
-        }
-
-        $itemBlanko->ada_tidak_ada = 0;
-        $itemBlanko->keterangan = ''; // Set to 0 (Tidak Ada)
-        $itemBlanko->save();
-
-        return response()->json(['success' => true, 'message' => 'File berhasil dihapus.']);
-    }
+    return response()->json(['success' => true, 'message' => 'File berhasil dihapus.']);
+}
 
 
 

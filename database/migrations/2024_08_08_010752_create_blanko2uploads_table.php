@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('blanko2_uploads', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('item_blanko_id')->nullable();
-            $table->string('path_blanko')->nullable();
+            $table->string('nama_file')->nullable();
             $table->timestamps();
 
 

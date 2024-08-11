@@ -88,8 +88,7 @@
                                         class="btn btn-danger delete-btn" data-item-id="{{ $item->id }}">
                                         <i class="fa fa-trash"></i> Hapus
                                     </button>
-                                    <a href="{{ asset('storage/' . substr($item->path_blanko, 7)) }}" target="_blank"
-                                        class="btn btn-info">
+                                    <a href="{{ $item->file_url }}" target="_blank" class="btn btn-info">
                                         <i class="fa fa-eye"></i> Lihat Dokumen
                                     </a>
                                     @else
@@ -129,8 +128,7 @@
                                         class="btn btn-danger delete-btn" data-item-id="{{ $item->id }}">
                                         <i class="fa fa-trash"></i> Hapus
                                     </button>
-                                    <a href="{{ asset('storage/' . substr($item->path_blanko, 7)) }}" target="_blank"
-                                        class="btn btn-info">
+                                    <a href="{{ $item->file_url }}" target="_blank" class="btn btn-info">
                                         <i class="fa fa-eye"></i> Lihat Dokumen
                                     </a>
                                     @else
@@ -168,8 +166,7 @@
                                         class="btn btn-danger delete-btn" data-item-id="{{ $item->id }}">
                                         <i class="fa fa-trash"></i> Hapus
                                     </button>
-                                    <a href="{{ asset('storage/' . substr($item->path_blanko, 7)) }}" target="_blank"
-                                        class="btn btn-info">
+                                    <a href="{{ $item->file_url }}" target="_blank" class="btn btn-info">
                                         <i class="fa fa-eye"></i> Lihat Dokumen
                                     </a>
                                     @else
@@ -205,8 +202,7 @@
                                         class="btn btn-danger delete-btn" data-item-id="{{ $item->id }}">
                                         <i class="fa fa-trash"></i> Hapus
                                     </button>
-                                    <a href="{{ asset('storage/' . substr($item->path_blanko, 7)) }}" target="_blank"
-                                        class="btn btn-info">
+                                    <a href="{{ $item->file_url }}" target="_blank" class="btn btn-info">
                                         <i class="fa fa-eye"></i> Lihat Dokumen
                                     </a>
                                     @else
@@ -247,8 +243,7 @@
                                         class="btn btn-danger delete-btn" data-item-id="{{ $item->id }}">
                                         <i class="fa fa-trash"></i> Hapus
                                     </button>
-                                    <a href="{{ asset('storage/' . substr($item->path_blanko, 7)) }}" target="_blank"
-                                        class="btn btn-info">
+                                    <a href="{{ $item->file_url }}" target="_blank" class="btn btn-info">
                                         <i class="fa fa-eye"></i> Lihat Dokumen
                                     </a>
                                     @else
@@ -287,8 +282,7 @@
                                         class="btn btn-danger delete-btn" data-item-id="{{ $item->id }}">
                                         <i class="fa fa-trash"></i> Hapus
                                     </button>
-                                    <a href="{{ asset('storage/' . substr($item->path_blanko, 7)) }}" target="_blank"
-                                        class="btn btn-info">
+                                    <a href="{{ $item->file_url }}" target="_blank" class="btn btn-info">
                                         <i class="fa fa-eye"></i> Lihat Dokumen
                                     </a>
                                     @else
@@ -386,21 +380,7 @@
                 success: function (response) {
                     if (response.success) {
                         alert('File berhasil diupload.');
-                        $('select[name="items[' + itemId + '][ada_tidak_ada]"]').val('1');
-                        $('input[name="items[' + itemId + '][keterangan]"]').val('Dokumen tersedia');
-                        calculateWeights();
-
-                        uploadBtn.html('<i class="fa fa-trash"></i> Hapus');
-                        uploadBtn.removeClass('upload-btn btn-primary').addClass('delete-btn btn-danger');
-                        uploadBtn.attr('id', 'delete-btn-' + itemId);
-
-                        // Update event handler for delete
-                        uploadBtn.off('click').on('click', function () {
-                            deleteFile(itemId);
-                        });
-
-                        // Tambahkan tombol untuk melihat dokumen
-                        uploadBtn.after('<a href="' + response.filePath + '" target="_blank" class="btn btn-info ml-2"><i class="fa fa-eye"></i> Lihat Dokumen</a>');
+                        window.location.reload();
                     }
                 },
                 error: function (xhr, status, error) {
