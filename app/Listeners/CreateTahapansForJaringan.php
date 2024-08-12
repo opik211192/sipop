@@ -31,6 +31,11 @@ class CreateTahapansForJaringan
             ['jaringan_id' => $jaringan->id, 'nama_tahapan' => 'Sosialisasi dan Koordinasi', 'nilai' => null],
             ['jaringan_id' => $jaringan->id, 'nama_tahapan' => 'Evaluasi Awal Kesiapan', 'nilai' => null],
             ['jaringan_id' => $jaringan->id, 'nama_tahapan' => 'Upload Dokumen Utama', 'nilai' => null],
+            ['jaringan_id' => $jaringan->id, 'nama_tahapan' => 'BA Hasil Evaluasi Awal Kesiapan OP', 'nilai' => null],
+            ['jaringan_id' => $jaringan->id, 'nama_tahapan' => 'Evaluasi Akhir Kesiapan', 'nilai' => null],
+            ['jaringan_id' => $jaringan->id, 'nama_tahapan' => 'BA Hasil Evaluasi Akhir Kesiapan OP', 'nilai' => null],
+            ['jaringan_id' => $jaringan->id, 'nama_tahapan' => 'Serah Terima hasil OP', 'nilai' => null],
+
         ];
 
         foreach ($tahapans as $tahapan) {

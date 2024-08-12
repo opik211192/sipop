@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('tahapans', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('jaringan_id');
-            $table->enum('nama_tahapan', ['Pembentukan Tim', 'Penyusunan Rencana Kerja', 'Sosialisasi dan Koordinasi', 'Evaluasi Awal Kesiapan', 'Upload Dokumen Utama']);
+            $table->string('nama_tahapan', 255);
             $table->integer('nilai')->nullable();
             $table->timestamps();
 

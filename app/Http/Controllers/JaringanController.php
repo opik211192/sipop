@@ -328,112 +328,162 @@ class JaringanController extends Controller
         return response()->json(['success' => 'Dokumen Sosialisasi dan Koordinasi berhasil diupdate.']);
     }
 
-  public function apiPenyusunanBaEvaluasiAwal($id)
-{
-    // Temukan jaringan berdasarkan ID
-    $jaringan = Jaringan::find($id);
-    
-    // Ambil tahapan terkait
-    $tahapan = $jaringan->tahapans()->where('nama_tahapan', 'Evaluasi Awal Kesiapan')->first();
+    public function apiPenyusunanBaEvaluasiAwal($id)
+    {
+        // Temukan jaringan berdasarkan ID
+        $jaringan = Jaringan::find($id);
+        
+        // Ambil tahapan terkait
+        $tahapan = $jaringan->tahapans()->where('nama_tahapan', 'Evaluasi Awal Kesiapan')->first();
 
-    // Inisialisasi variabel untuk hasil
-    $hasil_ada_tidak_ada_1 = 0;
-    $hasil_kondisi_1 = 0;
-    $hasil_fungsi_1 = 0;
-    $hasil_ada_tidak_ada_2 = 0;
-    $hasil_ada_tidak_ada_3A = 0;
-    $hasil_ada_tidak_ada_3B = 0;
-    $hasil_ada_tidak_ada_3C = 0;
-    $hasil_ada_tidak_ada_3D = 0;
+        // Inisialisasi variabel untuk hasil
+        $hasil_ada_tidak_ada_1 = 0;
+        $hasil_kondisi_1 = 0;
+        $hasil_fungsi_1 = 0;
+        $hasil_ada_tidak_ada_2 = 0;
+        $hasil_ada_tidak_ada_3A = 0;
+        $hasil_ada_tidak_ada_3B = 0;
+        $hasil_ada_tidak_ada_3C = 0;
+        $hasil_ada_tidak_ada_3D = 0;
 
-    // Periksa jenis jaringan dan ambil data sesuai jenisnya
-    switch ($jaringan->jenis) {
-        case 'Air Tanah':
-            // Ambil evaluasi blanko untuk Blanko 1A dan 1B
-            $blanko1A = EvaluasiBlanko::where('tahapan_id', $tahapan->id)->where('jenis_blanko', 'Blanko 1A')->first();
-            $blanko1B = EvaluasiBlanko::where('tahapan_id', $tahapan->id)->where('jenis_blanko', 'Blanko 1B')->first();
+        // Periksa jenis jaringan dan ambil data sesuai jenisnya
+        switch ($jaringan->jenis) {
+            case 'Air Tanah':
+                // Ambil evaluasi blanko untuk Blanko 1A dan 1B
+                $blanko1A = EvaluasiBlanko::where('tahapan_id', $tahapan->id)->where('jenis_blanko', 'Blanko 1A')->first();
+                $blanko1B = EvaluasiBlanko::where('tahapan_id', $tahapan->id)->where('jenis_blanko', 'Blanko 1B')->first();
 
-            // Hitung total hasil untuk Blanko 1A dan 1B (cek jika tidak null)
-            $hasil_ada_tidak_ada_1 = (($blanko1A->hasil_ada_tidak_ada ?? 0) + ($blanko1B->hasil_ada_tidak_ada ?? 0)) / 2;
-            $hasil_kondisi_1 = (($blanko1A->hasil_kondisi ?? 0) + ($blanko1B->hasil_kondisi ?? 0)) / 2;
-            $hasil_fungsi_1 = (($blanko1A->hasil_fungsi ?? 0) + ($blanko1B->hasil_fungsi ?? 0)) / 2;
-            break;
+                // Hitung total hasil untuk Blanko 1A dan 1B (cek jika tidak null)
+                $hasil_ada_tidak_ada_1 = (($blanko1A->hasil_ada_tidak_ada ?? 0) + ($blanko1B->hasil_ada_tidak_ada ?? 0)) / 2;
+                $hasil_kondisi_1 = (($blanko1A->hasil_kondisi ?? 0) + ($blanko1B->hasil_kondisi ?? 0)) / 2;
+                $hasil_fungsi_1 = (($blanko1A->hasil_fungsi ?? 0) + ($blanko1B->hasil_fungsi ?? 0)) / 2;
+                break;
 
-        case 'Air Baku':
-        case 'Embung':
-            // Ambil evaluasi blanko untuk Blanko 1C
-            $blanko1C = EvaluasiBlanko::where('tahapan_id', $tahapan->id)->where('jenis_blanko', 'Blanko 1C')->first();
-            
-            // Set hasil untuk Blanko 1C tanpa penjumlahan (cek jika tidak null)
-            $hasil_ada_tidak_ada_1 = $blanko1C->hasil_ada_tidak_ada ?? 0;
-            $hasil_kondisi_1 = $blanko1C->hasil_kondisi ?? 0;
-            $hasil_fungsi_1 = $blanko1C->hasil_fungsi ?? 0;
-            break;
+            case 'Air Baku':
+            case 'Embung':
+                // Ambil evaluasi blanko untuk Blanko 1C
+                $blanko1C = EvaluasiBlanko::where('tahapan_id', $tahapan->id)->where('jenis_blanko', 'Blanko 1C')->first();
+                
+                // Set hasil untuk Blanko 1C tanpa penjumlahan (cek jika tidak null)
+                $hasil_ada_tidak_ada_1 = $blanko1C->hasil_ada_tidak_ada ?? 0;
+                $hasil_kondisi_1 = $blanko1C->hasil_kondisi ?? 0;
+                $hasil_fungsi_1 = $blanko1C->hasil_fungsi ?? 0;
+                break;
+        }
+
+        // Ambil data untuk Blanko 2 (sama untuk semua jenis jaringan)
+        $blanko2 = EvaluasiBlanko::where('tahapan_id', $tahapan->id)->where('jenis_blanko', 'Blanko 2')->first();
+        $hasil_ada_tidak_ada_2 = $blanko2->hasil_ada_tidak_ada ?? 0;
+
+        // Ambil evaluasi blanko untuk Blanko 3A, 3B, 3C, 3D (sama untuk semua jenis jaringan)
+        $blanko3A = EvaluasiBlanko::where('tahapan_id', $tahapan->id)->where('jenis_blanko', 'Blanko 3A')->first();
+        $blanko3B = EvaluasiBlanko::where('tahapan_id', $tahapan->id)->where('jenis_blanko', 'Blanko 3B')->first();
+        $blanko3C = EvaluasiBlanko::where('tahapan_id', $tahapan->id)->where('jenis_blanko', 'Blanko 3C')->first();
+        $blanko3D = EvaluasiBlanko::where('tahapan_id', $tahapan->id)->where('jenis_blanko', 'Blanko 3D')->first();
+
+        // Menentukan rekomendasi berdasarkan hasil
+        $recommendation = 'Belum SIAP OP'; // Default
+
+        if (
+            $hasil_ada_tidak_ada_1 >= 80 &&
+            $hasil_kondisi_1 >= 80 &&
+            $hasil_fungsi_1 >= 80 &&
+            $hasil_ada_tidak_ada_2 >= 80 &&
+            $blanko3A->hasil_ada_tidak_ada >= 80 &&
+            $blanko3B->hasil_ada_tidak_ada >= 60 &&
+            $blanko3C->hasil_ada_tidak_ada >= 60 &&
+            $blanko3D->hasil_ada_tidak_ada >= 60
+        ) {
+            $recommendation = 'SIAP OP';
+        } elseif (
+            $hasil_ada_tidak_ada_1 >= 70 &&
+            $hasil_kondisi_1 >= 70 &&
+            $hasil_fungsi_1 >= 70 &&
+            $hasil_ada_tidak_ada_2 >= 70 &&
+            $blanko3A->hasil_ada_tidak_ada >= 80 &&
+            $blanko3B->hasil_ada_tidak_ada >= 60 &&
+            $blanko3C->hasil_ada_tidak_ada >= 60 &&
+            $blanko3D->hasil_ada_tidak_ada >= 60
+        ) {
+            $recommendation = 'SIAP OP dengan Catatan';
+        }
+
+        // Mengembalikan hasil dalam JSON format
+        return response()->json([
+            'blanko1' => [
+                'hasil_ada_tidak_ada' => $hasil_ada_tidak_ada_1,
+                'hasil_kondisi' => $hasil_kondisi_1,
+                'hasil_fungsi' => $hasil_fungsi_1,
+            ],
+            'blanko2' => [
+                'hasil_ada_tidak_ada' => $hasil_ada_tidak_ada_2,
+            ],
+            'blanko3' => [
+                'blanko3A' => [
+                    'hasil_ada_tidak_ada' => $blanko3A->hasil_ada_tidak_ada ?? 0,
+                ],
+                'blanko3B' => [
+                    'hasil_ada_tidak_ada' => $blanko3B->hasil_ada_tidak_ada ?? 0,
+                ],
+                'blanko3C' => [
+                    'hasil_ada_tidak_ada' => $blanko3C->hasil_ada_tidak_ada ?? 0,
+                ],
+                'blanko3D' => [
+                    'hasil_ada_tidak_ada' => $blanko3D->hasil_ada_tidak_ada ?? 0,
+                ],
+            ],
+            'recommendation' => $recommendation
+        ]);
     }
 
-    // Ambil data untuk Blanko 2 (sama untuk semua jenis jaringan)
-    $blanko2 = EvaluasiBlanko::where('tahapan_id', $tahapan->id)->where('jenis_blanko', 'Blanko 2')->first();
-    $hasil_ada_tidak_ada_2 = $blanko2->hasil_ada_tidak_ada ?? 0;
 
-    // Ambil evaluasi blanko untuk Blanko 3A, 3B, 3C, 3D (sama untuk semua jenis jaringan)
-    $blanko3A = EvaluasiBlanko::where('tahapan_id', $tahapan->id)->where('jenis_blanko', 'Blanko 3A')->first();
-    $blanko3B = EvaluasiBlanko::where('tahapan_id', $tahapan->id)->where('jenis_blanko', 'Blanko 3B')->first();
-    $blanko3C = EvaluasiBlanko::where('tahapan_id', $tahapan->id)->where('jenis_blanko', 'Blanko 3C')->first();
-    $blanko3D = EvaluasiBlanko::where('tahapan_id', $tahapan->id)->where('jenis_blanko', 'Blanko 3D')->first();
+    //Penyusunan BA Evaluasi Awal Kesiapan OP
+    public function uploadBAEvaluasiAwal(Request $request, Jaringan $jaringan)
+    {
+        $request->validate([
+            'dokumen_ba_evaluasi_awal' => 'required|file|mimes:pdf|max:3072', // Max size 3MB
+        ]);
 
-    // Menentukan rekomendasi berdasarkan hasil
-    $recommendation = 'Belum SIAP OP'; // Default
+        // Cari tahapan berdasarkan nama_tahapan 'BA Hasil Evaluasi Awal Kesiapan OP'
+        $tahapan = $jaringan->tahapans()->where('nama_tahapan', 'BA Hasil Evaluasi Awal Kesiapan OP')->first();
 
-    if (
-        $hasil_ada_tidak_ada_1 >= 80 &&
-        $hasil_kondisi_1 >= 80 &&
-        $hasil_fungsi_1 >= 80 &&
-        $hasil_ada_tidak_ada_2 >= 80 &&
-        $blanko3A->hasil_ada_tidak_ada >= 80 &&
-        $blanko3B->hasil_ada_tidak_ada >= 60 &&
-        $blanko3C->hasil_ada_tidak_ada >= 60 &&
-        $blanko3D->hasil_ada_tidak_ada >= 60
-    ) {
-        $recommendation = 'SIAP OP';
-    } elseif (
-        $hasil_ada_tidak_ada_1 >= 70 &&
-        $hasil_kondisi_1 >= 70 &&
-        $hasil_fungsi_1 >= 70 &&
-        $hasil_ada_tidak_ada_2 >= 70 &&
-        $blanko3A->hasil_ada_tidak_ada >= 80 &&
-        $blanko3B->hasil_ada_tidak_ada >= 60 &&
-        $blanko3C->hasil_ada_tidak_ada >= 60 &&
-        $blanko3D->hasil_ada_tidak_ada >= 60
-    ) {
-        $recommendation = 'SIAP OP dengan Catatan';
+        // Simpan file dengan nama unik
+        $file = $request->file('dokumen_ba_evaluasi_awal')->storeAs('public/ba_evaluasi_awal', uniqid() . '.' . $request->file('dokumen_ba_evaluasi_awal')->getClientOriginalExtension());
+
+        // Buat entri baru di tabel dokumens
+        Dokumen::create([
+            'tahapan_id' => $tahapan->id,
+            'nama_dokumen' => 'BA Evaluasi Awal Kesiapan OP',
+            'path_dokumen' => $file,
+        ]);
+
+        // Update tahapan di jaringan
+        $jaringan->update(['tahapan' => 'BA Hasil Evaluasi Awal Kesiapan OP']);
+
+        return response()->json(['success' => true]);
     }
 
-    // Mengembalikan hasil dalam JSON format
-    return response()->json([
-        'blanko1' => [
-            'hasil_ada_tidak_ada' => $hasil_ada_tidak_ada_1,
-            'hasil_kondisi' => $hasil_kondisi_1,
-            'hasil_fungsi' => $hasil_fungsi_1,
-        ],
-        'blanko2' => [
-            'hasil_ada_tidak_ada' => $hasil_ada_tidak_ada_2,
-        ],
-        'blanko3' => [
-            'blanko3A' => [
-                'hasil_ada_tidak_ada' => $blanko3A->hasil_ada_tidak_ada ?? 0,
-            ],
-            'blanko3B' => [
-                'hasil_ada_tidak_ada' => $blanko3B->hasil_ada_tidak_ada ?? 0,
-            ],
-            'blanko3C' => [
-                'hasil_ada_tidak_ada' => $blanko3C->hasil_ada_tidak_ada ?? 0,
-            ],
-            'blanko3D' => [
-                'hasil_ada_tidak_ada' => $blanko3D->hasil_ada_tidak_ada ?? 0,
-            ],
-        ],
-        'recommendation' => $recommendation
-    ]);
-}
+   public function updateUploadBAEvaluasi(Request $request, Jaringan $jaringan)
+    {
+        $request->validate([
+            'dokumen_ba_evaluasi_awal' => 'file|mimes:pdf|max:3072',
+        ]);
+
+        // Cari tahapan berdasarkan nama_tahapan 'BA Hasil Evaluasi Awal Kesiapan OP'
+        $tahapan = $jaringan->tahapans()->where('nama_tahapan', 'BA Hasil Evaluasi Awal Kesiapan OP')->first();
+
+        if ($request->hasFile('dokumen_ba_evaluasi_awal')) {
+            // Simpan file baru dengan nama unik
+            $file = $request->file('dokumen_ba_evaluasi_awal')->storeAs('public/ba_evaluasi_awal', uniqid() . '.' . $request->file('dokumen_ba_evaluasi_awal')->getClientOriginalExtension());
+
+            // Update atau buat baru entri di tabel dokumens
+            Dokumen::updateOrCreate(
+                ['tahapan_id' => $tahapan->id, 'nama_dokumen' => 'BA Evaluasi Awal Kesiapan OP'],
+                ['path_dokumen' => $file]
+            );
+        }
+
+        return response()->json(['success' => 'Dokumen BA Evaluasi Awal Kesiapan OP berhasil diupdate.']);
+    }
 
 }

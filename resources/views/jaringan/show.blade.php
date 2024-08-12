@@ -259,7 +259,7 @@
                                 Awal Kesiapan OP</span>
                             <i class="fas fa-chevron-down ml-auto text-primary"></i>
                         </a>
-                        <div class="collapse show" id="collapseInventarisasi">
+                        <div class="collapse " id="collapseInventarisasi">
                             <div class="card card-body">
                                 <div class="container mt-2">
                                     <div class="row">
@@ -680,21 +680,49 @@
                         </div>
                     </td>
                 </tr>
-                <tr>
-                    <td class="bg-white">
-                        <i class="fas fa-file-signature fa-lg text-primary mr-2"></i>
-                        <span class="font-weight-bold text-dark">Penyusunan BA Hasil Evaluasi Awal Kesiapan OP</span>
-                    </td>
-                    <td class="bg-white"></td>
-                    <td class="bg-white">
-                        <button class="btn btn-sm bg-gradient-primary" data-toggle="modal"
-                            data-target="#modal-ba-evaluasi-{{ $jaringan->id }}">
-                            <span class="fas fa-file-signature" title="Lihat Penyusunan BA Hasil Evaluasi Awal Kesiapan OP"></span>
-                        </button>
-
-                        <button class="btn btn-sm bg-gradient-primary" id="upload-ba-evaluasi-awal"><span class="fas fa-upload" title="Upload Penyusunan BA Hasil Evaluasi Awal Kesiapan OP"></span></button>
-                    </td>
-                </tr>
+              <tr>
+                <td class="bg-white">
+                    <i class="fas fa-file-signature fa-lg text-primary mr-2"></i>
+                    <span class="font-weight-bold text-dark">Penyusunan BA Hasil Evaluasi Awal Kesiapan OP</span>
+                </td>
+            
+                <td class="bg-white text-center">
+                    @php
+                    // Ambil tahapan yang sesuai dengan nama_tahapan 'BA Hasil Evaluasi Awal Kesiapan OP'
+                    $tahapanBAEvaluasi = $jaringan->tahapans->where('nama_tahapan', 'BA Hasil Evaluasi Awal Kesiapan OP')->first();
+                    
+                    // Cek apakah dokumen terkait dengan nama 'BA Evaluasi Awal Kesiapan OP' sudah ada
+                    $dokumenEvaluasiAwal = $tahapanBAEvaluasi ?
+                    $tahapanBAEvaluasi->dokumens->where('nama_dokumen', 'BA Evaluasi Awal Kesiapan OP')->first()
+                    : null;
+                    @endphp
+                    
+                    @if($dokumenEvaluasiAwal)
+                    <span class="badge badge-success"><i class="fas fa-check-circle"></i> Selesai</span>
+                    @else
+                    <span class="badge badge-warning"><i class="fas fa-exclamation-circle"></i> Pending</span>
+                    @endif
+                </td>
+            
+                <td class="bg-white">
+                    @if($dokumenEvaluasiAwal)
+                    <!-- Tombol untuk membuka modal edit BA Evaluasi Awal -->
+                    <button class="btn btn-sm bg-gradient-primary" data-toggle="modal" data-target="#edit-ba-evaluasi-awal">
+                        <span class="fas fa-edit" title="Edit Penyusunan BA Hasil Evaluasi Awal Kesiapan OP"></span>
+                    </button>
+                    @else
+                    <!-- Tombol untuk membuka modal upload BA Evaluasi Awal -->
+                    <button class="btn btn-sm bg-gradient-primary" data-toggle="modal" data-target="#upload-ba-evaluasi-awal">
+                        <span class="fas fa-upload" title="Upload Penyusunan BA Hasil Evaluasi Awal Kesiapan OP"></span>
+                    </button>
+                    @endif
+                    <!-- Tombol untuk melihat modal BA Evaluasi Awal -->
+                    <button class="btn btn-sm bg-gradient-primary" data-toggle="modal"
+                        data-target="#modal-ba-evaluasi-{{ $jaringan->id }}">
+                        <span class="fas fa-file-signature" title="Lihat Penyusunan BA Hasil Evaluasi Awal Kesiapan OP"></span>
+                    </button>
+                </td>
+            </tr>
                 <tr>
                     <td class="bg-white">
                         <i class="fas fa-clipboard-check fa-lg text-primary mr-2"></i>
@@ -1238,7 +1266,7 @@
         </div>
     </div>
 </div>
-{{-- @include('modal.ba-awal') --}}
+
 {{-- modal penyusuan BA Evaluasi Awal Kesiapan OP --}}
 <div class="modal fade" id="modal-ba-evaluasi-{{ $jaringan->id }}" tabindex="-1" aria-labelledby="modalBAEvaluasiLabel"
     aria-hidden="true">
@@ -1444,6 +1472,73 @@
                         <i class="fas fa-times mr-2"></i> Close
                     </button>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Upload BA Evaluasi Awal -->
+<div class="modal fade" id="upload-ba-evaluasi-awal" tabindex="-1" aria-labelledby="uploadBAEvaluasiAwalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-gradient-primary text-white">
+                <h5 class="modal-title" id="uploadBAEvaluasiAwalLabel">
+                    <i class="fas fa-upload mr-2"></i> Upload Dokumen BA Evaluasi Awal Kesiapan OP
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body bg-light">
+                <form id="formUploadBAEvaluasiAwal" action="{{ route('upload-ba-evaluasi-awal', $jaringan->id) }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <div class="form-group">
+                        <label for="dokumen_ba_evaluasi_awal" class="font-weight-bold">Dokumen BA Evaluasi Awal</label>
+                        <input type="file" accept="application/pdf" class="form-control-file border rounded p-2"
+                            id="dokumen_ba_evaluasi_awal" name="dokumen_ba_evaluasi_awal" required>
+                    </div>
+                    <div class="text-right">
+                        <button type="submit" class="btn bg-gradient-success text-white btn-sm">
+                            <i class="fas fa-paper-plane mr-2"></i> Submit
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Edit BA Evaluasi Awal -->
+<div class="modal fade" id="edit-ba-evaluasi-awal" tabindex="-1" aria-labelledby="editBAEvaluasiAwalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-gradient-primary text-white">
+                <h5 class="modal-title" id="editBAEvaluasiAwalLabel">
+                    <i class="fas fa-edit mr-2"></i> Edit Dokumen BA Evaluasi Awal Kesiapan OP
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body bg-light">
+                <form id="formEditBAEvaluasiAwal" action="{{ route('update-upload-ba-evaluasi-awal', $jaringan->id) }}"
+                    method="POST" enctype="multipart/form-data">
+                    @csrf
+                    @method('PUT')
+                    <div class="form-group">
+                        <label for="dokumen_ba_evaluasi_awal" class="font-weight-bold">Dokumen BA Evaluasi Awal</label>
+                        <input type="file" accept="application/pdf" class="form-control-file border rounded p-2"
+                            id="dokumen_ba_evaluasi_awal" name="dokumen_ba_evaluasi_awal">
+                        <small class="form-text text-muted"><i>Kosongkan jika tidak mengubah file</i></small>
+                    </div>
+                    <div class="text-right">
+                        <button type="submit" class="btn bg-gradient-success text-white btn-sm">
+                            <i class="fas fa-paper-plane mr-2"></i> Submit
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -1661,6 +1756,50 @@
                 },
                 error: function (xhr, status, error) {
                     console.log("Error:", error);
+                    alert('Gagal memperbarui dokumen. Silakan coba lagi.');
+                }
+            });
+        });
+
+        //-----FORM PENYUSUSNA BA Evaluasi AWAL KESIPAN OP---------//
+        $('#formUploadBAEvaluasiAwal').on('submit', function (e) {
+            e.preventDefault();
+            
+            var formData = new FormData(this);
+
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    alert('Dokumen berhasil diupload.');
+                    location.reload(); // Refresh halaman untuk memperbarui status
+                },
+                error: function (xhr) {
+                    alert('Gagal mengupload dokumen. Silakan coba lagi.');
+                }
+            });
+        });
+
+        //-----FORM EDIT BA Evaluasi Awal KESIPAN OP---------//
+        $('#formEditBAEvaluasiAwal').on('submit', function (e) {
+            e.preventDefault();
+            
+            var formData = new FormData(this);
+
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    alert('Dokumen berhasil diperbarui.');
+                    location.reload(); // Refresh halaman untuk memperbarui status
+                },
+                error: function (xhr) {
                     alert('Gagal memperbarui dokumen. Silakan coba lagi.');
                 }
             });

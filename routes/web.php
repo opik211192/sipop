@@ -119,7 +119,15 @@ Route::middleware(['auth'])->group(function () {
   //blanko3d
   Route::get('/inventarisasi-awal-kesiapan-konservasi/{jaringan}', [InventarisasiDataEvaluasiAwal::class, 'kesiapanKonservasi'])->name('inventarisasi-awal-kesiapan-konservasi');
   Route::put('/inventarisasi-awal-kesiapan-konservasi/{jaringan}', [InventarisasiDataEvaluasiAwal::class, 'kesiapanKonservasiProses'])->name('inventarisasi-awal-kesiapan-konservasi-proses');
+
+  //penyusunan BA hasil evaluasi Awal Kesiapan OP
+  //upload file
+  Route::post('/jaringan-atab/{jaringan}/upload-ba-evaluasi-awal', [JaringanController::class, 'uploadBAEvaluasiAwal'])->name('upload-ba-evaluasi-awal');
+  Route::put('/jaringan-atab/{jaringan}/upload-ba-evaluasi-awal', [JaringanController::class, 'updateUploadBAEvaluasiAwal'])->name('update-upload-ba-evaluasi-awal');
+
 });
+
+
 
 
 Route::get('/peta', [PetaJaringan::class, 'index'])->name('peta');
