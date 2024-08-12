@@ -93,7 +93,7 @@
                         @if($jaringan->tahapan == 'Serah Terima Hasil OP')
                         <span class="badge bg-success">{{ $jaringan->tahapan }}</span>
                         @else
-                        <span class="badge bg-warning">{{ $jaringan->tahapan }}</span>
+                        <span class="badge bg-info">{{ $jaringan->tahapan }}</span>
                         @endif
                         @else
                         <span class="badge bg-danger">Belum Tahapan</span>

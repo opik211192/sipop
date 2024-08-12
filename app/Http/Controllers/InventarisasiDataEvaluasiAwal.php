@@ -76,6 +76,9 @@ public function prasaranaAirTanahProses(Request $request, Jaringan $jaringan)
         }
     }
 
+    // Panggil fungsi untuk memeriksa apakah semua blanko sudah terisi
+    $this->checkAllBlankosFilled($jaringan);
+
     return redirect()->back()->with('success', 'Data evaluasi blanko 1A berhasil disimpan.');
 }
 
@@ -133,6 +136,9 @@ public function prasaranaAirTanahProses(Request $request, Jaringan $jaringan)
             }
         }
 
+        // Panggil fungsi untuk memeriksa apakah semua blanko sudah terisi
+        $this->checkAllBlankosFilled($jaringan);
+
         return redirect()->back()->with('success', 'Data evaluasi blanko 1B berhasil disimpan.');
     }
 
@@ -189,6 +195,9 @@ public function prasaranaAirTanahProses(Request $request, Jaringan $jaringan)
                 $evaluasiBlanko->save();
             }
         }
+
+        // Panggil fungsi untuk memeriksa apakah semua blanko sudah terisi
+        $this->checkAllBlankosFilled($jaringan);
 
         return redirect()->back()->with('success', 'Data evaluasi blanko 1C berhasil disimpan.');
     }
@@ -272,37 +281,44 @@ public function prasaranaAirTanahProses(Request $request, Jaringan $jaringan)
 
     public function dataInformasiNonFisikProses(Request $request, Jaringan $jaringan)
     {
-        $request->validate([
-            'items.*.ada_tidak_ada' => 'required|boolean',
-            'items.*.bobot' => 'required|numeric|min:0|max:100',
-            'items.*.keterangan' => 'nullable|string|max:255',
-            'hasil_ada_tidak_ada' => 'required|numeric|min:0|max:100',
-        ]);
+        // $request->validate([
+        //     'items.*.ada_tidak_ada' => 'nullable|boolean',
+        //     'items.*.bobot' => 'nullable|numeric|min:0|max:100',
+        //     'items.*.keterangan' => 'nullable|string|max:255',
+        //     'hasil_ada_tidak_ada' => 'nullable|numeric|min:0|max:100',
+        // ]);
+
+        //dd($request);
 
         $tahapan = $jaringan->tahapans()->where('nama_tahapan', 'Evaluasi Awal Kesiapan')->first();
 
+        
         if (!$tahapan) {
             return response()->json(['error' => 'Tahapan Evaluasi Awal Kesiapan tidak ditemukan.'], 404);
         }
-
+        
         $evaluasiBlanko = $tahapan->evaluasiBlankos()->where('jenis_blanko', 'Blanko 2')->first();
 
-        if (!$evaluasiBlanko) {
-            return response()->json(['error' => 'Evaluasi Blanko 2 tidak ditemukan.'], 404);
-        }
+        // if (!$evaluasiBlanko) {
+        //     return response()->json(['error' => 'Evaluasi Blanko 2 tidak ditemukan.'], 404);
+        // }
 
-        foreach ($request->items as $itemId => $itemData) {
-            $item = ItemBlanko::findOrFail($itemId);
-            $item->ada_tidak_ada = $itemData['ada_tidak_ada'];
-            $item->bobot = $itemData['bobot'];
-            $item->keterangan = $itemData['keterangan'];
-            $item->save();
-        }
+        // // foreach ($request->items as $itemId => $itemData) {
+        // //     $item = ItemBlanko::findOrFail($itemId);
+        // //     $item->ada_tidak_ada = $itemData['ada_tidak_ada'];
+        // //     $item->bobot = $itemData['bobot'];
+        // //     $item->keterangan = $itemData['keterangan'];
+        // //     $item->save();
+        // // }
 
         $evaluasiBlanko->hasil_ada_tidak_ada = $request->input('hasil_ada_tidak_ada');
         $evaluasiBlanko->save();
 
-        return response()->json(['success' => true, 'message' => 'Data berhasil disimpan.']);
+        //  // Panggil fungsi untuk memeriksa apakah semua blanko sudah terisi
+        $this->checkAllBlankosFilled($jaringan);
+
+        return redirect()->back()->with('success', 'Data evaluasi blanko 2 berhasil disimpan.');
+
     }
 
     public function uploadBlanko2(Request $request, $itemId)
@@ -325,6 +341,7 @@ public function prasaranaAirTanahProses(Request $request, Jaringan $jaringan)
     $itemBlanko->ada_tidak_ada = 1; // Set to 1 (Ada)
     $itemBlanko->keterangan = 'Dokumen tersedia';
     $itemBlanko->save();
+    
 
     return response()->json([
         'success' => true,
@@ -418,6 +435,9 @@ public function prasaranaAirTanahProses(Request $request, Jaringan $jaringan)
             }
         }
 
+        // Panggil fungsi untuk memeriksa apakah semua blanko sudah terisi
+        $this->checkAllBlankosFilled($jaringan);
+
         return redirect()->back()->with('success', 'Data evaluasi blanko 3A berhasil disimpan.');
     }
 
@@ -473,6 +493,9 @@ public function prasaranaAirTanahProses(Request $request, Jaringan $jaringan)
                 $evaluasiBlanko->save();
             }
         }
+
+        // Panggil fungsi untuk memeriksa apakah semua blanko sudah terisi
+        $this->checkAllBlankosFilled($jaringan);
 
         return redirect()->back()->with('success', 'Data evaluasi blanko 3B berhasil disimpan.');
 
@@ -530,6 +553,9 @@ public function prasaranaAirTanahProses(Request $request, Jaringan $jaringan)
             }
         }
 
+        // Panggil fungsi untuk memeriksa apakah semua blanko sudah terisi
+        $this->checkAllBlankosFilled($jaringan);
+
         return redirect()->back()->with('success', 'Data evaluasi blanko 3C berhasil disimpan.');
     }
 
@@ -585,6 +611,19 @@ public function prasaranaAirTanahProses(Request $request, Jaringan $jaringan)
             }
         }
 
+        // Panggil fungsi untuk memeriksa apakah semua blanko sudah terisi
+        $this->checkAllBlankosFilled($jaringan);
+
          return redirect()->back()->with('success', 'Data evaluasi blanko 3D berhasil disimpan.');
     }
+
+
+    //cek blanko untuk status tahapan
+    private function checkAllBlankosFilled(Jaringan $jaringan)
+    {
+        $jaringan->update(['tahapan' => 'Evaluasi Awal Kesiapan OP']);
+    }
+
+
+
 }

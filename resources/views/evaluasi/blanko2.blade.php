@@ -29,6 +29,13 @@
 </head>
 
 <body>
+    @if(session('success'))
+    <script>
+        alert("{{ session('success') }}");
+            window.close();
+            window.opener.location.reload();
+    </script>
+    @endif
     <div class="container-fluid">
         <div class="d-flex justify-content-between mt-2 mb-2 align-items-center">
             <h1>Blanko 2</h1>
@@ -361,6 +368,7 @@
 
             <div class="form-group">
                 <div class="form-group">
+                    <button type="submit" class="btn btn-primary mt-3 mb-2">Simpan</button>
                     <button type="button" class="btn btn-secondary mt-3 mb-2" onclick="window.close()">Kembali</button>
                 </div>
             </div>

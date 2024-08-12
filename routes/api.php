@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\JaringanController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -17,3 +18,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+//data penyususan BA Hasil Evaluasi Awal Kesiapan OP
+Route::get('/ba-awal-kesiapan-op/{id}', [JaringanController::class, 'apiPenyusunanBaEvaluasiAwal'])->name('api.ba-awal-kesiapan-op');
+

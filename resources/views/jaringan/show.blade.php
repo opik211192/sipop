@@ -686,7 +686,14 @@
                         <span class="font-weight-bold text-dark">Penyusunan BA Hasil Evaluasi Awal Kesiapan OP</span>
                     </td>
                     <td class="bg-white"></td>
-                    <td class="bg-white"></td>
+                    <td class="bg-white">
+                        <button class="btn btn-sm bg-gradient-primary" data-toggle="modal"
+                            data-target="#modal-ba-evaluasi-{{ $jaringan->id }}">
+                            <span class="fas fa-file-signature" title="Lihat Penyusunan BA Hasil Evaluasi Awal Kesiapan OP"></span>
+                        </button>
+
+                        <button class="btn btn-sm bg-gradient-primary" id="upload-ba-evaluasi-awal"><span class="fas fa-upload" title="Upload Penyusunan BA Hasil Evaluasi Awal Kesiapan OP"></span></button>
+                    </td>
                 </tr>
                 <tr>
                     <td class="bg-white">
@@ -1231,36 +1238,217 @@
         </div>
     </div>
 </div>
-
-<!-- Modal Penysunan BA Hasil Evaluasi Awal Kesiapan OP -->
-<div class="modal fade" id="BA-evaluasi-awal" tabindex="-1" aria-labelledby="BAEvaluasiAwalModalLabel"
+{{-- @include('modal.ba-awal') --}}
+{{-- modal penyusuan BA Evaluasi Awal Kesiapan OP --}}
+<div class="modal fade" id="modal-ba-evaluasi-{{ $jaringan->id }}" tabindex="-1" aria-labelledby="modalBAEvaluasiLabel"
     aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="BAEvaluasiAwalModalLabel">Penyusunan BA Hasil Evaluasi Awal Kesiapan OP</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-gradient-primary text-white">
+                <h5 class="modal-title" id="modalBAEvaluasiLabel">
+                    <i class="fas fa-info-circle mr-2"></i> Penyusunan BA Hasil Evaluasi Awal Kesiapan OP: <strong>{{$jaringan->nama }}</strong>
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">
-                <div class="container">
-                    <!-- Upload form BA evaluasi awal -->
-                    <form id="formBAEvaluasiAwal" action="" method="POST" enctype="multipart/form-data">
-                        @csrf
-                        <div class="form-group">
-                            <label for="penyusunan_ba_hasil_evaluasi_awal">Penyusunan BA Hasil Evaluasi Awal Kesiapan
-                                OP</label>
-                            <input type="file" accept="application/pdf" class="form-control"
-                                id="penyusunan_ba_hasil_evaluasi_awal" name="penyusunan_ba_hasil_evaluasi_awal">
+            <div class="modal-body bg-light">
+                <div class="row">
+                    <div class="col-md-12">
+                        <table class="table table-bordered">
+                            <thead class="bg-gradient-primary text-white table-sm text-center">
+                                <tr>
+                                    <th>No.</th>
+                                    <th>Kriteria dan Rekomendasi</th>
+                                    <th class="w-25">SIAP OP (Dengan Catatan)</th>
+                                    <th class="w-25">SIAP OP</th>
+                                    <th class="w-25">Hasil</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="bg-light">
+                                    <td>1</td>
+                                    <td class="text-bold">KESIAPAN DATA DAN INFORMASI PEKERJAAN FISIK</td>
+                                    <td>
+                                        <ul>
+                                            <li>Keberadaannya: 100%</li>
+                                            <li>Kondisi: > 70%</li>
+                                            <li>Fungsi: > 70%</li>
+                                        </ul>
+                                    </td>
+                                    <td>
+                                        <ul>
+                                            <li>Keberadaannya: > 80%</li>
+                                            <li>Kondisi: > 80%</li>
+                                            <li>Fungsi: > 80%</li>
+                                        </ul>
+                                    </td>
+                                    <td>
+                                        <ul>
+                                            {{-- ini blanko 1 --}}
+                                            <li class="" id="hasil-ada-tidak-ada-1">Keberadaannya:</li>
+                                            <li class="" id="hasil-kondisi-1">Kondisi:</li>
+                                            <li class="" id="hasil-fungsi-1">Fungsi:</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <tr class="bg-light">
+                                    <td>2</td>
+                                    <td class="text-bold">KESIAPAN DATA DAN INFORMASI PEKERJAAN NON-FISIK</td>
+                                    <td>
+                                        <ul>
+                                            <li>Keberadaannya: > 70%</li>
+                                            <li>Kondisi: > 80%</li>
+                                            <li>Fungsi: > 80%</li>
+                                        </ul>
+                                    </td>
+                                    <td>
+                                        <ul>
+                                            <li>Keberadaannya: > 80%</li>
+                                            <li>Kondisi: > 80%</li>
+                                            <li>Fungsi: > 80%</li>
+                                        </ul>
+                                    </td>
+                                    <td>
+                                        <ul>
+                                            <li id="hasil-ada-tidak-ada-2">Keberadaannya:</li>
+                                            <li>Kondisi: -</li>
+                                            <li>Fungsi: -</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <tr class="bg-light">
+                                    <td rowspan="6">3</td>
+                                    <td class="text-bold border-right-0">KESIAPAN SARANA DAN PRASARANA PENDUKUNG
+                                        PENGELOLA AIR TANAH DAN AIR BAKU</td>
+                                    <td colspan="3"></td>
+                                </tr>
+                                <tr class="bg-light">
+                                    <td class="text-bold">a. SARANA PENUNJANG OP TERPENUHI</td>
+                                    <td>
+                                        <ul>
+                                            <li>Keberadaannya: > 100%</li>
+                                            <li>Kondisi: > 80%</li>
+                                            <li>Fungsi: > 80%</li>
+                                        </ul>
+                                    </td>
+                                    <td>
+                                        <ul>
+                                            <li>Keberadaannya: > 80%</li>
+                                            <li>Kondisi: > 70%</li>
+                                            <li>Fungsi: > 70%</li>
+                                           
+                                        </ul>
+                                    </td>
+                                    <td>
+                                        <ul>
+                                            <li id="hasil-ada-tidak-ada-3A">Keberadaannya:</li>
+                                            <li>Kondisi: -</li>
+                                            <li>Fungsi: -</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <tr class="bg-light">
+                                    <td class="text-bold">b. KELEMBAGAAN DAN SDM TERPENUHI</td>
+                                    <td>
+                                        <ul>
+                                            <li>Keberadaannya: > 80%</li>
+                                            <li>Kondisi: > 80%</li>
+                                            <li>Fungsi: > 80%</li>
+                                        </ul>
+                                    </td>
+                                    <td>
+                                        <ul>
+                                            <li>Keberadaannya: > 60%</li>
+                                            <li>Kondisi: > 60%</li>
+                                            <li>Fungsi: > 60%</li>
+                                        </ul>
+                                    </td>
+                                    <td>
+                                        <ul>
+                                            <li id="hasil-ada-tidak-ada-3B">Keberadaannya:</li>
+                                            <li>Kondisi: -</li>
+                                            <li>Fungsi: -</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <tr class="bg-light">
+                                    <td class="text-bold">c. MANAJEMEN TERPENUHI</td>
+                                    <td>
+                                        <ul>
+                                            <li>Keberadaannya: > 80%</li>
+                                            <li>Kondisi: > 80%</li>
+                                            <li>Fungsi: > 80%</li>
+                                        </ul>
+                                    </td>
+                                    <td>
+                                        <ul>
+                                            <li>Keberadaannya: > 60%</li>
+                                            <li>Kondisi: > 60%</li>
+                                            <li>Fungsi: > 60%</li>     
+                                        </ul>
+                                    </td>
+                                    <td>
+                                        <ul>
+                                            <li id="hasil-ada-tidak-ada-3C">Keberadaannya:</li>
+                                            <li>Kondisi: -</li>
+                                            <li>Fungsi: -</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <tr class="bg-light">
+                                    <td class="text-bold">d. KONSERVASI TERPENUHI</td>
+                                    <td>
+                                        <ul>
+                                            <li>Keberadaannya: > 80%</li>
+                                            <li>Kondisi: > 80%</li>
+                                            <li>Fungsi: > 80%</li>
+                                        </ul>
+                                    </td>
+                                    <td>
+                                        <ul>
+                                            <li>Keberadaannya: > 60%</li>
+                                            <li>Kondisi: > 60%</li>
+                                            <li>Fungsi: > 60%</li>
+
+                                        </ul>
+                                    </td>
+                                    <td>
+                                        <ul>
+                                            <li id="hasil-ada-tidak-ada-3D">Keberadaannya:</li>
+                                            <li>Kondisi: -</li>
+                                            <li>Fungsi: -</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <!-- Alerts for recommendations -->
+                        <div class="mt-5">
+                            <div id="recommendation-success" class="d-none">
+                                Rekomendasi: SIAP OP
+                            </div>
+                            <div id="recommendation-warning" class="d-none">
+                                Rekomendasi: SIAP OP dengan Catatan
+                            </div>
+                            <div id="recommendation-failure" class="d-none">
+                                Rekomendasi: Belum SIAP OP
+                            </div>
                         </div>
-                        <button type="submit" class="btn btn-secondary btn-sm">Submit</button>
-                    </form>
+                    
+                        {{-- <p>Upload BA Hasil Evaluasi Awal Kesiapan OP</p> --}}
+                    </div>
+                </div>
+                <div class="text-right mt-5">
+                    <button type="button" class="btn bg-gradient-danger text-white btn-sm" data-dismiss="modal">
+                        <i class="fas fa-times mr-2"></i> Close
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 <a href="{{ route('jaringan-atab.index') }}"
     class="btn bg-gradient-warning btn-sm mb-3 d-flex align-items-center justify-content-center"
     style="border-radius: 30px; padding: 8px 15px; font-weight: bold; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); transition: transform 0.2s ease;">
@@ -1281,7 +1469,7 @@
             $('button').prop('disabled', true);
 
             // Open the new window
-            newWindow = window.open(url, '_blank', 'width=900,height=600,resizable=no');
+            newWindow = window.open(url, '_blank', 'width=1000,height=600,resizable=no');
 
             // Check if the window was blocked
             if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
@@ -1564,6 +1752,82 @@
             $(this).prev().find('.fas').removeClass('fa-chevron-down').addClass('fa-chevron-up');
         }).on('hide.bs.collapse', function () {
             $(this).prev().find('.fas').removeClass('fa-chevron-up').addClass('fa-chevron-down');
+        });
+    });
+</script>
+
+{{-- ini untuk penyusunan BA Evaluasi Awal Kesiapan OP --}}
+<script>
+    $(document).ready(function () {
+        $('#modal-ba-evaluasi-{{ $jaringan->id }}').on('shown.bs.modal', function () {
+            // Kosongkan elemen-elemen yang akan diisi ulang
+            $('#hasil-ada-tidak-ada-1 span').remove();
+            $('#hasil-kondisi-1 span').remove();
+            $('#hasil-fungsi-1 span').remove();
+            $('#hasil-ada-tidak-ada-2 span').remove();
+            $('#hasil-ada-tidak-ada-3A span').remove();
+            $('#hasil-ada-tidak-ada-3B span').remove();
+            $('#hasil-ada-tidak-ada-3C span').remove();
+            $('#hasil-ada-tidak-ada-3D span').remove();
+
+            $.ajax({
+                url: "{{ route('api.ba-awal-kesiapan-op', $jaringan) }}",
+                type: "GET",
+                success: function (data) {
+                    console.log(data);
+                    
+                    // Tampilkan hasil pada Blanko 1 dengan badge yang lebih besar dan informatif
+                    $('#hasil-ada-tidak-ada-1').append(`<span class="badge badge-secondary ml-2" style="font-size: 15px;" title="Hasil Keberadaan">${data.blanko1.hasil_ada_tidak_ada || 0}%</span>`);
+                    $('#hasil-kondisi-1').append(`<span class="badge badge-secondary ml-2" style="font-size: 15px;" title="Hasil Kondisi">${data.blanko1.hasil_kondisi || 0}%</span>`);
+                    $('#hasil-fungsi-1').append(`<span class="badge badge-secondary ml-2" style="font-size: 15px;" title="Hasil Fungsi">${data.blanko1.hasil_fungsi || 0}%</span>`);
+
+                    $('#hasil-ada-tidak-ada-2').append(`<span class="badge badge-secondary ml-2" style="font-size: 15px;" title="Hasil Keberadaan">${data.blanko2.hasil_ada_tidak_ada || 0}%</span>`);
+
+                    $('#hasil-ada-tidak-ada-3A').append(`<span class="badge badge-secondary ml-2" style="font-size: 15px;" title="Hasil Keberadaan">${data.blanko3.blanko3A.hasil_ada_tidak_ada || 0}%</span>`);
+                    $('#hasil-ada-tidak-ada-3B').append(`<span class="badge badge-secondary ml-2" style="font-size: 15px;" title="Hasil Keberadaan">${data.blanko3.blanko3B.hasil_ada_tidak_ada || 0}%</span>`);
+                    $('#hasil-ada-tidak-ada-3C').append(`<span class="badge badge-secondary ml-2" style="font-size: 15px;" title="Hasil Keberadaan">${data.blanko3.blanko3C.hasil_ada_tidak_ada || 0}%</span>`);
+                    $('#hasil-ada-tidak-ada-3D').append(`<span class="badge badge-secondary ml-2" style="font-size: 15px;" title="Hasil Keberadaan">${data.blanko3.blanko3D.hasil_ada_tidak_ada || 0}%</span>`);
+
+                    // Tampilkan rekomendasi
+                    if (data.recommendation === 'SIAP OP') {
+                        $('#recommendation-success')
+                            .removeClass('d-none')
+                            .show()
+                            .css({
+                                'background-color': '#28a745', // hijau
+                                'color': '#ffffff', // teks putih
+                                'padding': '10px', // padding
+                                'border-radius': '5px', // border radius
+                                'font-weight': 'bold', // teks tebal
+                                'text-align': 'center' // teks tengah
+                            });
+                    } else if (data.recommendation === 'SIAP OP dengan Catatan') {
+                        $('#recommendation-warning')
+                            .removeClass('d-none')
+                            .show()
+                            .css({
+                                'background-color': '#ffc107', // kuning
+                                'color': '#000000', // teks hitam
+                                'padding': '10px', // padding
+                                'border-radius': '5px', // border radius
+                                'font-weight': 'bold', // teks tebal
+                                'text-align': 'center' // teks tengah
+                            });
+                    } else if (data.recommendation === 'Belum SIAP OP') {
+                        $('#recommendation-failure')
+                            .removeClass('d-none')
+                            .show()
+                            .css({
+                                'background-color': '#dc3545', // merah
+                                'color': '#ffffff', // teks putih
+                                'padding': '10px', // padding
+                                'border-radius': '5px', // border radius
+                                'font-weight': 'bold', // teks tebal
+                                'text-align': 'center' // teks tengah
+                            });
+                    }
+                }
+            });
         });
     });
 </script>

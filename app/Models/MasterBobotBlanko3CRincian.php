@@ -10,7 +10,7 @@ class MasterBobotBlanko3CRincian extends Model
     use HasFactory;
 
     protected $guarded = [];
-     protected $table = 'master_bobot_blanko_3c_rincian';
+    protected $table = 'master_bobot_blanko_3c_rincian';
 
     public function masterBobotBlanko3C()
     {
