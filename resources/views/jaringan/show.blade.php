@@ -282,6 +282,10 @@
                                                     role="tab" aria-controls="v-tabs-messages" aria-selected="false">
                                                     <i class="fas fa-cogs mr-2"></i> Sarana dan Prasarana Pendukung
                                                 </a>
+                                                <a class="nav-link bg-light text-dark d-flex align-items-center" id="v-tabs-hasil-evaluasi-tab" data-toggle="pill"
+                                                    href="#v-tabs-hasil-evaluasi" role="tab" aria-controls="v-tabs-hasil-evaluasi" aria-selected="false">
+                                                    <i class="fas fa-check-circle mr-2"></i> Hasil Evaluasi Awal Kesiapan OP
+                                                </a>
                                             </div>
                                         </div>
                                         <div class="col-md-8">
@@ -672,6 +676,30 @@
                                                         </tbody>
                                                     </table>
                                                 </div>
+                                                <div class="tab-pane fade" id="v-tabs-hasil-evaluasi" role="tabpanel" aria-labelledby="v-tabs-hasil-evaluasi-tab">
+                                                    <table class="table table-sm">
+                                                        <thead class="bg-gradient-primary text-white">
+                                                            <tr>
+                                                                <th class="text-center border-bottom border-light">
+                                                                    <i class="fas fa-check-circle mr-2"></i> Hasil Evaluasi Awal Kesiapan OP
+                                                                </th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr>
+                                                                <td>
+                                                                    <div class="d-flex justify-content-center">
+                                                                        <!-- Tombol untuk melihat modal BA Evaluasi Awal -->
+                                                                            <button class="btn btn-sm bg-gradient-success" data-toggle="modal" data-target="#modal-ba-evaluasi-{{ $jaringan->id }}">
+                                                                                <span class="fas fa-file-signature" title="Lihat Penyusunan BA Hasil Evaluasi Awal Kesiapan OP"></span> Lihat Hasil Evalusai Kesiapan OP
+                                                                            </button>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                            
+                                                        </tbody>
+                                                    </table>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -706,6 +734,10 @@
             
                 <td class="bg-white">
                     @if($dokumenEvaluasiAwal)
+                    {{-- Tombol untuk membuka modal show --}}
+                    <button class="btn btn-sm bg-gradient-primary" data-toggle="modal" data-target="#show-ba-evaluasi-awal">
+                        <span class="fas fa-eye" title="Lihat Dokumen Penyusunan BA Hasil Evaluasi Awal Kesiapan OP"></span>
+                    </button>
                     <!-- Tombol untuk membuka modal edit BA Evaluasi Awal -->
                     <button class="btn btn-sm bg-gradient-primary" data-toggle="modal" data-target="#edit-ba-evaluasi-awal">
                         <span class="fas fa-edit" title="Edit Penyusunan BA Hasil Evaluasi Awal Kesiapan OP"></span>
@@ -716,11 +748,6 @@
                         <span class="fas fa-upload" title="Upload Penyusunan BA Hasil Evaluasi Awal Kesiapan OP"></span>
                     </button>
                     @endif
-                    <!-- Tombol untuk melihat modal BA Evaluasi Awal -->
-                    <button class="btn btn-sm bg-gradient-primary" data-toggle="modal"
-                        data-target="#modal-ba-evaluasi-{{ $jaringan->id }}">
-                        <span class="fas fa-file-signature" title="Lihat Penyusunan BA Hasil Evaluasi Awal Kesiapan OP"></span>
-                    </button>
                 </td>
             </tr>
                 <tr>
@@ -772,66 +799,147 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td class="bg-white">
-                        <i class="fas fa-file-contract text-info mr-2"></i>
-                        <span class="font-weight-bold text-dark">Kontrak</span>
-                    </td>
-                    <td class="text-center bg-white">
-                        <button class="btn btn-sm bg-gradient-primary" id="kontrak-button" data-toggle="modal"
-                            data-target="#dokumen-kontrak">
-                            <span class="fas fa-eye" title="Lihat Dokumen"></span>
-                        </button>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="bg-white">
-                        <i class="fas fa-drafting-compass text-info mr-2"></i>
-                        <span class="font-weight-bold text-dark">As Build Drawing</span>
-                    </td>
-                    <td class="text-center bg-white">
-                        <button class="btn btn-sm bg-gradient-primary" id="as-build-drawing-button" data-toggle="modal"
-                            data-target="#as-build-drawing">
-                            <span class="fas fa-eye" title="Lihat Dokumen"></span>
-                        </button>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="bg-white">
-                        <i class="fas fa-certificate text-info mr-2"></i>
-                        <span class="font-weight-bold text-dark">PHO/FHO</span>
-                    </td>
-                    <td class="text-center bg-white">
-                        <button class="btn btn-sm bg-gradient-primary" id="pho-fho-button" data-toggle="modal"
-                            data-target="#pho-fho">
-                            <span class="fas fa-eye" title="Lihat Dokumen"></span>
-                        </button>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="bg-white">
-                        <i class="fas fa-book text-info mr-2"></i>
-                        <span class="font-weight-bold text-dark">Manual OP</span>
-                    </td>
-                    <td class="text-center bg-white">
-                        <button class="btn btn-sm bg-gradient-primary" id="manual-op-button" data-toggle="modal"
-                            data-target="#manual-op">
-                            <span class="fas fa-eye" title="Lihat Dokumen"></span>
-                        </button>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="bg-white">
-                        <i class="fas fa-camera text-info mr-2"></i>
-                        <span class="font-weight-bold text-dark">Dokumentasi</span>
-                    </td>
-                    <td class="text-center bg-white">
-                        <button class="btn btn-sm bg-gradient-primary" id="dokumentasi-button" data-toggle="modal"
-                            data-target="#dokumentasi">
-                            <span class="fas fa-eye" title="Lihat Dokumen"></span>
-                        </button>
-                    </td>
-                </tr>
+             <tr>
+               @php
+                    $dokumenKontrak = null;
+                    $dokumenAsBuildDrawing = null;
+                    $dokumenPHO = null;
+                    $dokumenManualOP = null;
+                    $dokumenDokumentasi = null;
+
+                    // Cari tahapan yang sesuai
+                    $tahapanEvaluasiAwal = $jaringan->tahapans->where('nama_tahapan', 'Evaluasi Awal Kesiapan')->first();
+
+                    if ($tahapanEvaluasiAwal) {
+                        // Cari evaluasi blanko2 yang sesuai
+                        $evaluasiBlanko2 = $tahapanEvaluasiAwal->evaluasiBlankos->where('jenis_blanko', 'Blanko 2')->first();
+
+                        if ($evaluasiBlanko2) {
+                            // Kontrak
+                            $itemKontrak = \DB::table('item_blankos')
+                                ->where('evaluasi_blanko_id', $evaluasiBlanko2->id)
+                                ->where('nama_item', 'Kontrak')
+                                ->first();
+
+                            if ($itemKontrak) {
+                                $dokumenKontrak = \DB::table('blanko2_uploads')
+                                    ->where('item_blanko_id', $itemKontrak->id)
+                                    ->select('id', 'nama_file')
+                                    ->first();
+                            }
+
+                            // As Build Drawing
+                            $itemAsBuildDrawing = \DB::table('item_blankos')
+                                ->where('evaluasi_blanko_id', $evaluasiBlanko2->id)
+                                ->where('nama_item', 'As Build Drawing')
+                                ->first();
+
+                            if ($itemAsBuildDrawing) {
+                                $dokumenAsBuildDrawing = \DB::table('blanko2_uploads')
+                                    ->where('item_blanko_id', $itemAsBuildDrawing->id)
+                                    ->select('id', 'nama_file')
+                                    ->first();
+                            }
+
+                            // PHO
+                            $itemPHO = \DB::table('item_blankos')
+                                ->where('evaluasi_blanko_id', $evaluasiBlanko2->id)
+                                ->where('nama_item', 'PHO')
+                                ->first();
+
+                            if ($itemPHO) {
+                                $dokumenPHO = \DB::table('blanko2_uploads')
+                                    ->where('item_blanko_id', $itemPHO->id)
+                                    ->select('id', 'nama_file')
+                                    ->first();
+                            }
+
+                            // Manual OP
+                            $itemManualOP = \DB::table('item_blankos')
+                                ->where('evaluasi_blanko_id', $evaluasiBlanko2->id)
+                                ->where('nama_item', 'Manual OP')
+                                ->first();
+
+                            if ($itemManualOP) {
+                                $dokumenManualOP = \DB::table('blanko2_uploads')
+                                    ->where('item_blanko_id', $itemManualOP->id)
+                                    ->select('id', 'nama_file')
+                                    ->first();
+                            }
+
+                            // Dokumentasi
+                            $itemDokumentasi = \DB::table('item_blankos')
+                                ->where('evaluasi_blanko_id', $evaluasiBlanko2->id)
+                                ->where('nama_item', 'Dokumentasi')
+                                ->first();
+
+                            if ($itemDokumentasi) {
+                                $dokumenDokumentasi = \DB::table('blanko2_uploads')
+                                    ->where('item_blanko_id', $itemDokumentasi->id)
+                                    ->select('id', 'nama_file')
+                                    ->first();
+                            }
+                        }
+                    }
+                @endphp
+
+                <td class="bg-white">
+                    <i class="fas fa-file-contract text-info mr-2"></i>
+                    <span class="font-weight-bold text-dark">Kontrak</span>
+                </td>
+                <td class="text-center bg-white">
+                    <button class="btn btn-sm bg-gradient-primary" data-toggle="modal" data-target="#kontrak-show">
+                        <span class="fas fa-file-pdf" title="Lihat Dokumen"></span>
+                    </button>
+                </td>
+            </tr>
+               <tr>
+                <td class="bg-white">
+                    <i class="fas fa-drafting-compass text-info mr-2"></i>
+                    <span class="font-weight-bold text-dark">As Build Drawing</span>
+                </td>
+                <td class="text-center bg-white">
+                    <button class="btn btn-sm bg-gradient-primary" id="as-build-drawing-button" data-toggle="modal"
+                        data-target="#as-build-drawing-show">
+                        <span class="fas fa-file-pdf" title="Lihat Dokumen"></span>
+                    </button>
+                </td>
+            </tr>
+            <tr>
+                <td class="bg-white">
+                    <i class="fas fa-certificate text-info mr-2"></i>
+                    <span class="font-weight-bold text-dark">PHO</span>
+                </td>
+                <td class="text-center bg-white">
+                    <button class="btn btn-sm bg-gradient-primary" id="pho-button" data-toggle="modal" data-target="#pho-show">
+                        <span class="fas fa-file-pdf" title="Lihat Dokumen"></span>
+                    </button>
+                </td>
+            </tr>
+            <tr>
+                <td class="bg-white">
+                    <i class="fas fa-book text-info mr-2"></i>
+                    <span class="font-weight-bold text-dark">Manual OP</span>
+                </td>
+                <td class="text-center bg-white">
+                    <button class="btn btn-sm bg-gradient-primary" id="manual-op-button" data-toggle="modal"
+                        data-target="#manual-op-show">
+                        <span class="fas fa-file-pdf" title="Lihat Dokumen"></span>
+                    </button>
+                </td>
+            </tr>
+            <tr>
+                <td class="bg-white">
+                    <i class="fas fa-camera text-info mr-2"></i>
+                    <span class="font-weight-bold text-dark">Dokumentasi</span>
+                </td>
+                <td class="text-center bg-white">
+                    <button class="btn btn-sm bg-gradient-primary" id="dokumentasi-button" data-toggle="modal"
+                        data-target="#dokumentasi-show">
+                        <span class="fas fa-file-image" title="Lihat Dokumen"></span>
+                    </button>
+                </td>
+            </tr>
             </tbody>
         </table>
     </div>
@@ -1151,7 +1259,7 @@
                 <div class="container text-center">
                     @if ($dokumenSosialisasi)
                     <a href="{{ asset('storage/' . substr($dokumenSosialisasi->path_dokumen, 7)) }}" target="_blank"
-                        class="btn bg-gradient-info text-white btn-sm">
+                        class="btn bg-gradient-success text-white btn-sm">
                         <i class="fas fa-file-pdf mr-2"></i> Lihat file Sosialisasi dan Koordinasi
                     </a>
                     @endif
@@ -1255,7 +1363,7 @@
                 <div class="container text-center">
                     @if($dokumenUjiPengaliran)
                     <a href="{{ asset('storage/' . substr($dokumenUjiPengaliran->path_dokumen, 7)) }}" target="_blank"
-                        class="btn bg-gradient-info text-white btn-sm">
+                        class="btn bg-gradient-success text-white btn-sm">
                         <i class="fas fa-file-pdf mr-2"></i> Lihat Dokumen Uji Pengaliran
                     </a>
                     @else
@@ -1306,7 +1414,7 @@
                                     </td>
                                     <td>
                                         <ul>
-                                            <li>Keberadaannya: > 80%</li>
+                                            <li>Keberadaannya: > 100%</li>
                                             <li>Kondisi: > 80%</li>
                                             <li>Fungsi: > 80%</li>
                                         </ul>
@@ -1326,8 +1434,8 @@
                                     <td>
                                         <ul>
                                             <li>Keberadaannya: > 70%</li>
-                                            <li>Kondisi: > 80%</li>
-                                            <li>Fungsi: > 80%</li>
+                                            <li>Kondisi: > 70%</li>
+                                            <li>Fungsi: > 70%</li>
                                         </ul>
                                     </td>
                                     <td>
@@ -1355,16 +1463,16 @@
                                     <td class="text-bold">a. SARANA PENUNJANG OP TERPENUHI</td>
                                     <td>
                                         <ul>
-                                            <li>Keberadaannya: > 100%</li>
-                                            <li>Kondisi: > 80%</li>
-                                            <li>Fungsi: > 80%</li>
+                                            <li>Keberadaannya: > 80%</li>
+                                            <li>Kondisi: > 70%</li>
+                                            <li>Fungsi: > 70%</li>
                                         </ul>
                                     </td>
                                     <td>
                                         <ul>
-                                            <li>Keberadaannya: > 80%</li>
-                                            <li>Kondisi: > 70%</li>
-                                            <li>Fungsi: > 70%</li>
+                                            <li>Keberadaannya: > 100%</li>
+                                            <li>Kondisi: > 80%</li>
+                                            <li>Fungsi: > 80%</li>
                                            
                                         </ul>
                                     </td>
@@ -1380,16 +1488,16 @@
                                     <td class="text-bold">b. KELEMBAGAAN DAN SDM TERPENUHI</td>
                                     <td>
                                         <ul>
-                                            <li>Keberadaannya: > 80%</li>
-                                            <li>Kondisi: > 80%</li>
-                                            <li>Fungsi: > 80%</li>
+                                            <li>Keberadaannya: > 60%</li>
+                                            <li>Kondisi: > 60%</li>
+                                            <li>Fungsi: > 60%</li>
                                         </ul>
                                     </td>
                                     <td>
                                         <ul>
-                                            <li>Keberadaannya: > 60%</li>
-                                            <li>Kondisi: > 60%</li>
-                                            <li>Fungsi: > 60%</li>
+                                            <li>Keberadaannya: > 80%</li>
+                                            <li>Kondisi: > 80%</li>
+                                            <li>Fungsi: > 80%</li>
                                         </ul>
                                     </td>
                                     <td>
@@ -1404,16 +1512,16 @@
                                     <td class="text-bold">c. MANAJEMEN TERPENUHI</td>
                                     <td>
                                         <ul>
-                                            <li>Keberadaannya: > 80%</li>
-                                            <li>Kondisi: > 80%</li>
-                                            <li>Fungsi: > 80%</li>
+                                            <li>Keberadaannya: > 60%</li>
+                                            <li>Kondisi: > 60%</li>
+                                            <li>Fungsi: > 60%</li>     
                                         </ul>
                                     </td>
                                     <td>
                                         <ul>
-                                            <li>Keberadaannya: > 60%</li>
-                                            <li>Kondisi: > 60%</li>
-                                            <li>Fungsi: > 60%</li>     
+                                            <li>Keberadaannya: > 80%</li>
+                                            <li>Kondisi: > 80%</li>
+                                            <li>Fungsi: > 80%</li>
                                         </ul>
                                     </td>
                                     <td>
@@ -1428,16 +1536,16 @@
                                     <td class="text-bold">d. KONSERVASI TERPENUHI</td>
                                     <td>
                                         <ul>
-                                            <li>Keberadaannya: > 80%</li>
-                                            <li>Kondisi: > 80%</li>
-                                            <li>Fungsi: > 80%</li>
+                                            <li>Keberadaannya: > 60%</li>
+                                            <li>Kondisi: > 60%</li>
+                                            <li>Fungsi: > 60%</li>
                                         </ul>
                                     </td>
                                     <td>
                                         <ul>
-                                            <li>Keberadaannya: > 60%</li>
-                                            <li>Kondisi: > 60%</li>
-                                            <li>Fungsi: > 60%</li>
+                                            <li>Keberadaannya: > 80%</li>
+                                            <li>Kondisi: > 80%</li>
+                                            <li>Fungsi: > 80%</li>
 
                                         </ul>
                                     </td>
@@ -1539,6 +1647,182 @@
                         </button>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Show BA Evaluasi Awal -->
+<div class="modal fade" id="show-ba-evaluasi-awal" tabindex="-1" aria-labelledby="showBAEvaluasiAwalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-gradient-primary text-white">
+                <h5 class="modal-title" id="showBAEvaluasiAwalLabel">
+                    <i class="fas fa-file-pdf mr-2"></i> Dokumen BA Evaluasi Awal Kesiapan OP
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body bg-light">
+                <div class="container text-center">
+                    @if($dokumenEvaluasiAwal)
+                    <a href="{{ asset('storage/' .substr($dokumenEvaluasiAwal->path_dokumen, 7)) }}" target="_blank"
+                        class="btn bg-gradient-success text-white btn-sm">
+                        <i class="fas fa-file-pdf mr-2"></i> Lihat Dokumen BA Evaluasi Awal Kesiapan OP
+                    </a>
+                    @else
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle mr-2"></i> Dokumen BA Evaluasi Awal belum diunggah.
+                    </div>
+                    @endif
+                </div>
+            </div>
+            <div class="modal-footer">
+           
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Show Kontrak -->
+<div class="modal fade" id="kontrak-show" tabindex="-1" aria-labelledby="kontrakShowModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-gradient-primary text-white">
+                <h5 class="modal-title" id="kontrakShowModalLabel">
+                    <i class="fas fa-file-alt mr-2"></i> Dokumen Kontrak
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body bg-light">
+                <div class="container text-center">
+                    @if ($dokumenKontrak)
+                    <a href="{{ asset('storage/blanko2/' . $dokumenKontrak->nama_file) }}" target="_blank"
+                        class="btn bg-gradient-success text-white btn-sm">
+                        <i class="fas fa-file-pdf mr-2"></i> Lihat file Kontrak
+                    </a>
+                    @else
+                    <p class="text-muted">Dokumen belum diupload.</p>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Show As Build Drawing -->
+<div class="modal fade" id="as-build-drawing-show" tabindex="-1" aria-labelledby="asBuildDrawingShowModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-gradient-primary text-white">
+                <h5 class="modal-title" id="asBuildDrawingShowModalLabel">
+                    <i class="fas fa-drafting-compass mr-2"></i> Dokumen As Build Drawing
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body bg-light">
+                <div class="container text-center">
+                    @if ($dokumenAsBuildDrawing)
+                    <a href="{{ asset('storage/blanko2/' . $dokumenAsBuildDrawing->nama_file) }}" target="_blank"
+                        class="btn bg-gradient-success text-white btn-sm">
+                        <i class="fas fa-file-pdf mr-2"></i> Lihat file As Build Drawing
+                    </a>
+                    @else
+                    <p class="text-muted">Dokumen belum diupload.</p>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Show PHO -->
+<div class="modal fade" id="pho-show" tabindex="-1" aria-labelledby="phoShowModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-gradient-primary text-white">
+                <h5 class="modal-title" id="phoShowModalLabel">
+                    <i class="fas fa-certificate mr-2"></i> Dokumen PHO
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body bg-light">
+                <div class="container text-center">
+                    @if ($dokumenPHO)
+                    <a href="{{ asset('storage/blanko2/' . $dokumenPHO->nama_file) }}" target="_blank"
+                        class="btn bg-gradient-success text-white btn-sm">
+                        <i class="fas fa-file-pdf mr-2"></i> Lihat file PHO
+                    </a>
+                    @else
+                    <p class="text-muted">Dokumen belum diupload.</p>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Show Manual OP -->
+<div class="modal fade" id="manual-op-show" tabindex="-1" aria-labelledby="manualOPShowModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-gradient-primary text-white">
+                <h5 class="modal-title" id="manualOPShowModalLabel">
+                    <i class="fas fa-book mr-2"></i> Dokumen Manual OP
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body bg-light">
+                <div class="container text-center">
+                    @if ($dokumenManualOP)
+                    <a href="{{ asset('storage/blanko2/' . $dokumenManualOP->nama_file) }}" target="_blank"
+                        class="btn bg-gradient-success text-white btn-sm">
+                        <i class="fas fa-file-pdf mr-2"></i> Lihat file Manual OP
+                    </a>
+                    @else
+                    <p class="text-muted">Dokumen belum diupload.</p>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Show Dokumentasi -->
+<div class="modal fade" id="dokumentasi-show" tabindex="-1" aria-labelledby="dokumentasiShowModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-gradient-primary text-white">
+                <h5 class="modal-title" id="dokumentasiShowModalLabel">
+                    <i class="fas fa-camera mr-2"></i>Dokumentasi
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body bg-light">
+                <div class="container text-center">
+                    @if ($dokumenDokumentasi)
+                    <a href="{{ asset('storage/blanko2/' . $dokumenDokumentasi->nama_file) }}" target="_blank"
+                        class="btn bg-gradient-success text-white btn-sm">
+                        <i class="fas fa-file-image mr-2"></i> Lihat file Dokumentasi
+                    </a>
+                    @else
+                    <p class="text-muted">Dokumen belum diupload.</p>
+                    @endif
+                </div>
             </div>
         </div>
     </div>
@@ -1898,76 +2182,98 @@
 {{-- ini untuk penyusunan BA Evaluasi Awal Kesiapan OP --}}
 <script>
     $(document).ready(function () {
-        $('#modal-ba-evaluasi-{{ $jaringan->id }}').on('shown.bs.modal', function () {
-            // Kosongkan elemen-elemen yang akan diisi ulang
-            $('#hasil-ada-tidak-ada-1 span').remove();
-            $('#hasil-kondisi-1 span').remove();
-            $('#hasil-fungsi-1 span').remove();
-            $('#hasil-ada-tidak-ada-2 span').remove();
-            $('#hasil-ada-tidak-ada-3A span').remove();
-            $('#hasil-ada-tidak-ada-3B span').remove();
-            $('#hasil-ada-tidak-ada-3C span').remove();
-            $('#hasil-ada-tidak-ada-3D span').remove();
+    $('#modal-ba-evaluasi-{{ $jaringan->id }}').on('shown.bs.modal', function () {
+        // Kosongkan elemen-elemen yang akan diisi ulang
+        $('#hasil-ada-tidak-ada-1 span').remove();
+        $('#hasil-kondisi-1 span').remove();
+        $('#hasil-fungsi-1 span').remove();
+        $('#hasil-ada-tidak-ada-2 span').remove();
+        $('#hasil-ada-tidak-ada-3A span').remove();
+        $('#hasil-ada-tidak-ada-3B span').remove();
+        $('#hasil-ada-tidak-ada-3C span').remove();
+        $('#hasil-ada-tidak-ada-3D span').remove();
 
-            $.ajax({
-                url: "{{ route('api.ba-awal-kesiapan-op', $jaringan) }}",
-                type: "GET",
-                success: function (data) {
-                    console.log(data);
-                    
-                    // Tampilkan hasil pada Blanko 1 dengan badge yang lebih besar dan informatif
-                    $('#hasil-ada-tidak-ada-1').append(`<span class="badge badge-secondary ml-2" style="font-size: 15px;" title="Hasil Keberadaan">${data.blanko1.hasil_ada_tidak_ada || 0}%</span>`);
-                    $('#hasil-kondisi-1').append(`<span class="badge badge-secondary ml-2" style="font-size: 15px;" title="Hasil Kondisi">${data.blanko1.hasil_kondisi || 0}%</span>`);
-                    $('#hasil-fungsi-1').append(`<span class="badge badge-secondary ml-2" style="font-size: 15px;" title="Hasil Fungsi">${data.blanko1.hasil_fungsi || 0}%</span>`);
-
-                    $('#hasil-ada-tidak-ada-2').append(`<span class="badge badge-secondary ml-2" style="font-size: 15px;" title="Hasil Keberadaan">${data.blanko2.hasil_ada_tidak_ada || 0}%</span>`);
-
-                    $('#hasil-ada-tidak-ada-3A').append(`<span class="badge badge-secondary ml-2" style="font-size: 15px;" title="Hasil Keberadaan">${data.blanko3.blanko3A.hasil_ada_tidak_ada || 0}%</span>`);
-                    $('#hasil-ada-tidak-ada-3B').append(`<span class="badge badge-secondary ml-2" style="font-size: 15px;" title="Hasil Keberadaan">${data.blanko3.blanko3B.hasil_ada_tidak_ada || 0}%</span>`);
-                    $('#hasil-ada-tidak-ada-3C').append(`<span class="badge badge-secondary ml-2" style="font-size: 15px;" title="Hasil Keberadaan">${data.blanko3.blanko3C.hasil_ada_tidak_ada || 0}%</span>`);
-                    $('#hasil-ada-tidak-ada-3D').append(`<span class="badge badge-secondary ml-2" style="font-size: 15px;" title="Hasil Keberadaan">${data.blanko3.blanko3D.hasil_ada_tidak_ada || 0}%</span>`);
-
-                    // Tampilkan rekomendasi
-                    if (data.recommendation === 'SIAP OP') {
-                        $('#recommendation-success')
-                            .removeClass('d-none')
-                            .show()
-                            .css({
-                                'background-color': '#28a745', // hijau
-                                'color': '#ffffff', // teks putih
-                                'padding': '10px', // padding
-                                'border-radius': '5px', // border radius
-                                'font-weight': 'bold', // teks tebal
-                                'text-align': 'center' // teks tengah
-                            });
-                    } else if (data.recommendation === 'SIAP OP dengan Catatan') {
-                        $('#recommendation-warning')
-                            .removeClass('d-none')
-                            .show()
-                            .css({
-                                'background-color': '#ffc107', // kuning
-                                'color': '#000000', // teks hitam
-                                'padding': '10px', // padding
-                                'border-radius': '5px', // border radius
-                                'font-weight': 'bold', // teks tebal
-                                'text-align': 'center' // teks tengah
-                            });
-                    } else if (data.recommendation === 'Belum SIAP OP') {
-                        $('#recommendation-failure')
-                            .removeClass('d-none')
-                            .show()
-                            .css({
-                                'background-color': '#dc3545', // merah
-                                'color': '#ffffff', // teks putih
-                                'padding': '10px', // padding
-                                'border-radius': '5px', // border radius
-                                'font-weight': 'bold', // teks tebal
-                                'text-align': 'center' // teks tengah
-                            });
+        $.ajax({
+            url: "{{ route('api.ba-awal-kesiapan-op', $jaringan) }}",
+            type: "GET",
+            success: function (data) {
+                console.log(data);
+                
+                // Function to determine badge color based on value and thresholds
+                function getBadgeColor(value, catatanThreshold, siapThreshold) {
+                    if (value >= siapThreshold) {
+                        return 'badge-success'; // Hijau
+                    } else if (value >= catatanThreshold && value < siapThreshold) {
+                        return 'badge-warning'; // Kuning
+                    } else {
+                        return 'badge-danger'; // Merah
                     }
                 }
-            });
+
+                // Function to add badge with appropriate color and value
+                function addBadge(elementId, value, catatanThreshold, siapThreshold) {
+                    let badgeColor = getBadgeColor(value, catatanThreshold, siapThreshold);
+                    let titleText = `${value}%`;
+
+                    $(`#${elementId}`).append(`<span class="badge ${badgeColor} ml-2" style="font-size: 15px;" title="${titleText}">${value}%</span>`);
+                }
+
+                // Tampilkan hasil Blanko 1
+                addBadge('hasil-ada-tidak-ada-1', data.blanko1.hasil_ada_tidak_ada || 0, 70, 80);
+                addBadge('hasil-kondisi-1', data.blanko1.hasil_kondisi || 0, 70, 80);
+                addBadge('hasil-fungsi-1', data.blanko1.hasil_fungsi || 0, 70, 80);
+
+                // Tampilkan hasil Blanko 2
+                addBadge('hasil-ada-tidak-ada-2', data.blanko2.hasil_ada_tidak_ada || 0, 70, 80);
+
+                // Tampilkan hasil Blanko 3A, 3B, 3C, 3D
+                addBadge('hasil-ada-tidak-ada-3A', data.blanko3.blanko3A.hasil_ada_tidak_ada || 0, 70, 80);
+                addBadge('hasil-ada-tidak-ada-3B', data.blanko3.blanko3B.hasil_ada_tidak_ada || 0, 60, 80);
+                addBadge('hasil-ada-tidak-ada-3C', data.blanko3.blanko3C.hasil_ada_tidak_ada || 0, 60, 80);
+                addBadge('hasil-ada-tidak-ada-3D', data.blanko3.blanko3D.hasil_ada_tidak_ada || 0, 60, 80);
+
+                // Tampilkan rekomendasi
+                if (data.recommendation === 'SIAP OP') {
+                    $('#recommendation-success')
+                        .removeClass('d-none')
+                        .show()
+                        .css({
+                            'background-color': '#28a745', // hijau
+                            'color': '#ffffff', // teks putih
+                            'padding': '10px', // padding
+                            'border-radius': '5px', // border radius
+                            'font-weight': 'bold', // teks tebal
+                            'text-align': 'center' // teks tengah
+                        });
+                } else if (data.recommendation === 'SIAP OP dengan Catatan') {
+                    $('#recommendation-warning')
+                        .removeClass('d-none')
+                        .show()
+                        .css({
+                            'background-color': '#ffc107', // kuning
+                            'color': '#000000', // teks hitam
+                            'padding': '10px', // padding
+                            'border-radius': '5px', // border radius
+                            'font-weight': 'bold', // teks tebal
+                            'text-align': 'center' // teks tengah
+                        });
+                } else if (data.recommendation === 'Belum SIAP OP') {
+                    $('#recommendation-failure')
+                        .removeClass('d-none')
+                        .show()
+                        .css({
+                            'background-color': '#dc3545', // merah
+                            'color': '#ffffff', // teks putih
+                            'padding': '10px', // padding
+                            'border-radius': '5px', // border radius
+                            'font-weight': 'bold', // teks tebal
+                            'text-align': 'center' // teks tengah
+                        });
+                }
+            }
         });
     });
+});
+
 </script>
 @stop

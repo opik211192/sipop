@@ -621,7 +621,7 @@ public function prasaranaAirTanahProses(Request $request, Jaringan $jaringan)
     //cek blanko untuk status tahapan
     private function checkAllBlankosFilled(Jaringan $jaringan)
     {
-        $jaringan->update(['tahapan' => 'Evaluasi Awal Kesiapan OP']);
+        $jaringan->update(['tahapan' => 'Evaluasi Awal Kesiapan']);
     }
 
 

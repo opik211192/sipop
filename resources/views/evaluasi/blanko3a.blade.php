@@ -70,8 +70,8 @@
                                 <th>Rincian</th>
                                 <th class="col-bobot">Bobot (%)</th>
                                 <th class="col-ada-tidak-ada">Ada/Tidak Ada</th>
-                                <th class="col-kondisi">Kondisi (%)</th>
-                                <th class="col-fungsi">Fungsi (%)</th>
+                                <th class="col-kondisi d-none">Kondisi (%)</th>
+                                <th class="col-fungsi d-none">Fungsi (%)</th>
                                 <th class="col-keterangan">Keterangan</th>
                             </tr>
                         </thead>
@@ -103,13 +103,13 @@
                                         </option>
                                     </select>
                                 </td>
-                                <td>
+                                <td class="d-none">
                                     <input type="text"
                                         name="items[{{ $item->id }}][rincian][{{ $rincian->id }}][kondisi]"
                                         class="form-control" value="{{ $rincian->kondisi }}" max="100"
                                         oninput="validateAndConvert(this)" onchange="calculateWeights()">
                                 </td>
-                                <td>
+                                <td class="d-none">
                                     <input type="text"
                                         name="items[{{ $item->id }}][rincian][{{ $rincian->id }}][fungsi]"
                                         class="form-control" value="{{ $rincian->fungsi }}" max="100"
@@ -129,8 +129,8 @@
                                 <td colspan="3">Total Bobot (%)</td>
                                 <td><input type="text" class="form-control" id="total-bobot" disabled></td>
                                 <td><input type="text" class="form-control" id="total-ada-tidak-ada" disabled></td>
-                                <td><input type="text" class="form-control" id="total-kondisi" disabled></td>
-                                <td><input type="text" class="form-control" id="total-fungsi" disabled></td>
+                                <td class="d-none"><input type="text" class="form-control" id="total-kondisi" disabled></td>
+                                <td class="d-none"><input type="text" class="form-control" id="total-fungsi" disabled></td>
                                 <td></td>
                             </tr>
                         </tfoot>

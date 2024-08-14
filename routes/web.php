@@ -2,19 +2,20 @@
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PetaJaringan;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\EvaluasiController;
 use App\Http\Controllers\JaringanController;
 use App\Http\Controllers\Role\RoleController;
+use App\Http\Controllers\LihatDokumenController;
 use App\Http\Controllers\Assign\AssignController;
 use App\Http\Controllers\DependantDropdownController;
 use App\Http\Controllers\Assign\AssignToUserController;
+use App\Http\Controllers\InventarisasiDataEvaluasiAwal;
 use App\Http\Controllers\AssignRole\AssignRoleController;
 use App\Http\Controllers\Permission\PermissionController;
 use App\Http\Controllers\Assign\PermissionToRoleController;
-use App\Http\Controllers\EvaluasiController;
-use App\Http\Controllers\InventarisasiDataEvaluasiAwal;
-use App\Http\Controllers\PetaJaringan;
 
 /*
 |--------------------------------------------------------------------------
@@ -125,6 +126,9 @@ Route::middleware(['auth'])->group(function () {
   Route::post('/jaringan-atab/{jaringan}/upload-ba-evaluasi-awal', [JaringanController::class, 'uploadBAEvaluasiAwal'])->name('upload-ba-evaluasi-awal');
   Route::put('/jaringan-atab/{jaringan}/upload-ba-evaluasi-awal', [JaringanController::class, 'updateUploadBAEvaluasiAwal'])->name('update-upload-ba-evaluasi-awal');
 
+
+  //lihat dokumen
+  Route::get('/lihat-dokumen/kontrak/{jaringan}', [LihatDokumenController::class, 'kontrak'])->name('lihat-dokumen.kontrak');
 });
 
 

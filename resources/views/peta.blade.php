@@ -5,9 +5,6 @@
 @section('content_header')
 <div class="d-flex justify-content-between align-items-center">
     <h1 class="m-0 text-dark">Peta Lokasi Jaringan</h1>
-    {{-- <a href="#" id="download-map" class="btn btn-sm btn-primary shadow-sm"><i
-            class="fas fa-map-marked-alt fa-sm"></i>
-        Download Peta</a> --}}
 </div>
 @stop
 
@@ -70,25 +67,39 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://unpkg.com/leaflet-image/leaflet-image.js"></script>
+
 <script>
     var map = L.map('map').setView([-7.2066386, 108.4358553], 8);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
+    // Menambahkan layer groups
+    var airTanahLayer = L.layerGroup();
+    var airBakuLayer = L.layerGroup();
+    var embungLayer = L.layerGroup();
+
+    // Layer Control
+    var baseMaps = {};
+    var overlayMaps = {
+        "<span style='color: blue; font-weight: bold;'><i class='fas fa-square' style='color: blue;'></i></span> Air Tanah": airTanahLayer,
+        "<span style='color: red; font-weight: bold;'><i class='fas fa-square' style='color: red;'></i></span> Air Baku": airBakuLayer,
+        "<span style='color: green; font-weight: bold;'><i class='fas fa-square' style='color: green;'></i></span> Embung": embungLayer
+    };
+    L.control.layers(baseMaps, overlayMaps, {collapsed: false}).addTo(map);
+
     // Menambahkan legenda
     var legend = L.control({position: 'bottomleft'});
 
-    legend.onAdd = function (map) {
-        var div = L.DomUtil.create('div', 'legend');
-        div.innerHTML += '<div><i style="background: blue;"></i> Air Tanah</div>';
-        div.innerHTML += '<div><i style="background: red;"></i> Air Baku</div>';
-        div.innerHTML += '<div><i style="background: green;"></i> Embung</div>';
-        return div;
-    };
+    // legend.onAdd = function (map) {
+    //     var div = L.DomUtil.create('div', 'legend');
+    //     div.innerHTML += '<div><i style="background: blue;"></i> Air Tanah</div>';
+    //     div.innerHTML += '<div><i style="background: red;"></i> Air Baku</div>';
+    //     div.innerHTML += '<div><i style="background: green;"></i> Embung</div>';
+    //     return div;
+    // };
 
-    legend.addTo(map);
+    // legend.addTo(map);
 
     function getColoredIcon(color) {
         return L.icon({
@@ -133,46 +144,38 @@
         success: function(data) {
             data.forEach(function(location) {
                 var iconColor;
+                var targetLayer;
                 switch(location.jenis) {
                     case 'Air Tanah':
                         iconColor = 'blue';
+                        targetLayer = airTanahLayer;
                         break;
                     case 'Air Baku':
                         iconColor = 'red';
+                        targetLayer = airBakuLayer;
                         break;
                     case 'Embung':
                         iconColor = 'green';
+                        targetLayer = embungLayer;
                         break;
                     default:
                         iconColor = 'gray';
+                        targetLayer = airTanahLayer; // Default layer
                 }
 
                 var marker = L.marker([location.latitude, location.longitude], {icon: getColoredIcon(iconColor)})
-                    .addTo(map)
+                    .addTo(targetLayer)
                     .bindPopup('<b>Nama Jaringan:</b> ' + location.nama); 
             });
+
+            airTanahLayer.addTo(map);
+            airBakuLayer.addTo(map);
+            embungLayer.addTo(map);
         },
         error: function(error) {
             console.error('Error fetching locations:', error);
         }
     });
 
-    document.getElementById('download-map').addEventListener('click', function(e) {
-        e.preventDefault();
-        leafletImage(map, function(err, canvas) {
-            var img = document.createElement('img');
-            var dimensions = map.getSize();
-            img.width = dimensions.x;
-            img.height = dimensions.y;
-            img.src = canvas.toDataURL();
-
-            var link = document.createElement('a');
-            link.href = img.src;
-            link.download = 'map.png';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        });
-    });
 </script>
 @stop
