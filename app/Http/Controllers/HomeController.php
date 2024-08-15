@@ -48,7 +48,6 @@ class HomeController extends Controller
             'Penyusunan Rencana Kerja',
             'Sosialisasi dan Koordinasi',
             'Evaluasi Awal Kesiapan',
-            'Upload Dokumen Utama',
             'BA Hasil Evaluasi Awal Kesiapan OP',
             'Evaluasi Akhir Kesiapan',
             'BA Hasil Evaluasi Akhir Kesiapan OP',

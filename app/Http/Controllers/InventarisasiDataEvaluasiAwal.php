@@ -619,11 +619,56 @@ public function prasaranaAirTanahProses(Request $request, Jaringan $jaringan)
 
 
     //cek blanko untuk status tahapan
-    private function checkAllBlankosFilled(Jaringan $jaringan)
+        private function checkAllBlankosFilled(Jaringan $jaringan)
     {
-        $jaringan->update(['tahapan' => 'Evaluasi Awal Kesiapan']);
+        // Daftar tahapan berurutan
+        $tahapanList = [
+            'Pembentukan Tim',
+            'Penyusunan Rencana Kerja',
+            'Sosialisasi dan Koordinasi',
+            'Evaluasi Awal Kesiapan',
+            'BA Hasil Evaluasi Awal Kesiapan OP',
+            'Evaluasi Akhir Kesiapan',
+            'BA Hasil Evaluasi Akhir Kesiapan OP',
+            'Serah Terima hasil OP'
+        ];
+
+        // Ambil tahapan saat ini
+        $currentTahapan = $jaringan->tahapan;
+
+        // Cari indeks tahapan saat ini dalam daftar tahapan
+        $currentIndex = array_search($currentTahapan, $tahapanList);
+
+        // Pastikan tidak mundur dari tahapan saat ini
+        if ($currentIndex !== false && $currentIndex < count($tahapanList) - 1) {
+            // Logika untuk memeriksa apakah semua kriteria terpenuhi untuk maju ke tahap selanjutnya
+            $allFilled = $this->areAllBlankosFilled($jaringan); // Implementasikan fungsi ini untuk memeriksa validasi
+
+            // Jika semua kriteria terpenuhi, maju ke tahapan berikutnya
+            if ($allFilled) {
+                $nextTahapan = $tahapanList[$currentIndex + 1];
+                $jaringan->update(['tahapan' => $nextTahapan]);
+            }
+        }
     }
 
+    // Fungsi untuk memeriksa apakah semua blanko telah terisi
+    private function areAllBlankosFilled(Jaringan $jaringan)
+    {
+        // Implementasikan logika untuk memeriksa apakah semua Blanko telah terisi
+        // Contoh sederhana: cek apakah semua item blanko telah diisi
+        // return true jika semua terisi, jika tidak return false
 
+        // Contoh: Periksa apakah semua blanko pada tahap "Evaluasi Awal Kesiapan" sudah terisi
+        $tahapan = $jaringan->tahapans()->where('nama_tahapan', 'Evaluasi Awal Kesiapan')->first();
+        if ($tahapan) {
+            $allBlankosFilled = EvaluasiBlanko::where('tahapan_id', $tahapan->id)->get()->every(function ($evaluasiBlanko) {
+                return $evaluasiBlanko->hasil_ada_tidak_ada >= 1; // Misal jika hasil ada_tidak_ada lebih dari 1 maka dianggap terisi
+            });
 
+            return $allBlankosFilled;
+        }
+
+        return false;
+    }
 }

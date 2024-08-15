@@ -708,74 +708,184 @@
                         </div>
                     </td>
                 </tr>
-              <tr>
-                <td class="bg-white">
-                    <i class="fas fa-file-signature fa-lg text-primary mr-2"></i>
-                    <span class="font-weight-bold text-dark">Penyusunan BA Hasil Evaluasi Awal Kesiapan OP</span>
-                </td>
-            
-                <td class="bg-white text-center">
-                    @php
-                    // Ambil tahapan yang sesuai dengan nama_tahapan 'BA Hasil Evaluasi Awal Kesiapan OP'
-                    $tahapanBAEvaluasi = $jaringan->tahapans->where('nama_tahapan', 'BA Hasil Evaluasi Awal Kesiapan OP')->first();
+                @php
+                    // Ambil status apakah semua Blanko sudah terisi
+                    $allBlankoCompleted = ($isBlanko1APartiallyFilled || $isBlanko1BPartiallyFilled ||
+                    $isBlanko1CPartiallyFilled || $isBlanko2PartiallyFilled ||
+                    $isBlanko3APartiallyFilled || $isBlanko3BPartiallyFilled ||
+                    $isBlanko3CPartiallyFilled || $isBlanko3DPartiallyFilled);
+                @endphp
+                
+                <tr>
+                    <td class="bg-white">
+                        <i class="fas fa-file-signature fa-lg text-primary mr-2"></i>
+                        <span class="font-weight-bold text-dark">Penyusunan BA Hasil Evaluasi Awal Kesiapan OP</span>
+                    </td>
+                
+                    <td class="bg-white">
+                        @php
+                        // Ambil tahapan yang sesuai dengan nama_tahapan 'BA Hasil Evaluasi Awal Kesiapan OP'
+                        $tahapanBAEvaluasi = $jaringan->tahapans->where('nama_tahapan', 'BA Hasil Evaluasi Awal Kesiapan OP')->first();
+                
+                        // Cek apakah dokumen terkait dengan nama 'BA Evaluasi Awal Kesiapan OP' sudah ada
+                        $dokumenEvaluasiAwal = $tahapanBAEvaluasi ?
+                        $tahapanBAEvaluasi->dokumens->where('nama_dokumen', 'BA Evaluasi Awal Kesiapan OP')->first()
+                        : null;
+                        @endphp
+                
+                        @if($dokumenEvaluasiAwal)
+                        <span class="badge badge-success"><i class="fas fa-check-circle"></i> Selesai</span>
+                        @else
+                        <span class="badge badge-warning"><i class="fas fa-exclamation-circle"></i> Pending</span>
+                        @endif
+                    </td>
+                
+                    <td class="bg-white">
+                        @if($dokumenEvaluasiAwal)
+                        {{-- Tombol untuk membuka modal show --}}
+                        <button class="btn btn-sm bg-gradient-primary" data-toggle="modal" data-target="#show-ba-evaluasi-awal">
+                            <span class="fas fa-eye" title="Lihat Dokumen Penyusunan BA Hasil Evaluasi Awal Kesiapan OP"></span>
+                        </button>
+                        <!-- Tombol untuk membuka modal edit BA Evaluasi Awal -->
+                        <button class="btn btn-sm bg-gradient-primary" data-toggle="modal" data-target="#edit-ba-evaluasi-awal">
+                            <span class="fas fa-edit" title="Edit Penyusunan BA Hasil Evaluasi Awal Kesiapan OP"></span>
+                        </button>
+                        @else
+                        <!-- Tombol untuk membuka modal upload BA Evaluasi Awal -->
+                        <button class="btn btn-sm bg-gradient-primary" data-toggle="modal" data-target="#upload-ba-evaluasi-awal"
+                            @if(!$allBlankoCompleted) disabled @endif>
+                            <span class="fas fa-upload" title="Upload Penyusunan BA Hasil Evaluasi Awal Kesiapan OP"></span>
+                        </button>
+                        @endif
+                    </td>
+                </tr>
+                @php
+                     // Ambil tahapan untuk BA Hasil Evaluasi Awal Kesiapan OP
+                     $tahapanBAEvaluasiAwal = $jaringan->tahapans->where('nama_tahapan', 'BA Hasil Evaluasi Awal Kesiapan OP')->first();
                     
-                    // Cek apakah dokumen terkait dengan nama 'BA Evaluasi Awal Kesiapan OP' sudah ada
-                    $dokumenEvaluasiAwal = $tahapanBAEvaluasi ?
-                    $tahapanBAEvaluasi->dokumens->where('nama_dokumen', 'BA Evaluasi Awal Kesiapan OP')->first()
-                    : null;
-                    @endphp
-                    
-                    @if($dokumenEvaluasiAwal)
-                    <span class="badge badge-success"><i class="fas fa-check-circle"></i> Selesai</span>
-                    @else
-                    <span class="badge badge-warning"><i class="fas fa-exclamation-circle"></i> Pending</span>
-                    @endif
-                </td>
-            
-                <td class="bg-white">
-                    @if($dokumenEvaluasiAwal)
-                    {{-- Tombol untuk membuka modal show --}}
-                    <button class="btn btn-sm bg-gradient-primary" data-toggle="modal" data-target="#show-ba-evaluasi-awal">
-                        <span class="fas fa-eye" title="Lihat Dokumen Penyusunan BA Hasil Evaluasi Awal Kesiapan OP"></span>
-                    </button>
-                    <!-- Tombol untuk membuka modal edit BA Evaluasi Awal -->
-                    <button class="btn btn-sm bg-gradient-primary" data-toggle="modal" data-target="#edit-ba-evaluasi-awal">
-                        <span class="fas fa-edit" title="Edit Penyusunan BA Hasil Evaluasi Awal Kesiapan OP"></span>
-                    </button>
-                    @else
-                    <!-- Tombol untuk membuka modal upload BA Evaluasi Awal -->
-                    <button class="btn btn-sm bg-gradient-primary" data-toggle="modal" data-target="#upload-ba-evaluasi-awal">
-                        <span class="fas fa-upload" title="Upload Penyusunan BA Hasil Evaluasi Awal Kesiapan OP"></span>
-                    </button>
-                    @endif
-                </td>
-            </tr>
+                     // Cek apakah dokumen BA Hasil Evaluasi Awal Kesiapan OP sudah ada
+                     $dokumenBAEvaluasiAwal = $tahapanBAEvaluasiAwal ?
+                     $tahapanBAEvaluasiAwal->dokumens->where('nama_dokumen', 'BA Evaluasi Awal Kesiapan OP')->first() : null;
+                @endphp
                 <tr>
                     <td class="bg-white">
                         <i class="fas fa-clipboard-check fa-lg text-primary mr-2"></i>
                         <span class="font-weight-bold text-dark">Evaluasi Akhir Kesiapan OP</span>
                     </td>
-                    <td class="bg-white"></td>
-                    <td class="bg-white"></td>
+                    <td class="bg-white">
+                        <?php
+                        //cari tahaapan evaluasi akhir kesiapan OP
+                        $tahapanEvaluasiAkhir = $jaringan->tahapans->where('nama_tahapan', 'Evaluasi Akhir Kesiapan')->first();
+
+                        //cek apakah dokumen Evaluasi Akhir Kesiapan sudah ada
+                        $dokumenEvaluasiAkhir = $tahapanEvaluasiAkhir ?
+                        $tahapanEvaluasiAkhir->dokumens->where('nama_dokumen', 'Evaluasi Akhir Kesiapan')->first() : null;
+                        ?>
+
+                        @if($dokumenEvaluasiAkhir)
+                        <span class="badge badge-success"><i class="fas fa-check-circle"></i> Selesai</span>
+                        @else
+                        <span class="badge badge-warning"><i class="fas fa-exclamation-circle"></i> Pending</span>
+                        @endif  
+
+                    </td>
+                    <td class="bg-white">
+                        @if($dokumenEvaluasiAkhir)
+                        {{-- Tombol untuk membuka modal show --}}
+                        <button class="btn btn-sm bg-gradient-primary" data-toggle="modal" data-target="#show-evaluasi-akhir">
+                            <span class="fas fa-eye" title="Lihat Dokumen Evaluasi Akhir Kesiapan"></span>
+                        </button>
+                        <!-- Tombol untuk membuka modal edit Evaluasi Akhir -->
+                        <button class="btn btn-sm bg-gradient-primary" data-toggle="modal" data-target="#edit-evaluasi-akhir">
+                            <span class="fas fa-edit" title="Edit Evaluasi Akhir Kesiapan"></span>
+                        </button>
+                        @else
+                        <!-- Tombol untuk membuka modal upload Evaluasi Akhir -->
+                        <button class="btn btn-sm bg-gradient-primary" data-toggle="modal" data-target="#upload-evaluasi-akhir"
+                            @if(!$dokumenBAEvaluasiAwal) disabled @endif>
+                            <span class="fas fa-upload" title="Upload Evaluasi Akhir Kesiapan"></span>
+                        </button>
+                        @endif  
+                    </td>
                 </tr>
                 <tr>
                     <td class="bg-white">
                         <i class="fas fa-file-alt fa-lg text-primary mr-2"></i>
                         <span class="font-weight-bold text-dark">Penyusunan BA Hasil Evaluasi Akhir Kesiapan OP</span>
                     </td>
-                    <td class="bg-white"></td>
-                    <td class="bg-white"></td>
+                    <td class="bg-white">
+                        <?php
+                        //cari tahaapan evaluasi akhir kesiapan OP
+                        $tahapanBAEvaluasiAkhir = $jaringan->tahapans->where('nama_tahapan', 'BA Hasil Evaluasi Akhir Kesiapan OP')->first();
+
+                        //cek apakah dokumen Evaluasi Akhir Kesiapan sudah ada
+                        $dokumenBAEvaluasiAkhir = $tahapanBAEvaluasiAkhir ?
+                        $tahapanBAEvaluasiAkhir->dokumens->where('nama_dokumen', 'BA Hasil Evaluasi Akhir Kesiapan OP')->first() : null;
+                        ?>
+
+                        @if($dokumenBAEvaluasiAkhir)
+                        <span class="badge badge-success"><i class="fas fa-check-circle"></i> Selesai</span>
+                        @else
+                        <span class="badge badge-warning"><i class="fas fa-exclamation-circle"></i> Pending</span>
+                        @endif
+                    </td>
+                    <td class="bg-white">
+                        @if ($dokumenBAEvaluasiAkhir)
+                        {{-- Tombol untuk membuka modal show --}}
+                        <button class="btn btn-sm bg-gradient-primary" data-toggle="modal" data-target="#show-ba-evaluasi-akhir">
+                            <span class="fas fa-eye" title="Lihat Penyusunan BA Hasil Evaluasi Akhir Kesiapan OP"></span>
+                        </button>
+                        <!-- Tombol untuk membuka modal edit BA Evaluasi Akhir -->
+                        <button class="btn btn-sm bg-gradient-primary" data-toggle="modal" data-target="#edit-ba-evaluasi-akhir">
+                            <span class="fas fa-edit" title="Edit Penyusunan BA Hasil Evaluasi Akhir Kesiapan OP"></span>
+                        </button>
+                        @else
+                        <!-- Tombol untuk membuka modal upload BA Evaluasi Akhir -->
+                        <button class="btn btn-sm bg-gradient-primary" data-toggle="modal" data-target="#upload-ba-evaluasi-akhir"
+                            @if(!$dokumenEvaluasiAkhir) disabled @endif>
+                            <span class="fas fa-upload" title="Upload Penyusunan BA Hasil Evaluasi Akhir Kesiapan OP"></span>
+                        </button>
+                        @endif
+                    </td>
                 </tr>
                 <tr>
                     <td class="bg-white">
                         <i class="fas fa-handshake fa-lg text-success mr-2"></i>
                         <span class="font-weight-bold text-dark">Serah Terima Hasil OP</span>
                     </td>
-                    <td class="bg-white"></td>
                     <td class="bg-white">
-                        <button class="btn bg-gradient-primary btn-sm" data-toggle="modal" data-target="#serah-terima">
-                            <span class="fas fa-upload" title="Upload Dokumen"></span>
+                        <?php
+                        
+                        $tahapanSerahTerima = $jaringan->tahapans->where('nama_tahapan', 'Serah Terima hasil OP')->first();
+
+                        $dokumenSerahTerima = $tahapanSerahTerima ?
+                        $tahapanSerahTerima->dokumens->where('nama_dokumen', 'Serah Terima hasil OP')->first() : null;
+                        ?>
+
+                        @if($dokumenSerahTerima)
+                        <span class="badge badge-success"><i class="fas fa-check-circle"></i> Selesai</span>
+                        @else
+                        <span class="badge badge-warning"><i class="fas fa-exclamation-circle"></i> Pending</span>
+                        @endif
+
+                    </td>
+                    <td class="bg-white">
+                        @if ($dokumenSerahTerima)
+                        {{-- Tombol untuk membuka modal show --}}
+                        <button class="btn btn-sm bg-gradient-primary" data-toggle="modal" data-target="#show-serah-terima-op">
+                            <span class="fas fa-eye" title="Lihat Serah Terima Hasil OP"></span>
                         </button>
+                        <!-- Tombol untuk membuka modal edit Serah Terima -->
+                        <button class="btn btn-sm bg-gradient-primary" data-toggle="modal" data-target="#edit-serah-terima-op">
+                            <span class="fas fa-edit" title="Edit Serah Terima Hasil OP"></span>
+                        </button>
+                        @else
+                        <!-- Tombol untuk membuka modal upload Serah Terima -->
+                        <button class="btn btn-sm bg-gradient-primary" data-toggle="modal" data-target="#upload-serah-terima-op"
+                            @if(!$dokumenBAEvaluasiAkhir) disabled @endif>
+                            <span class="fas fa-upload" title="Upload Serah Terima Hasil OP"></span>
+                        </button>
+                        @endif
                     </td>
                 </tr>
             </tbody>
@@ -1686,6 +1796,298 @@
     </div>
 </div>
 
+<!-- Modal Upload Evaluasi Akhir Kesiapan OP -->
+<div class="modal fade" id="upload-evaluasi-akhir" tabindex="-1" aria-labelledby="uploadEvaluasiAkhirLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-gradient-primary text-white">
+                <h5 class="modal-title" id="uploadEvaluasiAkhirLabel">
+                    <i class="fas fa-upload mr-2"></i> Upload Dokumen Evaluasi Akhir Kesiapan OP
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body bg-light">
+                <form id="formUploadEvaluasiAkhir" action="{{ route('upload-evaluasi-akhir', $jaringan->id) }}"
+                    method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <div class="form-group">
+                        <label for="dokumen_evaluasi_akhir" class="font-weight-bold">Dokumen Evaluasi Akhir</label>
+                        <input type="file" accept="application/pdf" class="form-control-file border rounded p-2"
+                            id="dokumen_evaluasi_akhir" name="dokumen_evaluasi_akhir" required>
+                    </div>
+                    <div class="text-right">
+                        <button type="submit" class="btn bg-gradient-success text-white btn-sm">
+                            <i class="fas fa-paper-plane mr-2"></i> Submit
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Edit Evaluasi Akhir Kesiapan OP -->
+<div class="modal fade" id="edit-evaluasi-akhir" tabindex="-1" aria-labelledby="editEvaluasiAkhirLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-gradient-primary text-white">
+                <h5 class="modal-title" id="editEvaluasiAkhirLabel">
+                    <i class="fas fa-edit mr-2"></i> Edit Dokumen Evaluasi Akhir Kesiapan OP
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body bg-light">
+                <form id="formEditEvaluasiAkhir" action="{{ route('update-upload-evaluasi-akhir', $jaringan->id) }}"
+                    method="POST" enctype="multipart/form-data">
+                    @csrf
+                    @method('PUT')
+                    <div class="form-group">
+                        <label for="dokumen_evaluasi_akhir" class="font-weight-bold">Dokumen Evaluasi Akhir</label>
+                        <input type="file" accept="application/pdf" class="form-control-file border rounded p-2"
+                            id="dokumen_evaluasi_akhir" name="dokumen_evaluasi_akhir">
+                        <small class="form-text text-muted"><i>Kosongkan jika tidak mengubah file</i></small>
+                    </div>
+                    <div class="text-right">
+                        <button type="submit" class="btn bg-gradient-success text-white btn-sm">
+                            <i class="fas fa-paper-plane mr-2"></i> Submit
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Show Evaluasi Akhir Kesiapan OP -->
+<div class="modal fade" id="show-evaluasi-akhir" tabindex="-1" aria-labelledby="showEvaluasiAkhirLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-gradient-primary text-white">
+                <h5 class="modal-title" id="showEvaluasiAkhirLabel">
+                    <i class="fas fa-file-alt mr-2"></i> Dokumen Evaluasi Akhir Kesiapan OP
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body bg-light">
+                <div class="container text-center">
+                    @if ($dokumenEvaluasiAkhir)
+                    <a href="{{ asset('storage/' . substr($dokumenEvaluasiAkhir->path_dokumen, 7)) }}" target="_blank"
+                        class="btn bg-gradient-success text-white btn-sm">
+                        <i class="fas fa-file-pdf mr-2"></i> Lihat Dokumen Evaluasi Akhir Kesiapan OP
+                    </a>
+                    @else
+                    <p class="text-muted">Dokumen belum diupload.</p>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Upload BA Evaluasi Akhir Kesipan OP -->
+<div class="modal fade" id="upload-ba-evaluasi-akhir" tabindex="-1" aria-labelledby="uploadBAEvaluasiAkhirLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-gradient-primary text-white">
+                <h5 class="modal-title" id="uploadBAEvaluasiAkhirLabel">
+                    <i class="fas fa-upload mr-2"></i> Upload Dokumen BA Hasil Evaluasi Akhir Kesiapan OP
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body bg-light">
+                <form id="formUploadBAEvaluasiAkhir" action="{{ route('upload-ba-evaluasi-akhir', $jaringan->id) }}"
+                    method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <div class="form-group">
+                        <label for="dokumen_ba_evaluasi_akhir" class="font-weight-bold">Dokumen BA Evaluasi
+                            Akhir</label>
+                        <input type="file" accept="application/pdf" class="form-control-file border rounded p-2"
+                            id="dokumen_ba_evaluasi_akhir" name="dokumen_ba_evaluasi_akhir" required>
+                    </div>
+                    <div class="text-right">
+                        <button type="submit" class="btn bg-gradient-success text-white btn-sm">
+                            <i class="fas fa-paper-plane mr-2"></i> Submit
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Edit BA Evaluasi Akhir Kesiapan OP -->
+<div class="modal fade" id="edit-ba-evaluasi-akhir" tabindex="-1" aria-labelledby="editBAEvaluasiAkhirLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-gradient-primary text-white">
+                <h5 class="modal-title" id="editBAEvaluasiAkhirLabel">
+                    <i class="fas fa-edit mr-2"></i> Edit Dokumen BA Hasil Evaluasi Akhir Kesiapan OP
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body bg-light">
+                <form id="formEditBAEvaluasiAkhir"
+                    action="{{ route('update-upload-ba-evaluasi-akhir', $jaringan->id) }}" method="POST"
+                    enctype="multipart/form-data">
+                    @csrf
+                    @method('PUT')
+                    <div class="form-group">
+                        <label for="dokumen_ba_evaluasi_akhir" class="font-weight-bold">Dokumen BA Evaluasi
+                            Akhir</label>
+                        <input type="file" accept="application/pdf" class="form-control-file border rounded p-2"
+                            id="dokumen_ba_evaluasi_akhir" name="dokumen_ba_evaluasi_akhir">
+                        <small class="form-text text-muted"><i>Kosongkan jika tidak mengubah file</i></small>
+                    </div>
+                    <div class="text-right">
+                        <button type="submit" class="btn bg-gradient-success text-white btn-sm">
+                            <i class="fas fa-paper-plane mr-2"></i> Submit
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Show BA Evaluasi Akhir Kesiapan OP -->
+<div class="modal fade" id="show-ba-evaluasi-akhir" tabindex="-1" aria-labelledby="showBAEvaluasiAkhirLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-gradient-primary text-white">
+                <h5 class="modal-title" id="showBAEvaluasiAkhirLabel">
+                    <i class="fas fa-file-alt mr-2"></i> Dokumen BA Hasil Evaluasi Akhir Kesiapan OP
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body bg-light">
+                <div class="container text-center">
+                    @if ($dokumenBAEvaluasiAkhir)
+                    <a href="{{ asset('storage/' . substr($dokumenBAEvaluasiAkhir->path_dokumen, 7)) }}" target="_blank"
+                        class="btn bg-gradient-success text-white btn-sm">
+                        <i class="fas fa-file-pdf mr-2"></i> Lihat Dokumen
+                    </a>
+                    @else
+                    <p class="text-muted">Dokumen belum diupload.</p>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Upload Serah Terima OP -->
+<div class="modal fade" id="upload-serah-terima-op" tabindex="-1" aria-labelledby="uploadSerahTerimaOPLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-gradient-primary text-white">
+                <h5 class="modal-title" id="uploadSerahTerimaOPLabel">
+                    <i class="fas fa-upload mr-2"></i> Upload Dokumen Serah Terima Hasil OP
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body bg-light">
+                <form id="formUploadSerahTerimaOP" action="{{ route('upload-serah-terima-op', $jaringan->id) }}"   enctype="multipart/form-data">
+                    @csrf
+                    <div class="form-group">
+                        <label for="dokumen_serah_terima_op" class="font-weight-bold">Dokumen Serah Terima OP</label>
+                        <input type="file" accept="application/pdf" class="form-control-file border rounded p-2"
+                            id="dokumen_serah_terima_op" name="dokumen_serah_terima_op" required>
+                    </div>
+                    <div class="text-right">
+                        <button type="submit" class="btn bg-gradient-success text-white btn-sm">
+                            <i class="fas fa-paper-plane mr-2"></i> Submit
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Edit Serah Terima OP -->
+<div class="modal fade" id="edit-serah-terima-op" tabindex="-1" aria-labelledby="editSerahTerimaOPLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-gradient-primary text-white">
+                <h5 class="modal-title" id="editSerahTerimaOPLabel">
+                    <i class="fas fa-edit mr-2"></i> Edit Dokumen Serah Terima Hasil OP
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body bg-light">
+                <form id="formEditSerahTerimaOP" action="{{ route('update-upload-serah-terima-op', $jaringan->id) }}"" enctype="multipart/form-data">
+                    @csrf
+                    @method('PUT')
+                    <div class="form-group">
+                        <label for="dokumen_serah_terima_op" class="font-weight-bold">Dokumen Serah Terima OP</label>
+                        <input type="file" accept="application/pdf" class="form-control-file border rounded p-2"
+                            id="dokumen_serah_terima_op" name="dokumen_serah_terima_op">
+                        <small class="form-text text-muted"><i>Kosongkan jika tidak mengubah file</i></small>
+                    </div>
+                    <div class="text-right">
+                        <button type="submit" class="btn bg-gradient-success text-white btn-sm">
+                            <i class="fas fa-paper-plane mr-2"></i> Submit
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Show Serah Terima OP -->
+<div class="modal fade" id="show-serah-terima-op" tabindex="-1" aria-labelledby="showSerahTerimaOPLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-gradient-primary text-white">
+                <h5 class="modal-title" id="showSerahTerimaOPLabel">
+                    <i class="fas fa-file-alt mr-2"></i> Dokumen Serah Terima Hasil OP
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body bg-light">
+                <div class="container text-center">
+                    @if($dokumenSerahTerima)
+                    <a href="{{ asset('storage/' . substr($dokumenSerahTerima->path_dokumen, 7)) }}" target="_blank"
+                        class="btn bg-gradient-success text-white btn-sm">
+                        <i class="fas fa-file-pdf mr-2"></i> Lihat Dokumen Serah Terima OP
+                    </a>
+                    @else
+                    <p class="text-muted">Dokumen belum diupload.</p>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Modal Show Kontrak -->
 <div class="modal fade" id="kontrak-show" tabindex="-1" aria-labelledby="kontrakShowModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -2089,6 +2491,146 @@
             });
         });
 
+        //-----FORM UPLOAD EVALUASI AKHIR KESIAPAN OP---------//
+        $('#formUploadEvaluasiAkhir').on('submit', function (e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    console.log("Success:", data);
+                    $('#upload-evaluasi-akhir').modal('hide');
+                    alert('Dokumen berhasil diupload.');
+                    location.reload();
+                },
+                error: function (xhr, status, error) {
+                    console.log("Error:", error);
+                    alert('Gagal mengupload dokumen. Silakan coba lagi.');
+                }
+            });
+        });
+
+        //-----FORM EDIT EVALUASI AKHIR KESIAPAN OP---------//
+        $('#formEditEvaluasiAkhir').on('submit', function (e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    console.log("Success:", data);
+                    $('#edit-evaluasi-akhir').modal('hide');
+                    alert('Dokumen berhasil diupdate.');
+                    location.reload();
+                },
+                error: function (xhr, status, error) {
+                    console.log("Error:", error);
+                    alert('Gagal mengupdate dokumen. Silakan coba lagi.');
+                }
+            });
+        });
+
+        //-----FORM UPLOAD BA HASIL EVALUASI AKHIR KESIAPAN OP---------//
+        $('#formUploadBAEvaluasiAkhir').on('submit', function (e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    console.log("Success:", data);
+                    $('#upload-ba-evaluasi-akhir').modal('hide');
+                    alert('Dokumen berhasil diupload.');
+                    location.reload();
+                },
+                error: function (xhr, status, error) {
+                    console.log("Error:", error);
+                    alert('Gagal mengupload dokumen. Silakan coba lagi.');
+                }
+            });
+        });
+
+        //-----FORM EDIT BA HASIL EVALUASI AKHIR KESIAPAN OP---------//
+        $('#formEditBAEvaluasiAkhir').on('submit', function (e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    console.log("Success:", data);
+                    $('#edit-ba-evaluasi-akhir').modal('hide');
+                    alert('Dokumen berhasil diupdate.');
+                    location.reload();
+                },
+                error: function (xhr, status, error) {
+                    console.log("Error:", error);
+                    alert('Gagal mengupdate dokumen. Silakan coba lagi.');
+                }
+            });
+        });
+
+        //-----FORM UPLOAD SERTAH TERIMA OP---------//
+        $('#formUploadSerahTerimaOP').on('submit', function (e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    console.log("Success:", data);
+                    $('#upload-serah-terima-op').modal('hide');
+                    alert('Dokumen Serah Terima OP berhasil diupload.');
+                    location.reload(); // Refresh halaman untuk memperbarui status
+                },
+                error: function (xhr, status, error) {
+                    console.log("Error:", error);
+                    alert('Gagal mengupload dokumen. Silakan coba lagi.');
+                }
+            });
+        });
+
+        //-----FORM EDIT SERAH TERIMA OP---------//
+        $('#formEditSerahTerimaOP').on('submit', function (e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    console.log("Success:", data);
+                    $('#edit-serah-terima-op').modal('hide');
+                    alert('Dokumen Serah Terima OP berhasil diperbarui.');
+                    location.reload(); // Refresh halaman untuk memperbarui status
+                },
+                error: function (xhr, status, error) {
+                    console.log("Error:", error);
+                    alert('Gagal memperbarui dokumen. Silakan coba lagi.');
+                }
+            });
+        });
+
         //-----Halman FORM EVALUASI AWAL---------//
         var evaluasiAwalButton = document.getElementById('evaluasi-awal-button');
         if (evaluasiAwalButton) {
@@ -2197,7 +2739,7 @@
             url: "{{ route('api.ba-awal-kesiapan-op', $jaringan) }}",
             type: "GET",
             success: function (data) {
-                console.log(data);
+                //console.log(data);
                 
                 // Function to determine badge color based on value and thresholds
                 function getBadgeColor(value, catatanThreshold, siapThreshold) {

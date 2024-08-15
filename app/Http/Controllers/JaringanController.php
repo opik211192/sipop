@@ -487,4 +487,144 @@ class JaringanController extends Controller
         return response()->json(['success' => 'Dokumen BA Evaluasi Awal Kesiapan OP berhasil diupdate.']);
     }
 
+    public function uploadEvalausiAkhirOP(Request $request, Jaringan $jaringan)
+    {
+        $request->validate([
+            'dokumen_evaluasi_akhir' => 'required|file|mimes:pdf|max:3072', // Max size 3MB
+        ]);
+
+        // Cari tahapan berdasarkan nama_tahapan 'BA Hasil Evaluasi Awal Kesiapan OP'
+        $tahapan = $jaringan->tahapans()->where('nama_tahapan', 'Evaluasi Akhir Kesiapan')->first();
+
+        // Simpan file dengan nama unik
+        $file = $request->file('dokumen_evaluasi_akhir')->storeAs('public/evaluasi_akhir', uniqid() . '.' . $request->file('dokumen_evaluasi_akhir')->getClientOriginalExtension());
+
+        // Buat entri baru di tabel dokumens
+        Dokumen::create([
+            'tahapan_id' => $tahapan->id,
+            'nama_dokumen' => 'Evaluasi Akhir Kesiapan',
+            'path_dokumen' => $file,
+        ]);
+
+        $jaringan->update(['tahapan' => 'Evaluasi Akhir Kesiapan']);
+
+        return response()->json(['success' => true]);
+    }
+
+    public function updateUploadEvalausiAkhirOP(Request $request, Jaringan $jaringan)
+    {
+        $request->validate([
+            'dokumen_evaluasi_akhir' => 'file|mimes:pdf|max:3072',
+        ]);
+
+        // Cari tahapan berdasarkan nama_tahapan 'BA Hasil Evaluasi Awal Kesiapan OP'  
+        $tahapan = $jaringan->tahapans()->where('nama_tahapan', 'Evaluasi Akhir Kesiapan')->first();
+
+        if ($request->hasFile('dokumen_evaluasi_akhir')) {
+            // Simpan file baru dengan nama unik
+            $file = $request->file('dokumen_evaluasi_akhir')->storeAs('public/evaluasi_akhir', uniqid() . '.' . $request->file('dokumen_evaluasi_akhir')->getClientOriginalExtension());
+
+            // Update atau buat baru entri di tabel dokumens
+            Dokumen::updateOrCreate(
+                ['tahapan_id' => $tahapan->id, 'nama_dokumen' => 'Evaluasi Akhir Kesiapan'],
+                ['path_dokumen' => $file]
+            );
+        }
+
+        return response()->json(['success' => 'Dokumen Evaluasi Akhir Kesiapan OP berhasil diupdate.']);
+    }
+
+    public function uploadBAEvaluasiAkhir(Request $request, Jaringan $jaringan)
+    {
+        $request->validate([
+            'dokumen_ba_evaluasi_akhir' => 'required|file|mimes:pdf|max:3072', // Max size 3MB
+        ]);
+
+        // Cari tahapan berdasarkan nama_tahapan 'BA Hasil Evaluasi Awal Kesiapan OP'
+        $tahapan = $jaringan->tahapans()->where('nama_tahapan', 'BA Hasil Evaluasi Akhir Kesiapan OP')->first();
+
+        // Simpan file dengan nama unik
+        $file = $request->file('dokumen_ba_evaluasi_akhir')->storeAs('public/ba_evaluasi_akhir', uniqid() . '.' . $request->file('dokumen_ba_evaluasi_akhir')->getClientOriginalExtension());
+
+        // Buat entri baru di tabel dokumens
+        Dokumen::create([
+            'tahapan_id' => $tahapan->id,
+            'nama_dokumen' => 'BA Hasil Evaluasi Akhir Kesiapan OP',
+            'path_dokumen' => $file,
+        ]);
+
+        $jaringan->update(['tahapan' => 'BA Hasil Evaluasi Akhir Kesiapan OP']);
+
+        return response()->json(['success' => true]);
+    }
+
+    public function updateBAEvaluasiAkhir(Request $request, Jaringan $jaringan)
+    {
+        $request->validate([
+            'dokumen_ba_evaluasi_akhir' => 'file|mimes:pdf|max:3072',
+        ]);
+
+        // Cari tahapan berdasarkan nama_tahapan 'BA Hasil Evaluasi Awal Kesiapan OP'
+        $tahapan = $jaringan->tahapans()->where('nama_tahapan', 'BA Hasil Evaluasi Akhir Kesiapan OP')->first();
+
+        if ($request->hasFile('dokumen_ba_evaluasi_akhir')) {
+            // Simpan file baru dengan nama unik
+            $file = $request->file('dokumen_ba_evaluasi_akhir')->storeAs('public/ba_evaluasi_akhir', uniqid() . '.' . $request->file('dokumen_ba_evaluasi_akhir')->getClientOriginalExtension());
+
+            // Update atau buat baru entri di tabel dokumens
+            Dokumen::updateOrCreate(
+                ['tahapan_id' => $tahapan->id, 'nama_dokumen' => 'BA Hasil Evaluasi Akhir Kesiapan OP'],
+                ['path_dokumen' => $file]
+            );
+        }
+
+        return response()->json(['success' => 'Dokumen BA Hasil Evaluasi Akhir Kesiapan OP berhasil diupdate.']);
+    }
+
+    public function uploadSerahTerimaOP(Request $request, Jaringan $jaringan)
+    {
+        $request->validate([
+            'dokumen_serah_terima_op' => 'required|file|mimes:pdf|max:3072', // Max size 3MB
+        ]);
+
+        // Cari tahapan berdasarkan nama_tahapan 'Serah Terima OP'
+        $tahapan = $jaringan->tahapans()->where('nama_tahapan', 'Serah Terima hasil OP')->first();
+
+        // Simpan file dengan nama unik
+        $file = $request->file('dokumen_serah_terima_op')->storeAs('public/serah_terima_op', uniqid() . '.' . $request->file('dokumen_serah_terima_op')->getClientOriginalExtension());
+
+        // Buat entri baru di tabel dokumens
+        Dokumen::create([
+            'tahapan_id' => $tahapan->id,
+            'nama_dokumen' => 'Serah Terima hasil OP',
+            'path_dokumen' => $file,
+        ]);
+
+        $jaringan->update(['tahapan' => 'Serah Terima hasil OP']);
+
+        return response()->json(['success' => true]);
+    }
+
+    public function updateUploadSerahTerimaOP(Request $request, Jaringan $jaringan)
+    {
+        $request->validate([
+            'dokumen_serah_terima_op' => 'file|mimes:pdf|max:3072',
+        ]);
+
+        // Cari tahapan berdasarkan nama_tahapan 'Serah Terima OP'
+        $tahapan = $jaringan->tahapans()->where('nama_tahapan', 'Serah Terima hasil OP')->first();
+
+        if ($request->hasFile('dokumen_serah_terima_op')) {
+            // Simpan file baru dengan nama unik
+            $file = $request->file('dokumen_serah_terima_op')->storeAs('public/serah_terima_op', uniqid() . '.' . $request->file('dokumen_serah_terima_op')->getClientOriginalExtension());
+
+            // Update atau buat baru entri di tabel dokumens
+            Dokumen::updateOrCreate(
+                ['tahapan_id' => $tahapan->id, 'nama_dokumen' => 'Serah Terima hasil OP'],
+                ['path_dokumen' => $file]
+            );
+        }
+
+        return response()->json(['success' => 'Dokumen Serah Terima OP berhasil diupdate.']);
+    }
 }

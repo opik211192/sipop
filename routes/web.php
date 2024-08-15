@@ -129,6 +129,23 @@ Route::middleware(['auth'])->group(function () {
 
   //lihat dokumen
   Route::get('/lihat-dokumen/kontrak/{jaringan}', [LihatDokumenController::class, 'kontrak'])->name('lihat-dokumen.kontrak');
+
+  //Evaluasi Akhir Kesiapan OP
+  Route::post('/jaringan-atab/{jaringan}/upload-evaluasi-akhir/', [JaringanController::class, 'uploadEvalausiAkhirOP'])->name('upload-evaluasi-akhir');
+  Route::put('/jaringan-atab/{jaringan}/upload-evaluasi-akhir', [JaringanController::class, 'updateUploadEvaluasiAkhirOP'])->name('update-upload-evaluasi-akhir');
+
+  //penyusunan BA evaluasi Akhir Kesiapan OP
+  //upload file
+  Route::post('/jaringan-atab/{jaringan}/upload-ba-evaluasi-akhir', [JaringanController::class, 'uploadBAEvaluasiAkhir'])->name('upload-ba-evaluasi-akhir');
+  Route::put('/jaringan-atab/{jaringan}/upload-ba-evaluasi-akhir', [JaringanController::class, 'updateUploadBAEvaluasiAkhir'])->name('update-upload-ba-evaluasi-akhir');
+
+  //Serah terima OP
+  //upload file
+   Route::post('/jaringan-atab/{jaringan}/upload-serah-terima-op', [JaringanController::class, 'uploadSerahTerimaOP'])->name('upload-serah-terima-op');
+  Route::put('/jaringan-atab/{jaringan}/upload-serah-terima-op', [JaringanController::class, 'updateUploadSerahTerimaOP'])->name('update-upload-serah-terima-op');
+
+
+
 });
 
 

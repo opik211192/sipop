@@ -90,7 +90,7 @@
                     <td>{{ $jaringan->wilayah_sungai }}</td>
                     <td>
                         @if($jaringan->tahapan)
-                        @if($jaringan->tahapan == 'Serah Terima Hasil OP')
+                        @if($jaringan->tahapan == 'Serah Terima hasil OP')
                         <span class="badge bg-success">{{ $jaringan->tahapan }}</span>
                         @else
                         <span class="badge bg-info">{{ $jaringan->tahapan }}</span>
