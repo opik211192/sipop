@@ -70,11 +70,11 @@
                 <table class="table table-sm table-bordered table-hover table-striped">
                     <tbody>
                         <tr>
-                            <th class="text-muted"><i class="fas fa-water mr-2"></i>Wilayah Sungai</th>
+                            <th class="text-muted"><i class="fas fa-water mr-2"></i>DAS</th>
                             <td class="font-weight-bold text-dark">{{ $jaringan->wilayah_sungai }}</td>
                         </tr>
                         <tr>
-                            <th class="text-muted"><i class="fas fa-stream mr-2"></i>Jenis</th>
+                            <th class="text-muted"><i class="fas fa-cog mr-2"></i>Infrastruktur</th>
                             <td class="font-weight-bold text-dark">{{ $jaringan->jenis }}</td>
                         </tr>
                         <tr>

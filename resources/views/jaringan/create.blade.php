@@ -47,21 +47,24 @@
                 </div>
             </div>
 
-            <div class="form-group row">
-                <label for="province_id" class="col-sm-2 col-form-label">Provinsi</label>
-                <div class="col-sm-10">
-                    <select name="province_id" id="province_id" class="form-control">
-                        <option value="">Pilih Provinsi</option>
-                        @foreach($provinces as $province)
-                        <option value="{{ $province->id }}" {{ old('province_id')==$province->id ? 'selected' : '' }}>{{
-                            $province->name }}</option>
-                        @endforeach
-                    </select>
-                    @error('province_id')
-                    <div class="text-danger">{{ $message }}</div>
-                    @enderror
-                </div>
+           <div class="form-group row">
+            <label for="province_id" class="col-sm-2 col-form-label">Provinsi</label>
+            <div class="col-sm-10">
+                <select name="province_id" id="province_id" class="form-control">
+                    <option value="">Pilih Provinsi</option>
+                    @foreach($provinces as $province)
+                    @if($province->name == 'JAWA BARAT' || $province->name == 'JAWA TENGAH')
+                    <option value="{{ $province->id }}" {{ old('province_id')==$province->id ? 'selected' : '' }}>
+                        {{ $province->name }}
+                    </option>
+                    @endif
+                    @endforeach
+                </select>
+                @error('province_id')
+                <div class="text-danger">{{ $message }}</div>
+                @enderror
             </div>
+        </div>
 
             <div class="form-group row">
                 <label for="city_id" class="col-sm-2 col-form-label">Kota/Kabupaten</label>
@@ -99,16 +102,41 @@
                 </div>
             </div>
 
-            <div class="form-group row">
-                <label for="wilayah_sungai" class="col-sm-2 col-form-label">Wilayah Sungai</label>
-                <div class="col-sm-10">
-                    <input type="text" name="wilayah_sungai" id="wilayah_sungai" class="form-control"
-                        value="{{ old('wilayah_sungai') }}">
-                    @error('wilayah_sungai')
-                    <div class="text-danger">{{ $message }}</div>
-                    @enderror
-                </div>
+           <div class="form-group row">
+            <label for="wilayah_sungai" class="col-sm-2 col-form-label">DAS</label>
+            <div class="col-sm-10">
+                <select name="wilayah_sungai" id="wilayah_sungai" class="form-control">
+                    <option value="">Pilih DAS</option>
+                    <option value="DAS Citanduy">DAS Citanduy</option>
+                    <option value="DAS Cibeureum">DAS Cibeureum</option>
+                    <option value="DAS Citotok">DAS Citotok</option>
+                    <option value="DAS Cimeneng">DAS Cimeneng</option>
+                    <option value="DAS Cikonde">DAS Cikonde</option>
+                    <option value="DAS Sapuregel">DAS Sapuregel</option>
+                    <option value="DAS Gatel">DAS Gatel</option>
+                    <option value="DAS Branalang">DAS Branalang</option>
+                    <option value="DAS Kipah">DAS Kipah</option>
+                    <option value="DAS Panembung">DAS Panembung</option>
+                    <option value="DAS Karanganyar">DAS Karanganyar</option>
+                    <option value="DAS Tambakreja">DAS Tambakreja</option>
+                    <option value="DAS Nirbaya">DAS Nirbaya</option>
+                    <option value="DAS Solokjari">DAS Solokjari</option>
+                    <option value="DAS Permisan">DAS Permisan</option>
+                    <option value="DAS Lembongpucung">DAS Lembongpucung</option>
+                    <option value="DAS Solok Permisan">DAS Solok Permisan</option>
+                    <option value="DAS Solokpring">DAS Solokpring</option>
+                    <option value="DAS Pandan">DAS Pandan</option>
+                    <option value="DAS Solokdewata">DAS Solokdewata</option>
+                    <option value="DAS Ciparayangan">DAS Ciparayangan</option>
+                    <option value="DAS Cijolang">DAS Cijolang</option>
+                    <option value="DAS Cipambokongan">DAS Cipambokongan</option>
+                    <option value="DAS Cipanerekean">DAS Cipanerekean</option>
+                </select>
+                @error('wilayah_sungai')
+                <div class="text-danger">{{ $message }}</div>
+                @enderror
             </div>
+        </div>
 
             <div class="form-group row">
                 <label for="satker" class="col-sm-2 col-form-label">Satker</label>
@@ -131,10 +159,10 @@
             </div>
 
             <div class="form-group row">
-                <label for="jenis" class="col-sm-2 col-form-label">Jenis</label>
+                <label for="jenis" class="col-sm-2 col-form-label">Infrastruktur</label>
                 <div class="col-sm-10">
                     <select name="jenis" id="jenis" class="form-control">
-                        <option value="">Pilih Jenis</option>
+                        <option value="">Pilih Infrastruktur</option>
                         <option value="Air Tanah" {{ old('jenis')=='Air Tanah' ? 'selected' : '' }}>Air Tanah</option>
                         <option value="Air Baku" {{ old('jenis')=='Air Baku' ? 'selected' : '' }}>Air Baku</option>
                         <option value="Embung" {{ old('jenis')=='Embung' ? 'selected' : '' }}>Embung</option>

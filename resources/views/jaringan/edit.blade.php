@@ -11,7 +11,7 @@
 @stop
 
 @section('content')
-<div class="card col-md-10">
+<div class="card col-md-10 mx-auto">
     <div class="card-body">
         <form action="{{ route('jaringan-atab.update', $jaringan->id) }}" method="POST">
             @csrf
@@ -57,10 +57,12 @@
                     <select name="province_id" id="province_id" class="form-control">
                         <option value="">Pilih Provinsi</option>
                         @foreach($provinces as $province)
-                        <option value="{{ $province->id }}" {{ old('province_id', $jaringan->province_id) ==
-                            $province->id ? 'selected' : '' }}>
+                        @if($province->name == 'JAWA BARAT' || $province->name == 'JAWA TENGAH')
+                        <option value="{{ $province->id }}" {{ old('province_id', $jaringan->province_id) == $province->id ?
+                            'selected' : '' }}>
                             {{ $province->name }}
                         </option>
+                        @endif
                         @endforeach
                     </select>
                     @error('province_id')
@@ -105,16 +107,65 @@
                 </div>
             </div>
 
-            <div class="form-group row">
-                <label for="wilayah_sungai" class="col-sm-2 col-form-label">Wilayah Sungai</label>
-                <div class="col-sm-10">
-                    <input type="text" name="wilayah_sungai" id="wilayah_sungai" class="form-control"
-                        value="{{ old('wilayah_sungai', $jaringan->wilayah_sungai) }}">
-                    @error('wilayah_sungai')
-                    <div class="text-danger">{{ $message }}</div>
-                    @enderror
-                </div>
+           <div class="form-group row">
+            <label for="wilayah_sungai" class="col-sm-2 col-form-label">DAS</label>
+            <div class="col-sm-10">
+                <select name="wilayah_sungai" id="wilayah_sungai" class="form-control">
+                    <option value="">Pilih DAS</option>
+                    <option value="DAS Citanduy" {{ old('wilayah_sungai', $jaringan->wilayah_sungai) == 'DAS Citanduy' ?
+                        'selected' : '' }}>DAS Citanduy</option>
+                    <option value="DAS Cibeureum" {{ old('wilayah_sungai', $jaringan->wilayah_sungai) == 'DAS Cibeureum' ?
+                        'selected' : '' }}>DAS Cibeureum</option>
+                    <option value="DAS Citotok" {{ old('wilayah_sungai', $jaringan->wilayah_sungai) == 'DAS Citotok' ?
+                        'selected' : '' }}>DAS Citotok</option>
+                    <option value="DAS Cimeneng" {{ old('wilayah_sungai', $jaringan->wilayah_sungai) == 'DAS Cimeneng' ?
+                        'selected' : '' }}>DAS Cimeneng</option>
+                    <option value="DAS Cikonde" {{ old('wilayah_sungai', $jaringan->wilayah_sungai) == 'DAS Cikonde' ?
+                        'selected' : '' }}>DAS Cikonde</option>
+                    <option value="DAS Sapuregel" {{ old('wilayah_sungai', $jaringan->wilayah_sungai) == 'DAS Sapuregel' ?
+                        'selected' : '' }}>DAS Sapuregel</option>
+                    <option value="DAS Gatel" {{ old('wilayah_sungai', $jaringan->wilayah_sungai) == 'DAS Gatel' ? 'selected' :
+                        '' }}>DAS Gatel</option>
+                    <option value="DAS Branalang" {{ old('wilayah_sungai', $jaringan->wilayah_sungai) == 'DAS Branalang' ?
+                        'selected' : '' }}>DAS Branalang</option>
+                    <option value="DAS Kipah" {{ old('wilayah_sungai', $jaringan->wilayah_sungai) == 'DAS Kipah' ? 'selected' :
+                        '' }}>DAS Kipah</option>
+                    <option value="DAS Panembung" {{ old('wilayah_sungai', $jaringan->wilayah_sungai) == 'DAS Panembung' ?
+                        'selected' : '' }}>DAS Panembung</option>
+                    <option value="DAS Karanganyar" {{ old('wilayah_sungai', $jaringan->wilayah_sungai) == 'DAS Karanganyar' ?
+                        'selected' : '' }}>DAS Karanganyar</option>
+                    <option value="DAS Tambakreja" {{ old('wilayah_sungai', $jaringan->wilayah_sungai) == 'DAS Tambakreja' ?
+                        'selected' : '' }}>DAS Tambakreja</option>
+                    <option value="DAS Nirbaya" {{ old('wilayah_sungai', $jaringan->wilayah_sungai) == 'DAS Nirbaya' ?
+                        'selected' : '' }}>DAS Nirbaya</option>
+                    <option value="DAS Solokjari" {{ old('wilayah_sungai', $jaringan->wilayah_sungai) == 'DAS Solokjari' ?
+                        'selected' : '' }}>DAS Solokjari</option>
+                    <option value="DAS Permisan" {{ old('wilayah_sungai', $jaringan->wilayah_sungai) == 'DAS Permisan' ?
+                        'selected' : '' }}>DAS Permisan</option>
+                    <option value="DAS Lembongpucung" {{ old('wilayah_sungai', $jaringan->wilayah_sungai) == 'DAS Lembongpucung'
+                        ? 'selected' : '' }}>DAS Lembongpucung</option>
+                    <option value="DAS Solok Permisan" {{ old('wilayah_sungai', $jaringan->wilayah_sungai) == 'DAS Solok
+                        Permisan' ? 'selected' : '' }}>DAS Solok Permisan</option>
+                    <option value="DAS Solokpring" {{ old('wilayah_sungai', $jaringan->wilayah_sungai) == 'DAS Solokpring' ?
+                        'selected' : '' }}>DAS Solokpring</option>
+                    <option value="DAS Pandan" {{ old('wilayah_sungai', $jaringan->wilayah_sungai) == 'DAS Pandan' ? 'selected'
+                        : '' }}>DAS Pandan</option>
+                    <option value="DAS Solokdewata" {{ old('wilayah_sungai', $jaringan->wilayah_sungai) == 'DAS Solokdewata' ?
+                        'selected' : '' }}>DAS Solokdewata</option>
+                    <option value="DAS Ciparayangan" {{ old('wilayah_sungai', $jaringan->wilayah_sungai) == 'DAS Ciparayangan' ?
+                        'selected' : '' }}>DAS Ciparayangan</option>
+                    <option value="DAS Cijolang" {{ old('wilayah_sungai', $jaringan->wilayah_sungai) == 'DAS Cijolang' ?
+                        'selected' : '' }}>DAS Cijolang</option>
+                    <option value="DAS Cipambokongan" {{ old('wilayah_sungai', $jaringan->wilayah_sungai) == 'DAS Cipambokongan'
+                        ? 'selected' : '' }}>DAS Cipambokongan</option>
+                    <option value="DAS Cipanerekean" {{ old('wilayah_sungai', $jaringan->wilayah_sungai) == 'DAS Cipanerekean' ?
+                        'selected' : '' }}>DAS Cipanerekean</option>
+                </select>
+                @error('wilayah_sungai')
+                <div class="text-danger">{{ $message }}</div>
+                @enderror
             </div>
+        </div>
 
             <div class="form-group row">
                 <label for="jenis" class="col-sm-2 col-form-label">Jenis</label>
