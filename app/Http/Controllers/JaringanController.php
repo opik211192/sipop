@@ -384,29 +384,32 @@ class JaringanController extends Controller
         // Menentukan rekomendasi berdasarkan hasil
         $recommendation = 'Belum SIAP OP'; // Default
 
-        if (
-            $hasil_ada_tidak_ada_1 >= 80 &&
-            $hasil_kondisi_1 >= 80 &&
-            $hasil_fungsi_1 >= 80 &&
-            $hasil_ada_tidak_ada_2 >= 80 &&
-            ($blanko3A->hasil_ada_tidak_ada ?? 0) >= 80 &&
-            ($blanko3B->hasil_ada_tidak_ada ?? 0) >= 60 &&
-            ($blanko3C->hasil_ada_tidak_ada ?? 0) >= 60 &&
-            ($blanko3D->hasil_ada_tidak_ada ?? 0) >= 60
-        ) {
-            $recommendation = 'SIAP OP';
-        } elseif (
-            $hasil_ada_tidak_ada_1 >= 70 &&
-            $hasil_kondisi_1 >= 70 &&
-            $hasil_fungsi_1 >= 70 &&
-            $hasil_ada_tidak_ada_2 >= 70 &&
-            ($blanko3A->hasil_ada_tidak_ada ?? 0) >= 80 &&
-            ($blanko3B->hasil_ada_tidak_ada ?? 0) >= 60 &&
-            ($blanko3C->hasil_ada_tidak_ada ?? 0) >= 60 &&
-            ($blanko3D->hasil_ada_tidak_ada ?? 0) >= 60
-        ) {
-            $recommendation = 'SIAP OP dengan Catatan';
-        }
+       if (
+    $hasil_ada_tidak_ada_1 >= 80 &&
+    $hasil_kondisi_1 >= 80 &&
+    $hasil_fungsi_1 >= 80 &&
+    $hasil_ada_tidak_ada_2 >= 80 &&
+    ($blanko3A->hasil_ada_tidak_ada ?? 0) >= 80 &&
+    ($blanko3B->hasil_ada_tidak_ada ?? 0) >= 80 &&  // Sesuaikan menjadi >= 80 untuk hijau penuh
+    ($blanko3C->hasil_ada_tidak_ada ?? 0) >= 80 &&
+    ($blanko3D->hasil_ada_tidak_ada ?? 0) >= 80
+) {
+    $recommendation = 'SIAP OP';
+} elseif (
+    $hasil_ada_tidak_ada_1 >= 70 &&
+    $hasil_kondisi_1 >= 70 &&
+    $hasil_fungsi_1 >= 70 &&
+    $hasil_ada_tidak_ada_2 >= 70 &&
+    ($blanko3A->hasil_ada_tidak_ada ?? 0) >= 70 && // Sesuaikan menjadi >= 70 untuk catatan kuning
+    ($blanko3B->hasil_ada_tidak_ada ?? 0) >= 60 &&
+    ($blanko3C->hasil_ada_tidak_ada ?? 0) >= 60 &&
+    ($blanko3D->hasil_ada_tidak_ada ?? 0) >= 60
+) {
+    $recommendation = 'SIAP OP dengan Catatan';
+} else {
+    $recommendation = 'Belum SIAP OP';
+}
+
 
         // Mengembalikan hasil dalam JSON format
         return response()->json([

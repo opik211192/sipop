@@ -3,7 +3,7 @@
 @section('title', 'Tambah Jaringan')
 
 @section('content_header')
-<h1 class="font-weight-bold">Tambah Jaringan</h1>
+<h1 class="font-weight-bold">Tambah Paket</h1>
 @stop
 
 @section('css')

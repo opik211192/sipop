@@ -3,7 +3,7 @@
 @section('title', 'Edit Jaringan')
 
 @section('content_header')
-<h1>Edit Jaringan</h1>
+<h1>Edit Paket</h1>
 @stop
 
 @section('css')
@@ -168,10 +168,10 @@
         </div>
 
             <div class="form-group row">
-                <label for="jenis" class="col-sm-2 col-form-label">Jenis</label>
+                <label for="jenis" class="col-sm-2 col-form-label">Infrastruktur</label>
                 <div class="col-sm-10">
                     <select name="jenis" id="jenis" class="form-control">
-                        <option value="">Pilih Jenis</option>
+                        <option value="">Pilih Infrastruktur</option>
                         <option value="Air Tanah" {{ old('jenis', $jaringan->jenis) == 'Air Tanah' ? 'selected' : ''
                             }}>Air Tanah</option>
                         <option value="Air Baku" {{ old('jenis', $jaringan->jenis) == 'Air Baku' ? 'selected' : ''

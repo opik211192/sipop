@@ -141,7 +141,7 @@ Route::middleware(['auth'])->group(function () {
 
   //Serah terima OP
   //upload file
-   Route::post('/jaringan-atab/{jaringan}/upload-serah-terima-op', [JaringanController::class, 'uploadSerahTerimaOP'])->name('upload-serah-terima-op');
+  Route::post('/jaringan-atab/{jaringan}/upload-serah-terima-op', [JaringanController::class, 'uploadSerahTerimaOP'])->name('upload-serah-terima-op');
   Route::put('/jaringan-atab/{jaringan}/upload-serah-terima-op', [JaringanController::class, 'updateUploadSerahTerimaOP'])->name('update-upload-serah-terima-op');
 
 

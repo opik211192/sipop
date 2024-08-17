@@ -619,7 +619,7 @@ public function prasaranaAirTanahProses(Request $request, Jaringan $jaringan)
 
 
     //cek blanko untuk status tahapan
-        private function checkAllBlankosFilled(Jaringan $jaringan)
+    private function checkAllBlankosFilled(Jaringan $jaringan)
     {
         // Daftar tahapan berurutan
         $tahapanList = [

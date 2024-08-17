@@ -3,7 +3,7 @@
 @section('title', 'Daftar Jaringan')
 
 @section('content_header')
-<h1 class="font-weight-bold">Data Jaringan</h1>
+<h1 class="font-weight-bold">Data Paket</h1>
 @stop
 
 @section('content')
@@ -57,7 +57,7 @@
             </div>
             <div class="col-sm-4 text-right">
                 <a href="{{ route('jaringan-atab.create') }}" class="btn btn-success">
-                    <i class="fas fa-plus-circle"></i> Tambah Jaringan
+                    <i class="fas fa-plus-circle"></i> Tambah Paket
                 </a>
             </div>
         </div>

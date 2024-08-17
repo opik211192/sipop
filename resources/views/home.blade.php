@@ -11,27 +11,24 @@
 <div class="row mb-3">
     <div class="col-lg-12">
         <form method="GET" action="{{ route('home') }}">
-            <div class="input-group">
-                <div class="input-group-prepend">
-                    <label for="tahun" class="input-group-text font-weight-bold bg-primary text-white">
-                        <i class="fas fa-calendar-alt mr-2"></i>Pilih Tahun:
-                    </label>
-                </div>
-                <select name="tahun" id="tahun" class="form-control text-center font-weight-bold fs-5"
+            <div class="d-flex justify-content-end align-items-center">
+                <label for="tahun" class="mr-2 font-weight-bold text-primary">
+                    <i class="fas fa-calendar-alt mr-1"></i>Pilih Tahun:
+                </label>
+                <select name="tahun" id="tahun" class="form-control font-weight-bold mr-2" style="width: 120px;"
                     onchange="this.form.submit()">
                     @foreach($years as $year)
-                    <option class="font-weight-bold fs-5" value="{{ $year }}" {{ $year==$selectedYear ? 'selected' : ''
-                        }}>
-                        {{ $year }}
-                    </option>
+                    <option value="{{ $year }}" {{ $year==$selectedYear ? 'selected' : '' }}>{{ $year }}</option>
                     @endforeach
                 </select>
-                <div class="input-group-append">
-                    <button class="btn btn-primary" type="submit">
-                        <i class="fas fa-search mr-2"></i>Cari
+                <div class="btn-group" role="group">
+                    <button class="btn btn-primary" type="submit" data-toggle="tooltip" data-placement="top"
+                        title="Cari">
+                        <i class="fas fa-search"></i>
                     </button>
-                    <a href="{{ route('home') }}" class="btn btn-secondary">
-                        <i class="fas fa-redo mr-2"></i>Reset
+                    <a href="{{ route('home') }}" class="btn btn-secondary" data-toggle="tooltip" data-placement="top"
+                        title="Reset">
+                        <i class="fas fa-redo"></i>
                     </a>
                 </div>
             </div>
@@ -46,7 +43,7 @@
             <div class="card-body d-flex flex-column justify-content-between">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <div class="card-title font-weight-bold">Total Jaringan</div>
+                        <div class="card-title font-weight-bold">Total Paket</div>
                         <div class="card-text display-4">{{ $totalJaringan }}</div>
                     </div>
                     <i class="fas fa-network-wired fa-3x"></i>
@@ -92,7 +89,7 @@
     <div class="col-lg-12">
         <div class="card shadow-lg">
             <div class="card-header bg-gradient-primary text-white">
-                <h3 class="card-title"><i class="fas fa-chart-bar"></i> Grafik Tahapan Jaringan</h3>
+                <h3 class="card-title"><i class="fas fa-chart-bar"></i> Tahapan Pelaksanaan</h3>
             </div>
             <div class="card-body">
                 <div class="chart-container" style="position: relative; height:500px; width:100%">
@@ -136,28 +133,30 @@
         var tahapanChart = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: {!! json_encode($tahapan) !!},
+                labels: {!! json_encode($labels) !!}, // Nama jaringan
                 datasets: [{
-                    label: 'Jumlah Jaringan',
-                    data: {!! json_encode(array_values($jumlahTahapan)) !!},
+                    label: 'Tahapan Jaringan',
+                    data: {!! json_encode($data) !!}, // Tahapan
                     backgroundColor: 'rgba(75, 192, 192, 0.2)',
                     borderColor: 'rgba(75, 192, 192, 1)',
                     borderWidth: 1, 
                 }]
             },
             options: {
-                indexAxis: 'y',
                 scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return {!! json_encode($tahapan) !!}[value]; // Tampilkan nama tahapan
+                            }
+                        }
+                    },
                     x: {
                         beginAtZero: true,
-                        max: {{ $maxJumlah }},
-                        ticks: {
-                            stepSize: 1,
-                            callback: function(value) {
-                                if (Number.isInteger(value)) {
-                                    return value;
-                                }
-                            }
+                        title: {
+                            display: true,
+                            text: ''
                         }
                     }
                 },
@@ -166,10 +165,9 @@
                 plugins: {
                     tooltip: {
                         callbacks: {
-                            afterLabel: function(tooltipItem) {
-                                var tahapan = tooltipItem.label;
-                                var jaringanInfo = {!! json_encode($jaringanInfo) !!};
-                                return jaringanInfo[tahapan].join('\n');
+                            label: function(tooltipItem) {
+                                var value = tooltipItem.raw;
+                                return 'Tahapan: ' + {!! json_encode($tahapan) !!}[value]; // Menampilkan nama tahapan di tooltip
                             }
                         }
                     }
