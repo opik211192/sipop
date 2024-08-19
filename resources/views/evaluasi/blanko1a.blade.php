@@ -6,6 +6,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -55,6 +56,90 @@
                 <h5 class="font-weight-light">{{ $jaringan->tahun }}</h5>
             </div>
         </div>
+
+        <!-- Form Upload di atas tombol simpan -->
+        <div id="uploadSection" class="mb-2">
+            <?php
+            $tahapanBalnko1a = $jaringan->tahapans->where('nama_tahapan', 'Evaluasi Awal Kesiapan')->first();
+            $dokumenBlanko1a = $tahapanBalnko1a ? $tahapanBalnko1a->dokumens->where('nama_dokumen', 'Blanko 1A')->first() : null;
+            ?>
+            @if ($dokumenBlanko1a)
+            <!-- Tombol Show Dokumen -->
+            <button class="btn btn-primary" data-toggle="modal" data-target="#showDokumenModal">
+                <span class="fas fa-eye" title="Lihat Blanko 1A"></span> Lihat Dokumen
+            </button>
+            <!-- Tombol Delete Dokumen -->
+            <button class="btn btn-danger" id="deleteDokumenBtn">
+                <span class="fas fa-trash" title="Hapus Blanko 1A"></span> Hapus Dokumen
+            </button>
+
+            <!-- Modal Lihat Dokumen -->
+            <div class="modal fade" id="showDokumenModal" tabindex="-1" role="dialog" aria-labelledby="showDokumenLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="showDokumenLabel">Lihat Dokumen Blanko 1A</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <iframe src="{{ asset('storage/blanko1a/' . basename($dokumenBlanko1a->path_dokumen)) }}"
+                                width="100%" height="400px"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                // Aktifkan tombol submit jika dokumen ada
+                    $('#submitBtn').prop('disabled', false);
+
+                    $('#deleteDokumenBtn').on('click', function () {
+                        if (confirm('Apakah Anda yakin ingin menghapus dokumen ini?')) {
+                            $.ajax({
+                                url: '', // Sesuaikan route delete
+                                type: 'DELETE',
+                                data: {
+                                    _token: '{{ csrf_token() }}'
+                                },
+                                success: function(response) {
+                                    if (response.success) {
+                                        alert('Dokumen berhasil dihapus');
+                                        location.reload();
+                                    } else {
+                                        alert('Gagal menghapus dokumen, silakan coba lagi.');
+                                    }
+                                },
+                                error: function(xhr, status, error) {
+                                    console.error('Error:', error);
+                                    alert('Gagal menghapus dokumen, silakan coba lagi.');
+                                }
+                            });
+                        }
+                    });
+            </script>
+            @else
+            <!-- Form Upload jika dokumen belum ada -->
+            <div class="col-md-6">
+                <form id="upload-blanko1a-form" action="{{ url('/inventarisasi-awal-prasarana-air-tanah/' . $jaringan->id) }}"
+                    method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <div class="form-group">
+                        <label for="blanko1a" class="form-label">Upload Blanko 1A</label>
+                        <div class="input-group">
+                            <input type="file" class="form-control" id="blanko1a" name="blanko1a">
+                            <div class="input-group-append">
+                                <button type="submit" class="btn btn-primary mb-2"><span class="fas fa-upload"></span> Upload</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            @endif
+        </div>
+
         <form id="evaluasi-awal-form"
             action="{{ route('inventarisasi-awal-prasarana-air-tanah-proses', ['jaringan' => $jaringan->id]) }}"
             method="POST">
@@ -127,13 +212,104 @@
             <input type="hidden" name="hasil_kondisi" id="hasil-kondisi" value="{{ $evaluasiBlanko->hasil_kondisi }}">
             <input type="hidden" name="hasil_fungsi" id="hasil-fungsi" value="{{ $evaluasiBlanko->hasil_fungsi }}">
             <div class="form-group">
-                <button type="submit" class="btn btn-primary mt-3 mb-2">Simpan</button>
-                <button type="button" class="btn btn-secondary mt-3 mb-2" onclick="window.close()">Batal</button>
+                <button type="submit" class="btn btn-primary mt-3 mb-2" id="submitBtn" disabled><span class="fa fa-save"></span> Simpan</button>
+                <button type="button" class="btn btn-secondary mt-3 mb-2" onclick="window.close()"><span class="fa fa-times"></span> Batal</button>
             </div>
         </form>
     </div>
 
     <script>
+        // Periksa apakah dokumen sudah ada saat halaman dimuat
+        $(document).ready(function() {
+            @if ($dokumenBlanko1a)
+            // Jika dokumen sudah ada, aktifkan tombol submit
+            $('#submitBtn').prop('disabled', false);
+            @endif
+        });
+
+        $('#upload-blanko1a-form').on('submit', function(e) {
+            e.preventDefault();
+
+            var formData = new FormData(this);
+
+            $('#loading').show();
+
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(response) {
+                    $('#loading').hide();
+                    if (response.success) {
+                        alert('Dokumen berhasil di-upload');
+                        $('#submitBtn').prop('disabled', false);
+                        // Ganti form upload dengan tombol Lihat Dokumen dan Hapus Dokumen
+                        $('#uploadSection').html(`
+                            <button class="btn btn-primary" data-toggle="modal" data-target="#showDokumenModal">
+                                <span class="fas fa-eye" title="Lihat Blanko 1A"></span> Lihat Dokumen
+                            </button>
+                            <button class="btn btn-danger" id="deleteDokumenBtn">
+                                <span class="fas fa-trash" title="Hapus Blanko 1A"></span> Hapus Dokumen
+                            </button>
+                            <div class="modal fade" id="showDokumenModal" tabindex="-1" role="dialog" aria-labelledby="showDokumenLabel"
+                                aria-hidden="true">
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="showDokumenLabel">Lihat Dokumen Blanko 1A</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <iframe src="/storage/blanko1a/${response.fileName}" width="100%" height="400px"></iframe>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `);
+
+                        // Tambahkan event listener untuk tombol Hapus Dokumen yang baru
+                        $('#deleteDokumenBtn').on('click', function() {
+                            if (confirm('Apakah Anda yakin ingin menghapus dokumen ini?')) {
+                                $.ajax({
+                                    url: '{{ route("delete-blanko1a", $jaringan->id) }}', // Sesuaikan route delete
+                                    type: 'DELETE',
+                                    data: {
+                                        _token: '{{ csrf_token() }}'
+                                    },
+                                    success: function(response) {
+                                        if (response.success) {
+                                            alert('Dokumen berhasil dihapus');
+                                            location.reload();
+                                        } else {
+                                            alert('Gagal menghapus dokumen, silakan coba lagi.');
+                                        }
+                                    },
+                                    error: function(xhr, status, error) {
+                                        console.error('Error:', error);
+                                        alert('Gagal menghapus dokumen, silakan coba lagi.');
+                                    }
+                                });
+                            }
+                        });
+                    } else {
+                        alert('Gagal mengunggah dokumen, silakan coba lagi.');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    $('#loading').hide();
+                    console.error('Error:', error);
+                    alert('Gagal mengunggah dokumen, silakan coba lagi.');
+                }
+            });
+        });
+
         function calculateWeights() {
             let totalItems = $('input[name^="items"][name$="[bobot]"]').length;
             let totalBobot = 0;
@@ -141,7 +317,7 @@
             let totalBobotKondisi = 0;
             let totalBobotFungsi = 0;
 
-            $('input[name^="items"][name$="[bobot]"]').each(function () {
+            $('input[name^="items"][name$="[bobot]"]').each(function() {
                 let bobot = parseFloat($(this).val().replace(/,/g, '.')) || 0;
                 let ada = $(this).closest('tr').find('select[name$="[ada_tidak_ada]"]').val();
                 let kondisi = parseFloat($(this).closest('tr').find('input[name$="[kondisi]"]').val().replace(/,/g, '.')) || 0;
@@ -180,18 +356,18 @@
             }
         }
 
-        $(document).ready(function () {
+        $(document).ready(function() {
             calculateWeights();
 
-            $('select[name^="items"]').change(function () {
+            $('select[name^="items"]').change(function() {
                 calculateWeights();
             });
 
-            $('input[name^="items"][name$="[kondisi]"], input[name^="items"][name$="[fungsi]"], input[name^="items"][name$="[bobot]"]').on('input change', function () {
+            $('input[name^="items"][name$="[kondisi]"], input[name^="items"][name$="[fungsi]"], input[name^="items"][name$="[bobot]"]').on('input change', function() {
                 calculateWeights();
             });
 
-            $('#evaluasi-awal-form').on('submit', function (e) {
+            $('#evaluasi-awal-form').on('submit', function(e) {
                 let totalBobot = parseFloat($('#total-bobot').val().replace(/,/g, '.')) || 0;
 
                 if (totalBobot !== 100) {

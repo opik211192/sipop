@@ -86,15 +86,22 @@ Route::middleware(['auth'])->group(function () {
   //blanko 1a
   Route::get('/inventarisasi-awal-prasarana-air-tanah/{jaringan}', [InventarisasiDataEvaluasiAwal::class, 'prasaranaAirTanah'])->name('inventarisasi-awal-prasarana-air-tanah');
   Route::put('/inventarisasi-awal-prasarana-air-tanah/{jaringan}', [InventarisasiDataEvaluasiAwal::class, 'prasaranaAirTanahProses'])->name('inventarisasi-awal-prasarana-air-tanah-proses');
+  Route::post('/inventarisasi-awal-prasarana-air-tanah/{id}', [InventarisasiDataEvaluasiAwal::class, 'uploadBlanko1a'])->name('upload-blanko1a');
+  Route::delete('/inventarisasi-awal-prasarana-air-tanah/{id}', [InventarisasiDataEvaluasiAwal::class, 'deleteBlanko1a'])->name('delete-blanko1a');
 
   //blanko 1b
   Route::get('/inventarisasi-awal-peralatan-air-tanah/{jaringan}', [InventarisasiDataEvaluasiAwal::class, 'peralatanAirTanah'])->name('inventarisasi-awal-peralatan-air-tanah');
   Route::put('/inventarisasi-awal-peralatan-air-tanah/{jaringan}', [InventarisasiDataEvaluasiAwal::class, 'peralatanAirTanahProses'])->name('inventarisasi-awal-peralatan-air-tanah-proses');
+  Route::post('/inventarisasi-awal-peralatan-air-tanah/{id}', [InventarisasiDataEvaluasiAwal::class, 'uploadBlanko1b'])->name('upload-blanko1b');
+  Route::delete('/inventarisasi-awal-peralatan-air-tanah/{id}', [InventarisasiDataEvaluasiAwal::class, 'deleteBlanko1b'])->name('delete-blanko1b');
 
 
   //blanko 1c
   Route::get('/inventarisasi-awal-prasarana-air-baku/{jaringan}', [InventarisasiDataEvaluasiAwal::class, 'prasaranaAirBaku'])->name('inventarisasi-awal-prasarana-air-baku');
   Route::put('/inventarisasi-awal-prasarana-air-baku/{jaringan}', [InventarisasiDataEvaluasiAwal::class, 'prasaranaAirBakuProses'])->name('inventarisasi-awal-prasarana-air-baku-proses');
+  Route::post('/inventarisasi-awal-prasarana-air-baku/{id}', [InventarisasiDataEvaluasiAwal::class, 'uploadBlanko1c'])->name('upload-blanko1c');
+  Route::delete('/inventarisasi-awal-prasarana-air-baku/{id}', [InventarisasiDataEvaluasiAwal::class, 'deleteBlanko1c'])->name('delete-blanko1c');
+
   Route::post('/inventarisasi-awal-prasarana-air-baku/{jaringan}/uji-pengaliran', [InventarisasiDataEvaluasiAwal::class, 'ujiPengaliran'])->name('inventarisasi-awal-prasarana-air-baku-uji-pengaliran');
   Route::Put('/inventarisasi-awal-prasarana-air-baku/{jaringan}/uji-pengaliran', [InventarisasiDataEvaluasiAwal::class, 'UpdateUjiPengaliran'])->name('inventarisasi-awal-prasarana-air-baku-uji-pengaliran-update');
 
@@ -105,21 +112,41 @@ Route::middleware(['auth'])->group(function () {
   Route::post('/inventarisasi-awal-data-informasi-non-fisik/upload-dokumen/{item}', [InventarisasiDataEvaluasiAwal::class, 'uploadBlanko2'])->name('inventarisasi-awal-data-informasi-non-fisik-upload-blanko'); 
   Route::delete('/inventarisasi-awal-data-informasi-non-fisik/delete-dokumen/{item}', [InventarisasiDataEvaluasiAwal::class, 'deleteBlanko2'])->name('inventarisasi-awal-data-informasi-non-fisik-delete-blanko');
 
+  Route::post('/inventarisasi-awal-data-informasi-non-fisik/{id}', [InventarisasiDataEvaluasiAwal::class, 'dokumenBlanko2'])->name('upload-dokumen-blanko2');
+  Route::delete('/inventarisasi-awal-data-informasi-non-fisik/{id}', [InventarisasiDataEvaluasiAwal::class, 'deleteDokumenBlanko2'])->name('delete-dokumen-blanko2');
+
+
   //blanko3a
   Route::get('/inventarisasi-awal-kesiapan-sarana-penunjang-op/{jaringan}', [InventarisasiDataEvaluasiAwal::class, 'kesiapanSaranaPenunjangOperasiDanPemeliharaan'])->name('inventarisasi-awal-kesiapan-sarana-penunjang-op');
   Route::put('/inventarisasi-awal-kesiapan-sarana-penunjang-op/{jaringan}', [InventarisasiDataEvaluasiAwal::class, 'kesiapanSaranaPenunjangOperasiDanPemeliharaanProses'])->name('inventarisasi-awal-kesiapan-sarana-penunjang-op-proses');
+  Route::post('/inventarisasi-awal-kesiapan-sarana-penunjang-op/{id}', [InventarisasiDataEvaluasiAwal::class, 'uploadBlanko3a'])->name('upload-blanko3a');
+  Route::delete('/inventarisasi-awal-kesiapan-sarana-penunjang-op/{id}', [InventarisasiDataEvaluasiAwal::class, 'deleteBlanko3a'])->name('delete-blanko3a');
+
+
 
   //blanko3b
   Route::get('/inventarisasi-awal-kesiapan-kelembagaan-sdm/{jaringan}', [InventarisasiDataEvaluasiAwal::class, 'kesiapanKelembagaanDanSumberDayaManusia'])->name('inventarisasi-awal-kesiapan-kelembagaan-sdm');
   Route::put('/inventarisasi-awal-kesiapan-kelembagaan-sdm/{jaringan}', [InventarisasiDataEvaluasiAwal::class, 'kesiapanKelembagaanDanSumberDayaManusiaProses'])->name('inventarisasi-awal-kesiapan-kelembagaan-sdm-proses');
-  
+  Route::post('/inventarisasi-awal-kesiapan-kelembagaan-sdm/{id}', [InventarisasiDataEvaluasiAwal::class, 'uploadBlanko3b'])->name('upload-blanko3b');
+  Route::delete('/inventarisasi-awal-kesiapan-kelembagaan-sdm/{id}', [InventarisasiDataEvaluasiAwal::class, 'deleteBlanko3b'])->name('delete-blanko3b');
+
+
+
   //blanko3c
   Route::get('/inventarisasi-awal-kesiapan-manajemen/{jaringan}', [InventarisasiDataEvaluasiAwal::class, 'kesiapanManajemen'])->name('inventarisasi-awal-kesiapan-manajemen');
   Route::put('/inventarisasi-awal-kesiapan-manajemen/{jaringan}', [InventarisasiDataEvaluasiAwal::class, 'kesiapanManajemenProses'])->name('inventarisasi-awal-kesiapan-manajemen-proses');
-  
+  Route::post('/inventarisasi-awal-kesiapan-manajemen/{id}', [InventarisasiDataEvaluasiAwal::class, 'uploadBlanko3c'])->name('upload-blanko3c');
+  Route::delete('/inventarisasi-awal-kesiapan-manajemen/{id}', [InventarisasiDataEvaluasiAwal::class, 'deleteBlanko3c'])->name('delete-blanko3c');
+
+
+
   //blanko3d
   Route::get('/inventarisasi-awal-kesiapan-konservasi/{jaringan}', [InventarisasiDataEvaluasiAwal::class, 'kesiapanKonservasi'])->name('inventarisasi-awal-kesiapan-konservasi');
   Route::put('/inventarisasi-awal-kesiapan-konservasi/{jaringan}', [InventarisasiDataEvaluasiAwal::class, 'kesiapanKonservasiProses'])->name('inventarisasi-awal-kesiapan-konservasi-proses');
+  Route::post('/inventarisasi-awal-kesiapan-konservasi/{id}', [InventarisasiDataEvaluasiAwal::class, 'uploadBlanko3d'])->name('upload-blanko3d');
+  Route::delete('/inventarisasi-awal-kesiapan-konservasi/{id}', [InventarisasiDataEvaluasiAwal::class, 'deleteBlanko3d'])->name('delete-blanko3d');
+
+
 
   //penyusunan BA hasil evaluasi Awal Kesiapan OP
   //upload file

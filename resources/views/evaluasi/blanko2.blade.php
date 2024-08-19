@@ -36,6 +36,7 @@
             window.opener.location.reload();
     </script>
     @endif
+
     <div class="container-fluid">
         <div class="d-flex justify-content-between mt-2 mb-2 align-items-center">
             <h1>Blanko 2</h1>
@@ -44,6 +45,90 @@
                 <h5 class="font-weight-light">{{ $jaringan->tahun }}</h5>
             </div>
         </div>
+
+        <!-- Form Upload Blanko 2 -->
+        <div id="uploadSection">
+            <?php
+            $tahapanBlanko2 = $jaringan->tahapans->where('nama_tahapan', 'Evaluasi Awal Kesiapan')->first();
+            $dokumenBlanko2 = $tahapanBlanko2 ? $tahapanBlanko2->dokumens->where('nama_dokumen', 'Blanko 2')->first() : null;
+            ?>
+            @if ($dokumenBlanko2)
+            <!-- Tombol Show Dokumen -->
+            <button class="btn btn-primary" data-toggle="modal" data-target="#showDokumenModal">
+                <span class="fas fa-eye" title="Lihat Blanko 2"></span> Lihat Dokumen
+            </button>
+            <!-- Tombol Delete Dokumen -->
+            <button class="btn btn-danger" id="deleteDokumenBtn">
+                <span class="fas fa-trash" title="Hapus Blanko 2"></span> Hapus Dokumen
+            </button>
+
+            <!-- Modal Lihat Dokumen -->
+            <div class="modal fade" id="showDokumenModal" tabindex="-1" role="dialog" aria-labelledby="showDokumenLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="showDokumenLabel">Lihat Dokumen Blanko 2</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <iframe src="{{ asset('storage/blanko2/' . basename($dokumenBlanko2->path_dokumen)) }}"
+                                width="100%" height="400px"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                // Aktifkan tombol submit jika dokumen ada
+                $('#submitBtn').prop('disabled', false);
+
+                $('#deleteDokumenBtn').on('click', function () {
+                    if (confirm('Apakah Anda yakin ingin menghapus dokumen ini?')) {
+                        $.ajax({
+                            url: '{{ route("delete-dokumen-blanko2", $jaringan->id) }}',
+                            type: 'DELETE',
+                            data: {
+                                _token: '{{ csrf_token() }}'
+                            },
+                            success: function(response) {
+                                if (response.success) {
+                                    alert('Dokumen berhasil dihapus');
+                                    location.reload();
+                                } else {
+                                    alert('Gagal menghapus dokumen, silakan coba lagi.');
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                console.error('Error:', error);
+                                alert('Gagal menghapus dokumen, silakan coba lagi.');
+                            }
+                        });
+                    }
+                });
+            </script>
+            @else
+            <!-- Form Upload jika dokumen belum ada -->
+            <div class="col-md-6">
+                <form id="upload-blanko2-form" action="{{ route('upload-dokumen-blanko2', $jaringan->id) }}" method="POST"
+                    enctype="multipart/form-data">
+                    @csrf
+                    <div class="form-group">
+                        <label for="blanko2" class="form-label">Upload Blanko 2</label>
+                        <div class="input-group">
+                            <input type="file" class="form-control" id="blanko2" name="blanko2">
+                            <div class="input-group-append">
+                                <button type="submit" class="btn btn-primary"><span class="fas fa-upload"></span> Upload</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            @endif
+        </div>
+
         <form id="data-informasi-non-fisik-form"
             action="{{ route('inventarisasi-awal-data-informasi-non-fisik-proses', ['jaringan' => $jaringan->id]) }}"
             method="POST">
@@ -98,15 +183,16 @@
                                 <td><input type="text" class="form-control" name="items[{{ $item->id }}][keterangan]"
                                         value="{{ $item->keterangan }}" readonly></td>
                                 <td>
-                                    <input type="file" id="file-{{ $item->id }}" style="display:none;">
+                                    <input type="file" id="file-{{ $item->id }}" class="file-upload-tabel"
+                                        style="display:none;">
                                     @if ($item->file_uploaded)
                                     <button type="button" id="delete-btn-{{ $item->id }}"
                                         class="btn btn-danger btn-icon delete-btn" data-item-id="{{ $item->id }}"
                                         title="Hapus Dokumen">
                                         <i class="fa fa-trash"></i>
                                     </button>
-                                    <a href="{{ $item->file_url }}" target="_blank" class="btn btn-info btn-icon"
-                                        title="Lihat Dokumen">
+                                    <a href="javascript:void(0);" class="btn btn-info btn-icon" title="Lihat Dokumen"
+                                        onclick="viewDocument('{{ $item->file_url }}')">
                                         <i class="fa fa-eye"></i>
                                     </a>
                                     @else
@@ -145,15 +231,16 @@
                                 <td><input type="text" class="form-control" name="items[{{ $item->id }}][keterangan]"
                                         value="{{ $item->keterangan }}" readonly></td>
                                 <td>
-                                    <input type="file" id="file-{{ $item->id }}" style="display:none;">
+                                    <input type="file" id="file-{{ $item->id }}" class="file-upload-tabel"
+                                        style="display:none;">
                                     @if ($item->file_uploaded)
                                     <button type="button" id="delete-btn-{{ $item->id }}"
                                         class="btn btn-danger btn-icon delete-btn" data-item-id="{{ $item->id }}"
                                         title="Hapus Dokumen">
                                         <i class="fa fa-trash"></i>
                                     </button>
-                                    <a href="{{ $item->file_url }}" target="_blank" class="btn btn-info btn-icon"
-                                        title="Lihat Dokumen">
+                                    <a href="javascript:void(0);" class="btn btn-info btn-icon" title="Lihat Dokumen"
+                                        onclick="viewDocument('{{ $item->file_url }}')">
                                         <i class="fa fa-eye"></i>
                                     </a>
                                     @else
@@ -190,15 +277,16 @@
                                 <td><input type="text" class="form-control" name="items[{{ $item->id }}][keterangan]"
                                         value="{{ $item->keterangan }}" readonly></td>
                                 <td>
-                                    <input type="file" id="file-{{ $item->id }}" style="display:none;">
+                                    <input type="file" id="file-{{ $item->id }}" class="file-upload-tabel"
+                                        style="display:none;">
                                     @if ($item->file_uploaded)
                                     <button type="button" id="delete-btn-{{ $item->id }}"
                                         class="btn btn-danger btn-icon delete-btn" data-item-id="{{ $item->id }}"
                                         title="Hapus Dokumen">
                                         <i class="fa fa-trash"></i>
                                     </button>
-                                    <a href="{{ $item->file_url }}" target="_blank" class="btn btn-info btn-icon"
-                                        title="Lihat Dokumen">
+                                    <a href="javascript:void(0);" class="btn btn-info btn-icon" title="Lihat Dokumen"
+                                        onclick="viewDocument('{{ $item->file_url }}')">
                                         <i class="fa fa-eye"></i>
                                     </a>
                                     @else
@@ -233,15 +321,16 @@
                                 <td><input type="text" class="form-control" name="items[{{ $item->id }}][keterangan]"
                                         value="{{ $item->keterangan }}" readonly></td>
                                 <td>
-                                    <input type="file" id="file-{{ $item->id }}" style="display:none;">
+                                    <input type="file" id="file-{{ $item->id }}" class="file-upload-tabel"
+                                        style="display:none;">
                                     @if ($item->file_uploaded)
                                     <button type="button" id="delete-btn-{{ $item->id }}"
                                         class="btn btn-danger btn-icon delete-btn" data-item-id="{{ $item->id }}"
                                         title="Hapus Dokumen">
                                         <i class="fa fa-trash"></i>
                                     </button>
-                                    <a href="{{ $item->file_url }}" target="_blank" class="btn btn-info btn-icon"
-                                        title="Lihat Dokumen">
+                                    <a href="javascript:void(0);" class="btn btn-info btn-icon" title="Lihat Dokumen"
+                                        onclick="viewDocument('{{ $item->file_url }}')">
                                         <i class="fa fa-eye"></i>
                                     </a>
                                     @else
@@ -260,7 +349,6 @@
                             @if(!$isItemno5Rendered)
                             <tr>
                                 <td rowspan="{{ count($itemno5) + 1 }}">{{ $no++ }}</td>
-                                {{-- <td colspan="5"><strong>Item No. 5</strong></td> --}}
                             </tr>
                             @foreach($items as $index => $item)
                             @if(in_array($item->nama_item, $itemno5))
@@ -281,15 +369,16 @@
                                 <td><input type="text" class="form-control" name="items[{{ $item->id }}][keterangan]"
                                         value="{{ $item->keterangan }}" readonly></td>
                                 <td>
-                                    <input type="file" id="file-{{ $item->id }}" style="display:none;">
+                                    <input type="file" id="file-{{ $item->id }}" class="file-upload-tabel"
+                                        style="display:none;">
                                     @if ($item->file_uploaded)
                                     <button type="button" id="delete-btn-{{ $item->id }}"
                                         class="btn btn-danger btn-icon delete-btn" data-item-id="{{ $item->id }}"
                                         title="Hapus Dokumen">
                                         <i class="fa fa-trash"></i>
                                     </button>
-                                    <a href="{{ $item->file_url }}" target="_blank" class="btn btn-info btn-icon"
-                                        title="Lihat Dokumen">
+                                    <a href="javascript:void(0);" class="btn btn-info btn-icon" title="Lihat Dokumen"
+                                        onclick="viewDocument('{{ $item->file_url }}')">
                                         <i class="fa fa-eye"></i>
                                     </a>
                                     @else
@@ -308,8 +397,11 @@
 
                             <!-- Item lainnya -->
                             @foreach($items as $index => $item)
-                            @if(!in_array($item->nama_item, array_merge(['Dokumen Perencanaan', 'Hasil Uji kualitas
-                            air', 'Manual OP'], $dokumenPelaksanaan, $itemno5)))
+                            @if(!in_array($item->nama_item, array_merge([
+                            'Dokumen Perencanaan',
+                            'Hasil Uji kualitas air',
+                            'Manual OP'],
+                            $dokumenPelaksanaan, $itemno5)))
                             <tr>
                                 <td>{{ $no++ }}</td>
                                 <td>{{ $item->nama_item }}</td>
@@ -327,15 +419,16 @@
                                 <td><input type="text" class="form-control" name="items[{{ $item->id }}][keterangan]"
                                         value="{{ $item->keterangan }}" readonly></td>
                                 <td>
-                                    <input type="file" id="file-{{ $item->id }}" style="display:none;">
+                                    <input type="file" id="file-{{ $item->id }}" class="file-upload-tabel"
+                                        style="display:none;">
                                     @if ($item->file_uploaded)
                                     <button type="button" id="delete-btn-{{ $item->id }}"
                                         class="btn btn-danger btn-icon delete-btn" data-item-id="{{ $item->id }}"
                                         title="Hapus Dokumen">
                                         <i class="fa fa-trash"></i>
                                     </button>
-                                    <a href="{{ $item->file_url }}" target="_blank" class="btn btn-info btn-icon"
-                                        title="Lihat Dokumen">
+                                    <a href="javascript:void(0);" class="btn btn-info btn-icon" title="Lihat Dokumen"
+                                        onclick="viewDocument('{{ $item->file_url }}')">
                                         <i class="fa fa-eye"></i>
                                     </a>
                                     @else
@@ -368,11 +461,32 @@
 
             <div class="form-group">
                 <div class="form-group">
-                    <button type="submit" class="btn btn-primary mt-3 mb-2">Simpan</button>
-                    <button type="button" class="btn btn-secondary mt-3 mb-2" onclick="window.close()">Kembali</button>
+                    <button type="submit" class="btn btn-primary mt-3 mb-2" id="submitBtn" disabled><span
+                            class="fa fa-save"></span>
+                        Simpan</button>
+                    <button type="button" class="btn btn-secondary mt-3 mb-2" onclick="window.close()"><span
+                            class="fa fa-times"></span> Batal</button>
                 </div>
             </div>
         </form>
+    </div>
+
+    <!-- Modal untuk menampilkan dokumen dalam iframe -->
+    <div class="modal fade" id="documentModal" tabindex="-1" role="dialog" aria-labelledby="documentModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="documentModalLabel">Lihat Dokumen</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <iframe id="documentIframe" src="" frameborder="0" style="width: 100%; height: 500px;"></iframe>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -405,7 +519,75 @@
         }
     }
 
+    function checkUploadStatus() {
+        let fileUploaded = false;
+
+        // Cek apakah form #upload-blanko2-form telah diupload
+        if ($('#upload-blanko2-form').length > 0 && $('#upload-blanko2-form').find('.btn-info').length === 0) {
+            $('#submitBtn').prop('disabled', true);
+            return; // Jika form #upload-blanko2-form belum di-upload, nonaktifkan tombol submit dan keluar dari fungsi
+        }
+
+        $('input.file-upload-tabel').each(function () {
+            var row = $(this).closest('tr');
+            var hasFileUploaded = row.find('.btn-info').length > 0; // Cek jika tombol "Lihat Dokumen" ada
+
+            if (hasFileUploaded) {
+                fileUploaded = true; // Setel menjadi true jika salah satu file telah di-upload
+            }
+        });
+
+        // Jika ada file yang sudah di-upload, tombol submit diaktifkan
+        if (fileUploaded) {
+            $('#submitBtn').prop('disabled', false);
+        } else {
+            $('#submitBtn').prop('disabled', true);
+        }
+    }
+
+
+
+
     $(document).ready(function () {
+        $('#upload-blanko2-form').submit(function(event) {
+            event.preventDefault(); // Mencegah form submit biasa
+
+            var formData = new FormData(this); // Mengambil data form
+            var uploadBtn = $(this).find('button[type="submit"]'); // Tombol upload
+            uploadBtn.html('<i class="fa fa-spinner fa-spin"></i>'); // Ganti tombol menjadi loading spinner
+            uploadBtn.addClass('uploading-btn'); // Tambahkan kelas untuk gaya loading
+            uploadBtn.prop('disabled', true); // Nonaktifkan tombol sementara
+
+            $.ajax({
+                url: $(this).attr('action'), // URL tujuan
+                type: 'POST',
+                data: formData,
+                processData: false, // Tidak memproses data
+                contentType: false, // Tidak mengatur tipe konten
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // Token CSRF
+                },
+                success: function(response) {
+                    if (response.success) {
+                        alert('File berhasil diupload'); // Tampilkan pesan sukses
+                        location.reload(); // Refresh halaman
+                    } else {
+                        alert('Gagal mengupload file. Silakan coba lagi.'); // Tampilkan pesan gagal
+                    }
+                },
+                error: function(xhr, status, error) {
+                    alert('Gagal mengupload file. Silakan coba lagi.'); // Tampilkan pesan gagal
+                },
+                complete: function() {
+                    uploadBtn.removeClass('uploading-btn'); // Hapus kelas loading
+                    uploadBtn.html('Upload'); // Kembalikan teks tombol
+                    uploadBtn.prop('disabled', false); // Aktifkan kembali tombol
+                    checkUploadStatus();
+                }
+            });
+        });
+
+
         window.addEventListener('beforeunload', function (event) {
             if (window.opener && !window.opener.closed) {
                 window.opener.location.reload(); // Refresh window opener
@@ -413,13 +595,15 @@
         });
 
         calculateWeights();
+        checkUploadStatus();
 
         $('.upload-btn').click(function () {
             var itemId = $(this).data('item-id');
             $('#file-' + itemId).click();
         });
 
-        $('input[type="file"]').change(function () {
+        // Handle file upload for the table rows
+        $('input.file-upload-tabel').change(function () {
             var itemId = $(this).attr('id').split('-')[1];
             var formData = new FormData();
             formData.append('path_blanko', $(this)[0].files[0]);
@@ -440,8 +624,8 @@
                 },
                 success: function (response) {
                     if (response.success) {
-                        alert('File berhasil diupload.');
-                        window.location.reload();
+                        //alert('File berhasil diupload.');
+                        location.reload();
                     }
                 },
                 error: function (xhr, status, error) {
@@ -452,6 +636,8 @@
                     uploadBtn.prop('disabled', false);
                 }
             });
+
+            checkUploadStatus();
         });
 
         function deleteFile(itemId) {
@@ -469,6 +655,7 @@
                     success: function (response) {
                         if (response.success) {
                             alert('File berhasil dihapus.');
+                            checkUploadStatus();
                             window.location.reload(); // Refresh halaman setelah file dihapus
                         }
                     },
@@ -481,6 +668,8 @@
                 // Re-enable button if cancel is pressed
                 deleteBtn.prop('disabled', false);
             }
+
+            checkUploadStatus();
         }
 
         $(document).on('click', '.delete-btn', function () {
@@ -494,6 +683,11 @@
 
         calculateWeights();
     });
+
+    function viewDocument(fileUrl) {
+        $('#documentIframe').attr('src', fileUrl);
+        $('#documentModal').modal('show');
+    }
     </script>
 </body>
 
