@@ -30,7 +30,8 @@ use App\Http\Controllers\Assign\PermissionToRoleController;
 
 Route::get('/', function () {
     // return view('welcome')
-    return redirect()->route('login');
+    return view('welcome_new');
+    //return redirect()->route('login');
 });
 
 Route::get('provinces', [DependantDropdownController::class, 'provinces'])->name('provinces');
@@ -170,8 +171,6 @@ Route::middleware(['auth'])->group(function () {
   //upload file
   Route::post('/jaringan-atab/{jaringan}/upload-serah-terima-op', [JaringanController::class, 'uploadSerahTerimaOP'])->name('upload-serah-terima-op');
   Route::put('/jaringan-atab/{jaringan}/upload-serah-terima-op', [JaringanController::class, 'updateUploadSerahTerimaOP'])->name('update-upload-serah-terima-op');
-
-
 
 });
 

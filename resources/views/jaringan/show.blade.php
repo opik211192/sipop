@@ -1680,7 +1680,14 @@
                             <div id="recommendation-failure" class="d-none">
                                 Rekomendasi: Belum SIAP OP
                             </div>
+                            <div id="download" class="d-none text-center mt-2">
+                                <a href="{{ asset('download/Format_BA_Evaluasi_Awal_POP.pdf') }}"
+                                    class="btn bg-gradient-success text-white btn-sm" target="_blank">
+                                    <i class="fas fa-download mr-2"></i> Download Format BA
+                                </a>
+                            </div>
                         </div>
+                        
                     
                         {{-- <p>Upload BA Hasil Evaluasi Awal Kesiapan OP</p> --}}
                     </div>
@@ -2724,97 +2731,106 @@
 {{-- ini untuk penyusunan BA Evaluasi Awal Kesiapan OP --}}
 <script>
     $(document).ready(function () {
-    $('#modal-ba-evaluasi-{{ $jaringan->id }}').on('shown.bs.modal', function () {
-        // Kosongkan elemen-elemen yang akan diisi ulang
-        $('#hasil-ada-tidak-ada-1 span').remove();
-        $('#hasil-kondisi-1 span').remove();
-        $('#hasil-fungsi-1 span').remove();
-        $('#hasil-ada-tidak-ada-2 span').remove();
-        $('#hasil-ada-tidak-ada-3A span').remove();
-        $('#hasil-ada-tidak-ada-3B span').remove();
-        $('#hasil-ada-tidak-ada-3C span').remove();
-        $('#hasil-ada-tidak-ada-3D span').remove();
+        $('#modal-ba-evaluasi-{{ $jaringan->id }}').on('shown.bs.modal', function () {
+            // Kosongkan elemen-elemen yang akan diisi ulang
+            $('#hasil-ada-tidak-ada-1 span').remove();
+            $('#hasil-kondisi-1 span').remove();
+            $('#hasil-fungsi-1 span').remove();
+            $('#hasil-ada-tidak-ada-2 span').remove();
+            $('#hasil-ada-tidak-ada-3A span').remove();
+            $('#hasil-ada-tidak-ada-3B span').remove();
+            $('#hasil-ada-tidak-ada-3C span').remove();
+            $('#hasil-ada-tidak-ada-3D span').remove();
 
-        $.ajax({
-            url: "{{ route('api.ba-awal-kesiapan-op', $jaringan) }}",
-            type: "GET",
-            success: function (data) {
-                //console.log(data);
-                
-                // Function to determine badge color based on value and thresholds
-                function getBadgeColor(value, catatanThreshold, siapThreshold) {
-                    if (value >= siapThreshold) {
-                        return 'badge-success'; // Hijau
-                    } else if (value >= catatanThreshold && value < siapThreshold) {
-                        return 'badge-warning'; // Kuning
-                    } else {
-                        return 'badge-danger'; // Merah
+            // Reset tampilan download section
+            var downloadSection = document.getElementById('download');
+            downloadSection.classList.add('d-none');
+
+            $.ajax({
+                url: "{{ route('api.ba-awal-kesiapan-op', $jaringan) }}",
+                type: "GET",
+                success: function (data) {
+                    //console.log(data);
+                    
+                    // Function to determine badge color based on value and thresholds
+                    function getBadgeColor(value, catatanThreshold, siapThreshold) {
+                        if (value >= siapThreshold) {
+                            return 'badge-success'; // Hijau
+                        } else if (value >= catatanThreshold && value < siapThreshold) {
+                            return 'badge-warning'; // Kuning
+                        } else {
+                            return 'badge-danger'; // Merah
+                        }
+                    }
+
+                    // Function to add badge with appropriate color and value
+                    function addBadge(elementId, value, catatanThreshold, siapThreshold) {
+                        let badgeColor = getBadgeColor(value, catatanThreshold, siapThreshold);
+                        let titleText = `${value}%`;
+
+                        $(`#${elementId}`).append(`<span class="badge ${badgeColor} ml-2" style="font-size: 15px;" title="${titleText}">${value}%</span>`);
+                    }
+
+                    // Tampilkan hasil Blanko 1
+                    addBadge('hasil-ada-tidak-ada-1', data.blanko1.hasil_ada_tidak_ada || 0, 70, 80);
+                    addBadge('hasil-kondisi-1', data.blanko1.hasil_kondisi || 0, 70, 80);
+                    addBadge('hasil-fungsi-1', data.blanko1.hasil_fungsi || 0, 70, 80);
+
+                    // Tampilkan hasil Blanko 2
+                    addBadge('hasil-ada-tidak-ada-2', data.blanko2.hasil_ada_tidak_ada || 0, 70, 80);
+
+                    // Tampilkan hasil Blanko 3A, 3B, 3C, 3D
+                    addBadge('hasil-ada-tidak-ada-3A', data.blanko3.blanko3A.hasil_ada_tidak_ada || 0, 70, 80);
+                    addBadge('hasil-ada-tidak-ada-3B', data.blanko3.blanko3B.hasil_ada_tidak_ada || 0, 60, 80);
+                    addBadge('hasil-ada-tidak-ada-3C', data.blanko3.blanko3C.hasil_ada_tidak_ada || 0, 60, 80);
+                    addBadge('hasil-ada-tidak-ada-3D', data.blanko3.blanko3D.hasil_ada_tidak_ada || 0, 60, 80);
+
+                    // Tampilkan rekomendasi
+                    if (data.recommendation === 'SIAP OP') {
+                        $('#recommendation-success')
+                            .removeClass('d-none')
+                            .show()
+                            .css({
+                                'background-color': '#28a745', // hijau
+                                'color': '#ffffff', // teks putih
+                                'padding': '10px', // padding
+                                'border-radius': '5px', // border radius
+                                'font-weight': 'bold', // teks tebal
+                                'text-align': 'center' // teks tengah
+                            });
+                    } else if (data.recommendation === 'SIAP OP dengan Catatan') {
+                        $('#recommendation-warning')
+                            .removeClass('d-none')
+                            .show()
+                            .css({
+                                'background-color': '#ffc107', // kuning
+                                'color': '#000000', // teks hitam
+                                'padding': '10px', // padding
+                                'border-radius': '5px', // border radius
+                                'font-weight': 'bold', // teks tebal
+                                'text-align': 'center' // teks tengah
+                            });
+                    } else if (data.recommendation === 'Belum SIAP OP') {
+                        $('#recommendation-failure')
+                            .removeClass('d-none')
+                            .show()
+                            .css({
+                                'background-color': '#dc3545', // merah
+                                'color': '#ffffff', // teks putih
+                                'padding': '10px', // padding
+                                'border-radius': '5px', // border radius
+                                'font-weight': 'bold', // teks tebal
+                                'text-align': 'center' // teks tengah
+                            });
+                    }
+
+                    // Cek kondisi rekomendasi dan tampilkan tombol download jika diperlukan
+                    if (!$('#recommendation-success').hasClass('d-none') || !$('#recommendation-warning').hasClass('d-none')) {
+                    downloadSection.classList.remove('d-none');
                     }
                 }
-
-                // Function to add badge with appropriate color and value
-                function addBadge(elementId, value, catatanThreshold, siapThreshold) {
-                    let badgeColor = getBadgeColor(value, catatanThreshold, siapThreshold);
-                    let titleText = `${value}%`;
-
-                    $(`#${elementId}`).append(`<span class="badge ${badgeColor} ml-2" style="font-size: 15px;" title="${titleText}">${value}%</span>`);
-                }
-
-                // Tampilkan hasil Blanko 1
-                addBadge('hasil-ada-tidak-ada-1', data.blanko1.hasil_ada_tidak_ada || 0, 70, 80);
-                addBadge('hasil-kondisi-1', data.blanko1.hasil_kondisi || 0, 70, 80);
-                addBadge('hasil-fungsi-1', data.blanko1.hasil_fungsi || 0, 70, 80);
-
-                // Tampilkan hasil Blanko 2
-                addBadge('hasil-ada-tidak-ada-2', data.blanko2.hasil_ada_tidak_ada || 0, 70, 80);
-
-                // Tampilkan hasil Blanko 3A, 3B, 3C, 3D
-                addBadge('hasil-ada-tidak-ada-3A', data.blanko3.blanko3A.hasil_ada_tidak_ada || 0, 70, 80);
-                addBadge('hasil-ada-tidak-ada-3B', data.blanko3.blanko3B.hasil_ada_tidak_ada || 0, 60, 80);
-                addBadge('hasil-ada-tidak-ada-3C', data.blanko3.blanko3C.hasil_ada_tidak_ada || 0, 60, 80);
-                addBadge('hasil-ada-tidak-ada-3D', data.blanko3.blanko3D.hasil_ada_tidak_ada || 0, 60, 80);
-
-                // Tampilkan rekomendasi
-                if (data.recommendation === 'SIAP OP') {
-                    $('#recommendation-success')
-                        .removeClass('d-none')
-                        .show()
-                        .css({
-                            'background-color': '#28a745', // hijau
-                            'color': '#ffffff', // teks putih
-                            'padding': '10px', // padding
-                            'border-radius': '5px', // border radius
-                            'font-weight': 'bold', // teks tebal
-                            'text-align': 'center' // teks tengah
-                        });
-                } else if (data.recommendation === 'SIAP OP dengan Catatan') {
-                    $('#recommendation-warning')
-                        .removeClass('d-none')
-                        .show()
-                        .css({
-                            'background-color': '#ffc107', // kuning
-                            'color': '#000000', // teks hitam
-                            'padding': '10px', // padding
-                            'border-radius': '5px', // border radius
-                            'font-weight': 'bold', // teks tebal
-                            'text-align': 'center' // teks tengah
-                        });
-                } else if (data.recommendation === 'Belum SIAP OP') {
-                    $('#recommendation-failure')
-                        .removeClass('d-none')
-                        .show()
-                        .css({
-                            'background-color': '#dc3545', // merah
-                            'color': '#ffffff', // teks putih
-                            'padding': '10px', // padding
-                            'border-radius': '5px', // border radius
-                            'font-weight': 'bold', // teks tebal
-                            'text-align': 'center' // teks tengah
-                        });
-                }
-            }
+            });
         });
-    });
 });
 
 </script>

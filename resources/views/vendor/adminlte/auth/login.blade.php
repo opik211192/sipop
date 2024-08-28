@@ -19,7 +19,15 @@
 @php( $password_reset_url = $password_reset_url ? url($password_reset_url) : '' )
 @endif
 
-@section('auth_header', __('adminlte::adminlte.login_message'))
+{{-- @section('auth_header', __('adminlte::adminlte.login_message')) --}}
+@section('auth_header')
+{{-- Logo Citanduy --}}
+<div class="text-center mb-3">
+    <img src="{{ asset('img/citanduy.png') }}" alt="Logo Citanduy" class="img-fluid" style="max-width: 100px;">
+</div>
+<h1 class="text-center">SIPPOP</h1>
+<h5 class="text-center">Sistem Informasi Pemantauan Persiapan Operasi dan Pemeliharaan</h5>
+@stop
 
 @section('auth_body')
 <form action="{{ $login_url }}" method="post">
@@ -76,7 +84,8 @@
         <div class="col-5">
             <button type=submit class="btn btn-block {{ config('adminlte.classes_auth_btn', 'btn-flat btn-primary') }}">
                 <span class="fas fa-sign-in-alt"></span>
-                {{ __('adminlte::adminlte.sign_in') }}
+                {{-- {{ __('adminlte::adminlte.sign_in') }} --}}
+                Login
             </button>
         </div>
     </div>
@@ -87,19 +96,19 @@
 @section('auth_footer')
 {{-- Password reset link --}}
 @if($password_reset_url)
-<p class="my-0">
+{{-- <p class="my-0">
     <a href="{{ $password_reset_url }}">
         {{ __('adminlte::adminlte.i_forgot_my_password') }}
     </a>
-</p>
+</p> --}}
 @endif
 
 {{-- Register link --}}
 @if($register_url)
-<p class="my-0">
+{{-- <p class="my-0">
     <a href="{{ $register_url }}">
         {{ __('adminlte::adminlte.register_a_new_membership') }}
     </a>
-</p>
+</p> --}}
 @endif
 @stop

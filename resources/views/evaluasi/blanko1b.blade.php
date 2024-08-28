@@ -358,6 +358,18 @@
             }
         }
 
+        function  checkAndSetAdaTidakAda(input) {
+            let row = $(input).closest('tr');
+            let kondisi = parseFloat(row.find('input[name$="[kondisi]"]').val().replace(/,/g, '.')) || 0;
+            let fungsi = parseFloat(row.find('input[name$="[fungsi]"]').val().replace(/,/g, '.')) || 0;
+            
+            if (kondisi > 0 || fungsi > 0) {
+                row.find('select[name$="[ada_tidak_ada]"]').val(1).trigger('change');
+            }else{
+                row.find('select[name$="[ada_tidak_ada]"]').val(0).trigger('change');
+            }
+        }
+
         $(document).ready(function() {
             calculateWeights();
 
@@ -367,6 +379,7 @@
 
             $('input[name^="items"][name$="[kondisi]"], input[name^="items"][name$="[fungsi]"], input[name^="items"][name$="[bobot]"]').on('input change', function() {
                 calculateWeights();
+                checkAndSetAdaTidakAda(this);
             });
 
             $('#evaluasi-awal-form').on('submit', function(e) {

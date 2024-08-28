@@ -7,7 +7,7 @@
 @stop
 
 @section('content')
-<!-- Dropdown for Year Selection -->
+<!-- Dropdown for Year and Satker Selection -->
 <div class="row mb-3">
     <div class="col-lg-12">
         <form method="GET" action="{{ route('home') }}">
@@ -21,6 +21,19 @@
                     <option value="{{ $year }}" {{ $year==$selectedYear ? 'selected' : '' }}>{{ $year }}</option>
                     @endforeach
                 </select>
+
+                <label for="satker" class="mr-2 font-weight-bold text-primary">
+                    <i class="fas fa-building mr-1"></i>Pilih Satker:
+                </label>
+                <select name="satker" id="satker" class="form-control font-weight-bold mr-2" style="width: 200px;"
+                    onchange="this.form.submit()">
+                    <option value="Balai" {{ $selectedSatker=='Balai' ? 'selected' : '' }}>Satker Balai</option>
+                    <option value="PJPA" {{ $selectedSatker=='PJPA' ? 'selected' : '' }}>Satker PJPA</option>
+                    <option value="PJSA" {{ $selectedSatker=='PJSA' ? 'selected' : '' }}>Satker PJSA</option>
+                    <option value="Bendungan" {{ $selectedSatker=='Bendungan' ? 'selected' : '' }}>Satker Bendungan
+                    </option>
+                </select>
+
                 <div class="btn-group" role="group">
                     <button class="btn btn-primary" type="submit" data-toggle="tooltip" data-placement="top"
                         title="Cari">
@@ -36,17 +49,18 @@
     </div>
 </div>
 
+@if($selectedSatker == 'PJPA')
+<!-- Card for Total Jaringan (Placed at the top) -->
 <div class="row">
-    <!-- Card for Total Jaringan -->
-    <div class="col-lg-6 col-md-6 mb-4">
-        <div class="card bg-primary text-white shadow-lg">
+    <div class="col-lg-12 mb-4">
+        <div class="card bg-info text-white shadow-lg">
             <div class="card-body d-flex flex-column justify-content-between">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <div class="card-title font-weight-bold">Total Paket</div>
-                        <div class="card-text display-4">{{ $totalJaringan }}</div>
+                        <div class="card-text display-4 ">{{ $totalJaringan }}</div>
                     </div>
-                    <i class="fas fa-network-wired fa-3x"></i>
+                    <i class="fas fa-database fa-3x"></i>
                 </div>
             </div>
             <div class="card-footer bg-transparent border-top-0">
@@ -57,26 +71,64 @@
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Card for Satker PJPA -->
-    <div class="col-lg-6 col-md-6 mb-4">
-        <div class="card bg-info text-white shadow-lg">
+<div class="row">
+    <!-- Cards for Air Tanah, Air Baku, and Embung -->
+    <div class="col-lg-4 col-md-6 mb-4">
+        <div class="card bg-primary text-white shadow-lg">
             <div class="card-body d-flex flex-column justify-content-between">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <div class="card-title font-weight-bold">Satker PJPA</div>
-                        <ul class="list-unstyled">
-                            <li>Air Tanah: <strong>{{ $totalAirTanah }}</strong></li>
-                            <li>Air Baku: <strong>{{ $totalAirBaku }}</strong></li>
-                            <li>Embung: <strong>{{ $totalEmbung }}</strong></li>
-                        </ul>
+                        <div class="card-title font-weight-bold">Air Tanah</div>
+                        <div class="card-text display-4">{{ $totalAirTanah }}</div>
                     </div>
-                    <i class="fas fa-project-diagram fa-3x"></i>
+                    <i class="fas fa-tint fa-3x"></i>
                 </div>
             </div>
             <div class="card-footer bg-transparent border-top-0">
                 <a href="{{ route('jaringan-atab.index') }}"
                     class="btn btn-light btn-sm btn-block text-info font-weight-bold">
+                    More info <i class="fas fa-arrow-circle-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4 col-md-6 mb-4">
+        <div class="card bg-warning text-white shadow-lg">
+            <div class="card-body d-flex flex-column justify-content-between">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="card-title font-weight-bold">Air Baku</div>
+                        <div class="card-text display-4">{{ $totalAirBaku }}</div>
+                    </div>
+                    <i class="fas fa-water fa-3x"></i>
+                </div>
+            </div>
+            <div class="card-footer bg-transparent border-top-0">
+                <a href="{{ route('jaringan-atab.index') }}"
+                    class="btn btn-light btn-sm btn-block text-warning font-weight-bold">
+                    More info <i class="fas fa-arrow-circle-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4 col-md-6 mb-4">
+        <div class="card bg-success text-white shadow-lg">
+            <div class="card-body d-flex flex-column justify-content-between">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="card-title font-weight-bold">Embung</div>
+                        <div class="card-text display-4">{{ $totalEmbung }}</div>
+                    </div>
+                    <i class="fas fa-mountain fa-3x"></i>
+                </div>
+            </div>
+            <div class="card-footer bg-transparent border-top-0">
+                <a href="{{ route('jaringan-atab.index') }}"
+                    class="btn btn-light btn-sm btn-block text-success font-weight-bold">
                     More info <i class="fas fa-arrow-circle-right"></i>
                 </a>
             </div>
@@ -95,10 +147,19 @@
                 <div class="chart-container" style="position: relative; height:500px; width:100%">
                     <canvas id="tahapanChart"></canvas>
                 </div>
+                <div class="mt-4 text-center">
+                    <span class="legend-item bg-primary"></span> Air Tanah
+                    <span class="legend-item bg-warning"></span> Air Baku
+                    <span class="legend-item bg-success"></span> Embung
+                </div>
             </div>
         </div>
     </div>
 </div>
+@else
+<!-- Tampilkan pesan kosong atau tidak tampilkan apa-apa jika bukan PJPA -->
+<div class="alert alert-danger">Tidak ada data yang tersedia untuk Satker selain PJPA.</div>
+@endif
 @stop
 
 @section('css')
@@ -113,14 +174,27 @@
         font-size: 1.5rem;
     }
 
-    .list-unstyled li {
-        font-size: 1.2rem;
-        margin-bottom: 0.5rem;
+    .card-text {
+        font-size: 2rem;
     }
 
     .btn:hover {
         transform: scale(1.05);
         transition: transform 0.2s;
+    }
+
+    /* Custom legend styling */
+    .legend-item {
+        display: inline-block;
+        width: 40px;
+        height: 20px;
+        margin-right: 10px;
+        margin-bottom: 10px;
+        border-radius: 3px;
+    }
+
+    .legend-item+.legend-item {
+        margin-left: 15px;
     }
 </style>
 @stop
@@ -128,6 +202,7 @@
 @section('js')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+    @if($selectedSatker == 'PJPA')
     document.addEventListener('DOMContentLoaded', function () {
         var ctx = document.getElementById('tahapanChart').getContext('2d');
         var tahapanChart = new Chart(ctx, {
@@ -135,11 +210,11 @@
             data: {
                 labels: {!! json_encode($labels) !!}, // Nama jaringan
                 datasets: [{
-                    label: 'Tahapan Jaringan',
-                    data: {!! json_encode($data) !!}, // Tahapan
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 1, 
+                    label: 'Tahapan Pelaksanaan',
+                    data: {!! json_encode($data) !!}, // Data tahapan
+                    backgroundColor: {!! json_encode($colors) !!}, // Warna sesuai jenis jaringan
+                    borderColor: {!! json_encode($borderColors) !!}, // Warna border sesuai jenis jaringan
+                    borderWidth: 1
                 }]
             },
             options: {
@@ -147,6 +222,10 @@
                     y: {
                         beginAtZero: true,
                         ticks: {
+                            font: {
+                                weight: 'bold',
+                                size: 12
+                            },
                             callback: function(value) {
                                 return {!! json_encode($tahapan) !!}[value]; // Tampilkan nama tahapan
                             }
@@ -157,12 +236,21 @@
                         title: {
                             display: true,
                             text: ''
+                        },
+                        ticks: {
+                            font: {
+                                weight: 'bold', // Buat label pada sumbu x menjadi tebal
+                                size: 11
+                            }
                         }
                     }
                 },
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
+                    legend: {
+                        display: false // Nonaktifkan legend
+                    },
                     tooltip: {
                         callbacks: {
                             label: function(tooltipItem) {
@@ -175,5 +263,6 @@
             }
         });
     });
+    @endif
 </script>
 @stop

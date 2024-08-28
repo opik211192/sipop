@@ -19,6 +19,7 @@
     <div class="{{ $auth_type ?? 'login' }}-box">
 
         {{-- Logo --}}
+        <!--  
         <div class="{{ $auth_type ?? 'login' }}-logo">
             <a href="{{ $dashboard_url }}">
 
@@ -52,7 +53,7 @@
             Sistem Informasi Pemantauan <br> Persiapan Operasi dan Pemeliharaan
         </p>
     </div>
-
+    -->
         {{-- Card Box --}}
         <div class="card {{ config('adminlte.classes_auth_card', 'card-outline card-primary') }}">
             

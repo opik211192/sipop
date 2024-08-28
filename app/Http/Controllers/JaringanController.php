@@ -93,7 +93,7 @@ class JaringanController extends Controller
         ]);
         
         Jaringan::create($validateData);
-        return redirect()->route('jaringan-atab.index')->with('success', 'Jaringan Telah Ditambahkan');
+        return redirect()->route('jaringan-atab.index')->with('success', 'Paket Telah Ditambahkan');
     }
 
     /**
@@ -148,7 +148,7 @@ class JaringanController extends Controller
         ]);
         
         $jaringan->update($validateData);
-        return redirect()->route('jaringan-atab.index')->with('success', 'Jaringan Telah Diubah');
+        return redirect()->route('jaringan-atab.index')->with('success', 'Paket Telah Diubah');
     }
 
     /**
@@ -175,7 +175,7 @@ class JaringanController extends Controller
         $jaringan->tahapans()->delete();
         $jaringan->delete();
 
-        return redirect()->route('jaringan-atab.index')->with('success', 'Jaringan Telah Dihapus beserta dokumen terkait.');
+        return redirect()->route('jaringan-atab.index')->with('success', 'Paket Telah Dihapus beserta dokumen terkait.');
     }
     
 
