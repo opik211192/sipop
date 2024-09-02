@@ -23,6 +23,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'jabatan_id',
+        'jabatan_detail_id',
     ];
 
     /**
@@ -43,4 +45,14 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function jabatan()
+    {
+        return $this->belongsTo(Jabatan::class);
+    }
+
+    public function JabatanDetail()
+    {
+        return $this->belongsTo(JabatanDetail::class);
+    }
 }

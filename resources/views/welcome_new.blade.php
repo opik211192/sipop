@@ -60,7 +60,7 @@
     <div class="bg-text">
         <img style="max-width: 100px;" class="mb-2" src="{{ asset('img/citanduy.png') }}" alt="Logo SIPPOP">
         <h1>SIPPOP</h1>
-        <p>Sistem Informasi Pemantauan Persiapan Operasi dan Pemeliharaan</p>
+        <p>Sistem Pemantauan Persiapan Operasi dan Pemeliharaan</p>
         <a href="{{ route('login') }}" class="btn btn-primary btn-lg shadow"><span class="fas fa-share-from-square"></span> Login</a>
     </div>
 

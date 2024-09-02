@@ -56,9 +56,11 @@
                 </form>
             </div>
             <div class="col-sm-4 text-right">
+                @can('create paket')
                 <a href="{{ route('jaringan-atab.create') }}" class="btn btn-success">
                     <i class="fas fa-plus-circle"></i> Tambah Paket
                 </a>
+                @endcan
             </div>
         </div>
     </div>
@@ -75,7 +77,10 @@
                     <th>Satker</th>
                     <th>Wilayah Sungai</th>
                     <th>Tahapan</th>
+                    @can('edit paket')
+                        
                     <th style="width: 15%">Aksi</th>
+                    @endcan
                 </tr>
             </thead>
             <tbody>
@@ -99,21 +104,25 @@
                         <span class="badge bg-danger">Belum Tahapan</span>
                         @endif
                     </td>
+                    @can('edit paket')
                     <td>
                         <a href="{{ route('jaringan-atab.edit', $jaringan) }}" class="btn btn-primary btn-sm"
                             title="Edit">
                             <i class="fas fa-edit"></i>
                         </a>
+                        @can('delete paket')
                         <form action="{{ route('jaringan-atab.destroy', $jaringan) }}" method="POST"
-                            style="display:inline-block;">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger btn-sm" title="Hapus"
-                                onclick="return confirm('Menghapus data ini akan menghapus seluruh data dokumen terkait dan tidak dapat dikembalikan. Apakah Anda yakin ingin melanjutkan?')">
-                                <i class="fas fa-trash-alt"></i>
-                            </button>
-                        </form>
-                    </td>
+                        style="display:inline-block;">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger btn-sm" title="Hapus"
+                        onclick="return confirm('Menghapus data ini akan menghapus seluruh data dokumen terkait dan tidak dapat dikembalikan. Apakah Anda yakin ingin melanjutkan?')">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </form>
+                @endcan
+            </td>
+            @endcan 
                 </tr>
                 @empty
                 <tr>

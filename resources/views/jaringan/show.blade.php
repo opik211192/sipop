@@ -144,22 +144,34 @@
                         <span class="badge badge-warning"><i class="fas fa-exclamation-circle"></i> Pending</span>
                         @endif
                     </td>
-                    <td>
-                        @if ($dokumenPembina && $dokumenPelaksana)
-                        <button type="button" class="btn bg-gradient-primary btn-sm" data-toggle="modal"
-                            data-target="#pembentukan-tim-show">
-                            <span class="fas fa-eye" title="Lihat Dokumen"></span></button>
-                        <button type="button" class="btn bg-gradient-primary btn-sm" data-toggle="modal"
-                            data-target="#pembentukan-tim-edit">
-                            <span class="fas fa-edit" title="Edit"></span>
-                        </button>
-                        @else
-                        <button type="button" class="btn bg-gradient-primary btn-sm" data-toggle="modal"
-                            data-target="#pembentukan-tim">
-                            <span class="fas fa-upload" title="Upload Dokumen"></span>
-                        </button>
-                        @endif
-                    </td>
+                  <td>
+                    @if ($dokumenPembina && $dokumenPelaksana)
+                    @can('edit upload')
+                    <!-- Jika user memiliki permission 'edit upload', tampilkan tombol lihat dan edit -->
+                    <button type="button" class="btn bg-gradient-primary btn-sm" data-toggle="modal"
+                        data-target="#pembentukan-tim-show">
+                        <span class="fas fa-eye" title="Lihat Dokumen"></span>
+                    </button>
+                    <button type="button" class="btn bg-gradient-primary btn-sm" data-toggle="modal"
+                        data-target="#pembentukan-tim-edit">
+                        <span class="fas fa-edit" title="Edit"></span>
+                    </button>
+                    @elsecan('view upload')
+                    <!-- Jika user hanya memiliki permission 'view upload', tampilkan hanya tombol lihat -->
+                    <button type="button" class="btn bg-gradient-primary btn-sm" data-toggle="modal"
+                        data-target="#pembentukan-tim-show">
+                        <span class="fas fa-eye" title="Lihat Dokumen"></span>
+                    </button>
+                    @endcan
+                    @else
+                    <!-- Jika dokumen belum ada, tampilkan tombol upload -->
+                    @can('create upload')
+                    <button type="button" class="btn bg-gradient-primary btn-sm" data-toggle="modal" data-target="#pembentukan-tim">
+                        <span class="fas fa-upload" title="Upload Dokumen"></span>
+                    </button>
+                    @endcan
+                    @endif
+                </td>
                 </tr>
                 <tr>
                     <td class="bg-white">
@@ -178,27 +190,44 @@
                         <span class="badge badge-warning"><i class="fas fa-exclamation-circle"></i> Pending</span>
                         @endif
                     </td>
-                    <td>
-                        @if ($dokumenPenyusunanRencanaKerja)
-                        <button type="button" class="btn bg-gradient-primary btn-sm" data-toggle="modal"
-                            data-target="#penyusunan-rencana-kerja-show">
-                            <span class="fas fa-eye" title="Lihat Dokumen"></span>
-                        </button>
-                        <button type="button" class="btn bg-gradient-primary btn-sm" data-toggle="modal"
-                            data-target="#penyusunan-rencana-kerja-edit">
-                            <span class="fas fa-edit" title="Edit"></span>
-                        </button>
-                        @elseif ($dokumenPembina && $dokumenPelaksana)
-                        <button type="button" class="btn bg-gradient-primary btn-sm" data-toggle="modal"
-                            data-target="#penyusunan-rencana-kerja">
-                            <span class="fas fa-upload" title="Upload Dokumen"></span>
-                        </button>
-                        @else
-                        <button type="button" class="btn bg-gradient-primary btn-sm" disabled>
-                            <span class="fas fa-upload" title="Upload Dokumen"></span>
-                        </button>
-                        @endif
-                    </td>
+                  <td>
+                    @if ($dokumenPenyusunanRencanaKerja)
+                    @can('edit upload')
+                    <!-- Jika user memiliki permission 'edit upload', tampilkan tombol edit dan lihat dokumen -->
+                    <button type="button" class="btn bg-gradient-primary btn-sm" data-toggle="modal"
+                        data-target="#penyusunan-rencana-kerja-show">
+                        <span class="fas fa-eye" title="Lihat Dokumen"></span>
+                    </button>
+                    <button type="button" class="btn bg-gradient-primary btn-sm" data-toggle="modal"
+                        data-target="#penyusunan-rencana-kerja-edit">
+                        <span class="fas fa-edit" title="Edit"></span>
+                    </button>
+                    @elsecan('view upload')
+                    <!-- Jika user tidak memiliki permission 'edit upload', tetapi memiliki permission 'view upload', tampilkan tombol lihat dokumen -->
+                    <button type="button" class="btn bg-gradient-primary btn-sm" data-toggle="modal"
+                        data-target="#penyusunan-rencana-kerja-show">
+                        <span class="fas fa-eye" title="Lihat Dokumen"></span>
+                    </button>
+                    @endcan
+                    @else
+                    <!-- Jika dokumen Penyusunan Rencana Kerja tidak ada -->
+                    @can('create upload')
+                    <!-- Jika user memiliki permission 'create upload', tampilkan tombol upload -->
+                    @if ($dokumenPembina && $dokumenPelaksana)
+                    <!-- Jika dokumen Pembina dan Pelaksana ada, tombol upload aktif -->
+                    <button type="button" class="btn bg-gradient-primary btn-sm" data-toggle="modal"
+                        data-target="#penyusunan-rencana-kerja">
+                        <span class="fas fa-upload" title="Upload Dokumen"></span>
+                    </button>
+                    @else
+                    <!-- Jika dokumen Pembina dan Pelaksana belum ada, tombol upload dinonaktifkan -->
+                    <button type="button" class="btn bg-gradient-primary btn-sm" disabled>
+                        <span class="fas fa-upload" title="Upload Dokumen"></span>
+                    </button>
+                    @endif
+                    @endcan
+                    @endif
+                </td>
                 </tr>
                 <tr>
                     <td class="bg-white">
@@ -219,32 +248,49 @@
                         <span class="badge badge-warning"><i class="fas fa-exclamation-circle"></i> Pending</span>
                         @endif
                     </td>
-                    <td>
-                        @if ($dokumenSosialisasi)
-                        <button type="button" class="btn bg-gradient-primary btn-sm" data-toggle="modal"
-                            data-target="#sosialisasi-dan-koordinasi-show">
-                            <span class="fas fa-eye" title="Lihat Dokumen"></span>
-                        </button>
-                        <button type="button" class="btn bg-gradient-primary btn-sm" data-toggle="modal"
-                            data-target="#sosialisasi-dan-koordinasi-edit">
-                            <span class="fas fa-edit" title="Edit"></span>
-                        </button>
-                        @elseif ($dokumenPenyusunanRencanaKerja)
-                        <button type="button" class="btn bg-gradient-primary btn-sm" data-toggle="modal"
-                            data-target="#sosialisai-dan-koordiansi">
-                            <span class="fas fa-upload" title="Upload Dokumen"></span>
-                        </button>
-                        @else
-                        <button type="button" class="btn bg-gradient-primary btn-sm" disabled>
-                            <span class="fas fa-upload" title="Upload Dokumen"></span>
-                        </button>
-                        @endif
-                    </td>
+                   <td>
+                    @if ($dokumenSosialisasi)
+                    @can('edit upload')
+                    <!-- Jika user memiliki permission 'edit upload', tampilkan tombol lihat dan edit dokumen -->
+                    <button type="button" class="btn bg-gradient-primary btn-sm" data-toggle="modal"
+                        data-target="#sosialisasi-dan-koordinasi-show">
+                        <span class="fas fa-eye" title="Lihat Dokumen"></span>
+                    </button>
+                    <button type="button" class="btn bg-gradient-primary btn-sm" data-toggle="modal"
+                        data-target="#sosialisasi-dan-koordinasi-edit">
+                        <span class="fas fa-edit" title="Edit"></span>
+                    </button>
+                    @elsecan('view upload')
+                    <!-- Jika user hanya memiliki permission 'view upload', tampilkan hanya tombol lihat dokumen -->
+                    <button type="button" class="btn bg-gradient-primary btn-sm" data-toggle="modal"
+                        data-target="#sosialisasi-dan-koordinasi-show">
+                        <span class="fas fa-eye" title="Lihat Dokumen"></span>
+                    </button>
+                    @endcan
+                    @else
+                    <!-- Jika dokumen Sosialisasi tidak ada -->
+                    @can('create upload')
+                    <!-- Jika user memiliki permission 'create upload', tampilkan tombol upload -->
+                    @if ($dokumenPenyusunanRencanaKerja)
+                    <!-- Jika dokumen Penyusunan Rencana Kerja ada, tombol upload aktif -->
+                    <button type="button" class="btn bg-gradient-primary btn-sm" data-toggle="modal"
+                        data-target="#sosialisasi-dan-koordinasi-upload">
+                        <span class="fas fa-upload" title="Upload Dokumen"></span>
+                    </button>
+                    @else
+                    <!-- Jika dokumen Penyusunan Rencana Kerja belum ada, tombol upload dinonaktifkan -->
+                    <button type="button" class="btn bg-gradient-primary btn-sm" disabled>
+                        <span class="fas fa-upload" title="Upload Dokumen"></span>
+                    </button>
+                    @endif
+                    @endcan
+                    @endif
+                </td>
                 </tr>
                 <tr>
                     <td colspan="3">
                         <i class="fas fa-tasks fa-lg text-primary mr-2"></i>
-                        <span class="font-weight-bold text-dark">Penyusunan Evaluasi Awal Kesiapan</span>
+                        <span class="font-weight-bold text-dark">Penyusunan Lembar Evaluasi Kesiapan OP</span>
                     </td>
                 </tr>
                 <tr>
@@ -255,8 +301,7 @@
                             <div class="p-1 bg-gradient-primary text-white rounded-circle mr-2">
                                 <i class="fas fa-folder-open"></i>
                             </div>
-                            <span class="font-weight-bold text-dark">Inventarisasi Data dan Informasi dan Evaluasi
-                                Awal Kesiapan OP</span>
+                            <span class="font-weight-bold text-dark">Inventarisasi Data dan Informasi</span>
                             <i class="fas fa-chevron-down ml-auto text-primary"></i>
                         </a>
                         <div class="collapse " id="collapseInventarisasi">
@@ -393,8 +438,7 @@
                                                                     </button>
                                                                 </td>
                                                             </tr>
-                                                            @elseif ($jaringan->jenis == 'Air Baku' || $jaringan->jenis
-                                                            == 'Embung')
+                                                            @elseif ($jaringan->jenis == 'Air Baku' || $jaringan->jenis == 'Embung')
                                                             <tr>
                                                                 <td>Prasarana Air Baku/Embung <strong>(Blanko
                                                                         1C)</strong></td>
@@ -719,7 +763,7 @@
                 <tr>
                     <td class="bg-white">
                         <i class="fas fa-file-signature fa-lg text-primary mr-2"></i>
-                        <span class="font-weight-bold text-dark">Penyusunan BA Hasil Evaluasi Awal Kesiapan OP</span>
+                        <span class="font-weight-bold text-dark">BA Hasil Evaluasi Awal Kesiapan OP</span>
                     </td>
                 
                     <td class="bg-white">
@@ -740,24 +784,32 @@
                         @endif
                     </td>
                 
-                    <td class="bg-white">
-                        @if($dokumenEvaluasiAwal)
-                        {{-- Tombol untuk membuka modal show --}}
-                        <button class="btn btn-sm bg-gradient-primary" data-toggle="modal" data-target="#show-ba-evaluasi-awal">
-                            <span class="fas fa-eye" title="Lihat Dokumen Penyusunan BA Hasil Evaluasi Awal Kesiapan OP"></span>
-                        </button>
-                        <!-- Tombol untuk membuka modal edit BA Evaluasi Awal -->
-                        <button class="btn btn-sm bg-gradient-primary" data-toggle="modal" data-target="#edit-ba-evaluasi-awal">
-                            <span class="fas fa-edit" title="Edit Penyusunan BA Hasil Evaluasi Awal Kesiapan OP"></span>
-                        </button>
-                        @else
-                        <!-- Tombol untuk membuka modal upload BA Evaluasi Awal -->
-                        <button class="btn btn-sm bg-gradient-primary" data-toggle="modal" data-target="#upload-ba-evaluasi-awal"
-                            @if(!$allBlankoCompleted) disabled @endif>
-                            <span class="fas fa-upload" title="Upload Penyusunan BA Hasil Evaluasi Awal Kesiapan OP"></span>
-                        </button>
-                        @endif
-                    </td>
+                  <td class="bg-white">
+                    @if($dokumenEvaluasiAwal)
+                    {{-- Tombol untuk melihat Dokumen BA Evaluasi Awal (Hanya untuk pengguna dengan 'view blanko') --}}
+                    @can('view blanko')
+                    <button class="btn btn-sm bg-gradient-primary" data-toggle="modal" data-target="#show-ba-evaluasi-awal">
+                        <span class="fas fa-eye" title="Lihat Dokumen Penyusunan BA Hasil Evaluasi Awal Kesiapan OP"></span>
+                    </button>
+                    @endcan
+                
+                    {{-- Tombol untuk mengelola Dokumen BA Evaluasi Awal (Hanya untuk pengguna dengan 'manage blanko') --}}
+                    @can('manage blanko')
+                    <!-- Tombol untuk membuka modal edit BA Evaluasi Awal -->
+                    <button class="btn btn-sm bg-gradient-primary" data-toggle="modal" data-target="#edit-ba-evaluasi-awal">
+                        <span class="fas fa-edit" title="Edit Penyusunan BA Hasil Evaluasi Awal Kesiapan OP"></span>
+                    </button>
+                    @endcan
+                    @else
+                    {{-- Tombol untuk meng-upload Dokumen BA Evaluasi Awal (Hanya untuk pengguna dengan 'manage blanko') --}}
+                    @can('manage blanko')
+                    <button class="btn btn-sm bg-gradient-primary" data-toggle="modal" data-target="#upload-ba-evaluasi-awal"
+                        @if(!$allBlankoCompleted) disabled @endif>
+                        <span class="fas fa-upload" title="Upload Penyusunan BA Hasil Evaluasi Awal Kesiapan OP"></span>
+                    </button>
+                    @endcan
+                    @endif
+                </td>
                 </tr>
                 @php
                      // Ambil tahapan untuk BA Hasil Evaluasi Awal Kesiapan OP
@@ -789,24 +841,32 @@
                         @endif  
 
                     </td>
-                    <td class="bg-white">
-                        @if($dokumenEvaluasiAkhir)
-                        {{-- Tombol untuk membuka modal show --}}
-                        <button class="btn btn-sm bg-gradient-primary" data-toggle="modal" data-target="#show-evaluasi-akhir">
-                            <span class="fas fa-eye" title="Lihat Dokumen Evaluasi Akhir Kesiapan"></span>
-                        </button>
-                        <!-- Tombol untuk membuka modal edit Evaluasi Akhir -->
-                        <button class="btn btn-sm bg-gradient-primary" data-toggle="modal" data-target="#edit-evaluasi-akhir">
-                            <span class="fas fa-edit" title="Edit Evaluasi Akhir Kesiapan"></span>
-                        </button>
-                        @else
-                        <!-- Tombol untuk membuka modal upload Evaluasi Akhir -->
-                        <button class="btn btn-sm bg-gradient-primary" data-toggle="modal" data-target="#upload-evaluasi-akhir"
-                            @if(!$dokumenBAEvaluasiAwal) disabled @endif>
-                            <span class="fas fa-upload" title="Upload Evaluasi Akhir Kesiapan"></span>
-                        </button>
-                        @endif  
-                    </td>
+                  <td class="bg-white">
+                    @if($dokumenEvaluasiAkhir)
+                    {{-- Tombol untuk melihat Dokumen Evaluasi Akhir (Hanya untuk pengguna dengan 'view blanko') --}}
+                    @can('view blanko')
+                    <button class="btn btn-sm bg-gradient-primary" data-toggle="modal" data-target="#show-evaluasi-akhir">
+                        <span class="fas fa-eye" title="Lihat Dokumen Evaluasi Akhir Kesiapan"></span>
+                    </button>
+                    @endcan
+                
+                    {{-- Tombol untuk mengelola Dokumen Evaluasi Akhir (Hanya untuk pengguna dengan 'manage blanko') --}}
+                    @can('manage blanko')
+                    <!-- Tombol untuk membuka modal edit Evaluasi Akhir -->
+                    <button class="btn btn-sm bg-gradient-primary" data-toggle="modal" data-target="#edit-evaluasi-akhir">
+                        <span class="fas fa-edit" title="Edit Evaluasi Akhir Kesiapan"></span>
+                    </button>
+                    @endcan
+                    @else
+                    {{-- Tombol untuk meng-upload Dokumen Evaluasi Akhir (Hanya untuk pengguna dengan 'manage blanko') --}}
+                    @can('manage blanko')
+                    <button class="btn btn-sm bg-gradient-primary" data-toggle="modal" data-target="#upload-evaluasi-akhir"
+                        @if(!$dokumenBAEvaluasiAwal) disabled @endif>
+                        <span class="fas fa-upload" title="Upload Evaluasi Akhir Kesiapan"></span>
+                    </button>
+                    @endcan
+                    @endif
+                </td>
                 </tr>
                 <tr>
                     <td class="bg-white">
@@ -817,7 +877,7 @@
                         <?php
                         //cari tahaapan evaluasi akhir kesiapan OP
                         $tahapanBAEvaluasiAkhir = $jaringan->tahapans->where('nama_tahapan', 'BA Hasil Evaluasi Akhir Kesiapan OP')->first();
-
+                        
                         //cek apakah dokumen Evaluasi Akhir Kesiapan sudah ada
                         $dokumenBAEvaluasiAkhir = $tahapanBAEvaluasiAkhir ?
                         $tahapanBAEvaluasiAkhir->dokumens->where('nama_dokumen', 'BA Hasil Evaluasi Akhir Kesiapan OP')->first() : null;
@@ -830,6 +890,7 @@
                         @endif
                     </td>
                     <td class="bg-white">
+                        @can('ba akhir upload')
                         @if ($dokumenBAEvaluasiAkhir)
                         {{-- Tombol untuk membuka modal show --}}
                         <button class="btn btn-sm bg-gradient-primary" data-toggle="modal" data-target="#show-ba-evaluasi-akhir">
@@ -846,6 +907,7 @@
                             <span class="fas fa-upload" title="Upload Penyusunan BA Hasil Evaluasi Akhir Kesiapan OP"></span>
                         </button>
                         @endif
+                        @endcan
                     </td>
                 </tr>
                 <tr>
@@ -869,24 +931,32 @@
                         @endif
 
                     </td>
-                    <td class="bg-white">
-                        @if ($dokumenSerahTerima)
-                        {{-- Tombol untuk membuka modal show --}}
-                        <button class="btn btn-sm bg-gradient-primary" data-toggle="modal" data-target="#show-serah-terima-op">
-                            <span class="fas fa-eye" title="Lihat Serah Terima Hasil OP"></span>
-                        </button>
-                        <!-- Tombol untuk membuka modal edit Serah Terima -->
-                        <button class="btn btn-sm bg-gradient-primary" data-toggle="modal" data-target="#edit-serah-terima-op">
-                            <span class="fas fa-edit" title="Edit Serah Terima Hasil OP"></span>
-                        </button>
-                        @else
-                        <!-- Tombol untuk membuka modal upload Serah Terima -->
-                        <button class="btn btn-sm bg-gradient-primary" data-toggle="modal" data-target="#upload-serah-terima-op"
-                            @if(!$dokumenBAEvaluasiAkhir) disabled @endif>
-                            <span class="fas fa-upload" title="Upload Serah Terima Hasil OP"></span>
-                        </button>
-                        @endif
-                    </td>
+                   <td class="bg-white">
+                    {{-- Tombol untuk melihat Serah Terima (Hanya untuk pengguna dengan 'view blanko') --}}
+                    @can('view blanko')
+                    @if ($dokumenSerahTerima)
+                    <button class="btn btn-sm bg-gradient-primary" data-toggle="modal" data-target="#show-serah-terima-op">
+                        <span class="fas fa-eye" title="Lihat Serah Terima Hasil OP"></span>
+                    </button>
+                    @endif
+                    @endcan
+                
+                    {{-- Tombol untuk mengelola Serah Terima (Hanya untuk pengguna dengan 'manage blanko') --}}
+                    @can('manage blanko')
+                    @if ($dokumenSerahTerima)
+                    <!-- Tombol untuk membuka modal edit Serah Terima -->
+                    <button class="btn btn-sm bg-gradient-primary" data-toggle="modal" data-target="#edit-serah-terima-op">
+                        <span class="fas fa-edit" title="Edit Serah Terima Hasil OP"></span>
+                    </button>
+                    @else
+                    <!-- Tombol untuk membuka modal upload Serah Terima -->
+                    <button class="btn btn-sm bg-gradient-primary" data-toggle="modal" data-target="#upload-serah-terima-op"
+                        @if(!$dokumenBAEvaluasiAkhir) disabled @endif>
+                        <span class="fas fa-upload" title="Upload Serah Terima Hasil OP"></span>
+                    </button>
+                    @endif
+                    @endcan
+                </td>
                 </tr>
             </tbody>
         </table>

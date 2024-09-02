@@ -19,14 +19,21 @@
 @php( $password_reset_url = $password_reset_url ? url($password_reset_url) : '' )
 @endif
 
-{{-- @section('auth_header', __('adminlte::adminlte.login_message')) --}}
 @section('auth_header')
-{{-- Logo Citanduy --}}
-<div class="text-center mb-3">
-    <img src="{{ asset('img/citanduy.png') }}" alt="Logo Citanduy" class="img-fluid" style="max-width: 100px;">
+<div class="d-flex justify-content-between align-items-center">
+    <!-- Tombol Panah Kembali -->
+    <a href="{{ url('/') }}" class="btn btn-outline-primary btn-xs" style="top: 0; left: 0; transform: translateY(-100%);">
+        <i class="fas fa-arrow-left"></i>
+    </a>
+
+    <!-- Logo di Tengah -->
+    <img src="{{ asset('img/citanduy.png') }}" alt="Logo Citanduy" class="img-fluid" style="max-width: 100px; margin-left: -10px;">
+
+    <!-- Kolom Kosong untuk Menjaga Ruang -->
+    <div></div>
 </div>
 <h1 class="text-center">SIPPOP</h1>
-<h5 class="text-center">Sistem Informasi Pemantauan Persiapan Operasi dan Pemeliharaan</h5>
+<h5 class="text-center">Sistem Pemantauan Persiapan Operasi dan Pemeliharaan</h5>
 @stop
 
 @section('auth_body')
@@ -69,18 +76,18 @@
         @enderror
     </div>
 
-    {{-- Login field --}}
+   {{-- Login field --}}
     <div class="row">
         <div class="col-7">
             <div class="icheck-primary" title="{{ __('adminlte::adminlte.remember_me_hint') }}">
                 <input type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
-
+    
                 <label for="remember">
                     {{ __('adminlte::adminlte.remember_me') }}
                 </label>
             </div>
         </div>
-
+    
         <div class="col-5">
             <button type=submit class="btn btn-block {{ config('adminlte.classes_auth_btn', 'btn-flat btn-primary') }}">
                 <span class="fas fa-sign-in-alt"></span>
@@ -89,7 +96,6 @@
             </button>
         </div>
     </div>
-
 </form>
 @stop
 

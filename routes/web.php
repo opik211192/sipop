@@ -39,12 +39,15 @@ Route::get('cities', [DependantDropdownController::class, 'cities'])->name('citi
 Route::get('districts', [DependantDropdownController::class, 'districts'])->name('districts');
 Route::get('villages', [DependantDropdownController::class, 'villages'])->name('villages');
 
+Route::post('logout', [App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout');
+
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 Route::middleware(['auth'])->group(function () {
   Route::resource('users', UserController::class);
+  Route::get('/users/getJabatanDetails/{jabatan_id}', [UserController::class, 'getJabatanDetails'])->name('getJabatanDetails');
 
   Route::resource('/permissions', PermissionController::class)->except('show');
   Route::resource('/roles', RoleController::class)->except('show');
@@ -179,3 +182,6 @@ Route::middleware(['auth'])->group(function () {
 
 Route::get('/peta', [PetaJaringan::class, 'index'])->name('peta');
 Route::get('/data-peta', [PetaJaringan::class, 'dataPeta'])->name('data-peta');
+
+Route::get('/coba/{jaringan}', [InventarisasiDataEvaluasiAwal::class, 'prasaranaAirBaku'])->name('coba');
+  

@@ -41,6 +41,21 @@
                     <label for="password_confirmation">Confirm Password</label>
                     <input type="password" name="password_confirmation" class="form-control" required>
                 </div>
+                <div class="form-group">
+                    <label for="jabatan_id">Jabatan</label>
+                    <select name="jabatan_id" id="jabatan_id" class="form-control">
+                        <option value="">Pilih Jabatan</option>
+                        @foreach($jabatans as $jabatan)
+                        <option value="{{ $jabatan->id }}">{{ $jabatan->nama_jabatan }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="jabatan_detail_id">Detail Jabatan</label>
+                    <select name="jabatan_detail_id" id="jabatan_detail_id" class="form-control">
+                        <option value="">Pilih Detail Jabatan</option>
+                    </select>
+                </div>
                 <button type="submit" class="btn btn-primary btn-sm">Simpan</button>
                 <a href="{{ route('users.index') }}" class="btn btn-primary btn-sm">Batal</a>
             </form>
@@ -62,6 +77,27 @@
                 });
             });
         }
+
+        $('#jabatan_id').on('change', function() {
+            var jabatanID = $(this).val();
+            if(jabatanID) {
+                $.ajax({
+                    url: '/users/getJabatanDetails/'+jabatanID,
+                    type: "GET",
+                    dataType: "json",
+                    success:function(data) {
+                        $('#jabatan_detail_id').empty();
+                        $('#jabatan_detail_id').append('<option value="">Pilih Detail Jabatan</option>');
+                        $.each(data, function(key, value) {
+                            $('#jabatan_detail_id').append('<option value="'+ value.id +'">'+ value.nama_jabatan_detail +'</option>');
+                        });
+                    }
+                });
+            }else{
+                $('#jabatan_detail_id').empty();
+                $('#jabatan_detail_id').append('<option value="">Pilih Detail Jabatan</option>');
+            }
+        });
     });
 </script>
 @stop

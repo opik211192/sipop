@@ -69,9 +69,11 @@
                 <span class="fas fa-eye" title="Lihat Blanko 3C"></span> Lihat Dokumen
             </button>
             <!-- Tombol Delete Dokumen -->
+            @can('manage blanko')
             <button class="btn btn-danger" id="deleteDokumenBtn">
                 <span class="fas fa-trash" title="Hapus Blanko 3C"></span> Hapus Dokumen
             </button>
+            @endcan
 
             <!-- Modal Lihat Dokumen -->
             <div class="modal fade" id="showDokumenModal" tabindex="-1" role="dialog" aria-labelledby="showDokumenLabel"
@@ -122,6 +124,7 @@
             </script>
             @else
             <!-- Form Upload jika dokumen belum ada -->
+            @can('manage blanko')                
             <div class="col-md-6">
                 <form id="upload-blanko3c-form" action="{{ route('upload-blanko3c', $jaringan->id) }}" method="POST"
                     enctype="multipart/form-data">
@@ -138,6 +141,7 @@
                 </form>
             </div>
             @endif
+            @endcan
         </div>
 
         <form id="blanko3c-form"
@@ -181,7 +185,7 @@
                                 </td>
                                 <td>
                                     <select name="items[{{ $item->id }}][rincian][{{ $rincian->id }}][ada_tidak_ada]"
-                                        class="form-control" style="width: 120px" onchange="calculateWeights()">
+                                        class="form-control" style="width: 120px" onchange="calculateWeights()" @cannot('manage blanko') disabled  @endcannot>
                                         <option value="1" {{ $rincian->ada_tidak_ada == 1 ? 'selected' : '' }}>Ada
                                         </option>
                                         <option value="0" {{ $rincian->ada_tidak_ada == 0 ? 'selected' : '' }}>Tidak Ada
@@ -192,18 +196,24 @@
                                     <input type="text"
                                         name="items[{{ $item->id }}][rincian][{{ $rincian->id }}][kondisi]"
                                         class="form-control" value="{{ $rincian->kondisi }}" max="100"
-                                        oninput="validateAndConvert(this)">
+                                        oninput="validateAndConvert(this)" @cannot('manage blanko')
+                                            readonly
+                                        @endcannot>
                                 </td>
                                 <td class="d-none">
                                     <input type="text"
                                         name="items[{{ $item->id }}][rincian][{{ $rincian->id }}][fungsi]"
                                         class="form-control" value="{{ $rincian->fungsi }}" max="100"
-                                        oninput="validateAndConvert(this)">
+                                        oninput="validateAndConvert(this)" @cannot('manage blanko')
+                                            readonly
+                                        @endcannot>
                                 </td>
                                 <td>
                                     <input type="text"
                                         name="items[{{ $item->id }}][rincian][{{ $rincian->id }}][keterangan]"
-                                        class="form-control" value="{{ $rincian->keterangan }}">
+                                        class="form-control" value="{{ $rincian->keterangan }}" @cannot('manage blanko')
+                                            readonly
+                                        @endcannot>
                                 </td>
                             </tr>
                             @endforeach
@@ -231,10 +241,12 @@
             <input type="hidden" name="hasil_fungsi" id="hasil-fungsi">
 
             <div class="form-group">
+                @can('manage blanko')
                 <button type="submit" class="btn btn-primary mt-3 mb-2" id="submitBtn" disabled><span
-                        class="fa fa-save"></span> Simpan</button>
+                        class="fa fa-save"></span> Simpan</button>  
+                @endcan
                 <button type="button" class="btn btn-secondary mt-3 mb-2" onclick="window.close()"><span
-                        class="fa fa-times"></span> Batal</button>
+                        class="fa fa-arrow-left"></span> Kembali</button>
             </div>
         </form>
     </div>

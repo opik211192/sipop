@@ -39,6 +39,7 @@
                     <th>#</th>
                     <th>Name</th>
                     <th>Email</th>
+                    <th>Jabatan</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -48,6 +49,7 @@
                     <td>{{ $loop->iteration }}</td>
                     <td>{{ $user->name }}</td>
                     <td>{{ $user->email }}</td>
+                    <td>{{ $user->jabatanDetail->nama_jabatan_detail ?? '-' }}</td>
                     <td>
                         <a href="{{ route('users.edit', $user->id) }}" class="btn btn-sm btn-info">
                             <span class="fas fa-edit" title="edit"></span>
@@ -55,7 +57,7 @@
                         <form action="{{ route('users.destroy', $user->id) }}" method="POST" style="display:inline;">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn btn-sm btn-dark" onclick="return confirm('Are you sure?')">
+                            <button type="submit" class="btn btn-sm btn-dark" onclick="return confirm('Hapus data ini ?')">
                                 <span class="fas fa-trash" title="delete"></span>
                             </button>
                         </form>

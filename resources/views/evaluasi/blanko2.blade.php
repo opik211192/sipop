@@ -58,10 +58,11 @@
                 <span class="fas fa-eye" title="Lihat Blanko 2"></span> Lihat Dokumen
             </button>
             <!-- Tombol Delete Dokumen -->
+            @can('manage blanko')
             <button class="btn btn-danger" id="deleteDokumenBtn">
                 <span class="fas fa-trash" title="Hapus Blanko 2"></span> Hapus Dokumen
             </button>
-
+            @endcan
             <!-- Modal Lihat Dokumen -->
             <div class="modal fade" id="showDokumenModal" tabindex="-1" role="dialog" aria-labelledby="showDokumenLabel"
                 aria-hidden="true">
@@ -111,6 +112,7 @@
             </script>
             @else
             <!-- Form Upload jika dokumen belum ada -->
+            @can('manage blanko')
             <div class="col-md-6">
                 <form id="upload-blanko2-form" action="{{ route('upload-dokumen-blanko2', $jaringan->id) }}" method="POST"
                     enctype="multipart/form-data">
@@ -127,6 +129,7 @@
                 </form>
             </div>
             @endif
+            @endcan
         </div>
 
         <form id="data-informasi-non-fisik-form"
@@ -145,7 +148,9 @@
                                 <th>Bobot (%)</th>
                                 <th>Ada/Tidak ada</th>
                                 <th>Keterangan</th>
+                                @can('manage blanko')
                                 <th>Upload File</th>
+                                @endcan
                             </tr>
                         </thead>
                         <tbody>
@@ -183,6 +188,7 @@
                                 <td><input type="text" class="form-control" name="items[{{ $item->id }}][keterangan]"
                                         value="{{ $item->keterangan }}" readonly></td>
                                 <td>
+                                    @can('manage blanko')
                                     <input type="file" id="file-{{ $item->id }}" class="file-upload-tabel"
                                         style="display:none;">
                                     @if ($item->file_uploaded)
@@ -202,6 +208,7 @@
                                         <i class="fa fa-upload"></i>
                                     </button>
                                     @endif
+                                    @endcan
                                 </td>
                             </tr>
                             @endif
@@ -231,6 +238,7 @@
                                 <td><input type="text" class="form-control" name="items[{{ $item->id }}][keterangan]"
                                         value="{{ $item->keterangan }}" readonly></td>
                                 <td>
+                                    @can('manage blanko')
                                     <input type="file" id="file-{{ $item->id }}" class="file-upload-tabel"
                                         style="display:none;">
                                     @if ($item->file_uploaded)
@@ -250,6 +258,7 @@
                                         <i class="fa fa-upload"></i>
                                     </button>
                                     @endif
+                                    @endcan
                                 </td>
                             </tr>
                             @endif
@@ -277,6 +286,7 @@
                                 <td><input type="text" class="form-control" name="items[{{ $item->id }}][keterangan]"
                                         value="{{ $item->keterangan }}" readonly></td>
                                 <td>
+                                    @can('manage blanko')
                                     <input type="file" id="file-{{ $item->id }}" class="file-upload-tabel"
                                         style="display:none;">
                                     @if ($item->file_uploaded)
@@ -296,6 +306,7 @@
                                         <i class="fa fa-upload"></i>
                                     </button>
                                     @endif
+                                    @endcan
                                 </td>
                             </tr>
                             @endif
@@ -321,6 +332,7 @@
                                 <td><input type="text" class="form-control" name="items[{{ $item->id }}][keterangan]"
                                         value="{{ $item->keterangan }}" readonly></td>
                                 <td>
+                                    @can('manage blanko')
                                     <input type="file" id="file-{{ $item->id }}" class="file-upload-tabel"
                                         style="display:none;">
                                     @if ($item->file_uploaded)
@@ -340,6 +352,7 @@
                                         <i class="fa fa-upload"></i>
                                     </button>
                                     @endif
+                                    @endcan
                                 </td>
                             </tr>
                             @endif
@@ -369,6 +382,7 @@
                                 <td><input type="text" class="form-control" name="items[{{ $item->id }}][keterangan]"
                                         value="{{ $item->keterangan }}" readonly></td>
                                 <td>
+                                    @can('manage blanko')
                                     <input type="file" id="file-{{ $item->id }}" class="file-upload-tabel"
                                         style="display:none;">
                                     @if ($item->file_uploaded)
@@ -388,6 +402,7 @@
                                         <i class="fa fa-upload"></i>
                                     </button>
                                     @endif
+                                    @endcan
                                 </td>
                             </tr>
                             @endif
@@ -419,6 +434,7 @@
                                 <td><input type="text" class="form-control" name="items[{{ $item->id }}][keterangan]"
                                         value="{{ $item->keterangan }}" readonly></td>
                                 <td>
+                                    @can('manage blanko')
                                     <input type="file" id="file-{{ $item->id }}" class="file-upload-tabel"
                                         style="display:none;">
                                     @if ($item->file_uploaded)
@@ -438,6 +454,7 @@
                                         <i class="fa fa-upload"></i>
                                     </button>
                                     @endif
+                                    @endcan
                                 </td>
                             </tr>
                             @endif
@@ -461,11 +478,13 @@
 
             <div class="form-group">
                 <div class="form-group">
+                    @can('manage blanko')                        
                     <button type="submit" class="btn btn-primary mt-3 mb-2" id="submitBtn" disabled><span
                             class="fa fa-save"></span>
                         Simpan</button>
+                    @endcan
                     <button type="button" class="btn btn-secondary mt-3 mb-2" onclick="window.close()"><span
-                            class="fa fa-times"></span> Batal</button>
+                            class="fa fa-arrow-left"></span> Kembali</button>
                 </div>
             </div>
         </form>

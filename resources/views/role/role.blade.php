@@ -123,7 +123,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">Save</button>
+                    <button type="submit" class="btn btn-primary">Update</button>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
             </form>
@@ -169,7 +169,7 @@
 
     // Handle Delete Role
     function deleteRole(roleId) {
-        if (confirm('Are you sure you want to delete this role?')) {
+        if (confirm('Hapus Data ini ?')) {
             $.ajax({
                 url: '/roles/' + roleId,
                 type: 'DELETE',

@@ -58,6 +58,7 @@
         </div>
 
         <!-- Form Upload di atas tombol simpan -->
+        
         <div id="uploadSection" class="mb-2">
             <?php
             $tahapanBalnko1a = $jaringan->tahapans->where('nama_tahapan', 'Evaluasi Awal Kesiapan')->first();
@@ -69,10 +70,11 @@
                 <span class="fas fa-eye" title="Lihat Blanko 1A"></span> Lihat Dokumen
             </button>
             <!-- Tombol Delete Dokumen -->
+            @can('manage blanko')
             <button class="btn btn-danger" id="deleteDokumenBtn">
                 <span class="fas fa-trash" title="Hapus Blanko 1A"></span> Hapus Dokumen
             </button>
-
+            @endcan
             <!-- Modal Lihat Dokumen -->
             <div class="modal fade" id="showDokumenModal" tabindex="-1" role="dialog" aria-labelledby="showDokumenLabel"
                 aria-hidden="true">
@@ -125,6 +127,7 @@
             </script>
             @else
             <!-- Form Upload jika dokumen belum ada -->
+            @can('manage blanko')
             <div class="col-md-6">
                 <form id="upload-blanko1a-form" action="{{ url('/inventarisasi-awal-prasarana-air-tanah/' . $jaringan->id) }}"
                     method="POST" enctype="multipart/form-data">
@@ -141,6 +144,7 @@
                 </form>
             </div>
             @endif
+            @endcan
         </div>
 
         <form id="evaluasi-awal-form"
@@ -170,11 +174,11 @@
                                 <td>
                                     <input type="text" name="items[{{ $item->id }}][bobot]"
                                         class="form-control bobot-input" value="{{ $item->bobot }}"
-                                        oninput="validateAndConvert(this)" onchange="calculateWeights()" readonly>
+                                        oninput="validateAndConvert(this)" onchange="calculateWeights()" @cannot('manage blanko') readonly @endcannot>
                                 </td>
                                 <td>
                                     <select name="items[{{ $item->id }}][ada_tidak_ada]" class="form-control"
-                                        onchange="calculateWeights()">
+                                        onchange="calculateWeights()" @cannot('manage blanko') disabled @endcannot>
                                         <option value="1" {{ $item->ada_tidak_ada == 1 ? 'selected' : '' }}>Ada</option>
                                         <option value="0" {{ $item->ada_tidak_ada == 0 ? 'selected' : '' }}>Tidak Ada
                                         </option>
@@ -183,16 +187,16 @@
                                 <td>
                                     <input type="text" name="items[{{ $item->id }}][kondisi]"
                                         class="form-control col-kondisi" value="{{ $item->kondisi ?? 0 }}"
-                                        oninput="validateAndConvert(this)">
+                                        oninput="validateAndConvert(this)" @cannot('manage blanko') readonly @endcannot)>
                                 </td>
                                 <td>
                                     <input type="text" name="items[{{ $item->id }}][fungsi]"
                                         class="form-control col-fungsi" value="{{ $item->fungsi ?? 0 }}"
-                                        oninput="validateAndConvert(this)">
+                                        oninput="validateAndConvert(this)" @cannot('manage blanko') readonly @endcannot>
                                 </td>
                                 <td>
                                     <input type="text" name="items[{{ $item->id }}][keterangan]"
-                                        class="form-control col-keterangan" value="{{ $item->keterangan }}">
+                                        class="form-control col-keterangan" value="{{ $item->keterangan }}" @cannot('manage blanko') readonly @endcannot>
                                 </td>
                             </tr>
                             @endforeach
@@ -215,8 +219,10 @@
             <input type="hidden" name="hasil_kondisi" id="hasil-kondisi" value="{{ $evaluasiBlanko->hasil_kondisi }}">
             <input type="hidden" name="hasil_fungsi" id="hasil-fungsi" value="{{ $evaluasiBlanko->hasil_fungsi }}">
             <div class="form-group">
+                @can('manage blanko')
                 <button type="submit" class="btn btn-primary mt-3 mb-2" id="submitBtn" disabled><span class="fa fa-save"></span> Simpan</button>
-                <button type="button" class="btn btn-secondary mt-3 mb-2" onclick="window.close()"><span class="fa fa-times"></span> Batal</button>
+                @endcan
+                <button type="button" class="btn btn-secondary mt-3 mb-2" onclick="window.close()"><span class="fa fa-arrow-left"></span> Kembali</button>
             </div>
         </form>
     </div>

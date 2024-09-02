@@ -336,6 +336,7 @@ return [
         [
             'text' => 'Management Users',
             'icon' => 'fas fa-fw fa-user',
+            'can' => 'manage users',
             'submenu' => [
                 [
                     'text' => 'Permissions',

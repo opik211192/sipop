@@ -29,7 +29,7 @@
                 <label for="latitude" class="col-sm-2 col-form-label">Latitude</label>
                 <div class="col-sm-10">
                     <input type="text" name="latitude" id="latitude" class="form-control" value="{{ old('latitude') }}"
-                        required>
+                        required placeholder="-6.200000">
                     @error('latitude')
                     <div class="text-danger">{{ $message }}</div>
                     @enderror

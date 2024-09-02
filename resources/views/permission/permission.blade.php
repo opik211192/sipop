@@ -180,7 +180,7 @@
 
         // Delete Permission AJAX
         $(document).on('click', '.delete-permission', function() {
-            if (!confirm('Are you sure?')) return;
+            if (!confirm('Hapus data ini ?')) return;
             var id = $(this).data('id');
             $.ajax({
                 url: '/permissions/' + id,

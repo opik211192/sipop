@@ -289,23 +289,23 @@ class InventarisasiDataEvaluasiAwal extends Controller
     }
 
     //--------------------------------------------Blanko 1C---------------------------------------
-   public function prasaranaAirBaku(Jaringan $jaringan)
-{
-    $tahapan = $jaringan->tahapans()->where('nama_tahapan', 'Evaluasi Awal Kesiapan')->first();
+    public function prasaranaAirBaku(Jaringan $jaringan)
+    {
+        //dd($jaringan);
+        $tahapan = $jaringan->tahapans()->where('nama_tahapan', 'Evaluasi Awal Kesiapan')->first();
+        if (!$tahapan) {
+            return redirect()->back()->with('error', 'Tahapan Evaluasi Awal Kesiapan tidak ditemukan.');
+        }
+        
+        $evaluasiBlanko = EvaluasiBlanko::where('tahapan_id', $tahapan->id)->where('jenis_blanko', 'Blanko 1C')->first();
+        
+        if (!$evaluasiBlanko) {
+            return redirect()->back()->with('error', 'Evaluasi Blanko 1C tidak ditemukan.');
+        }
 
-    if (!$tahapan) {
-        return redirect()->back()->with('error', 'Tahapan Evaluasi Awal Kesiapan tidak ditemukan.');
-    }
+        $items = ItemBlanko::where('evaluasi_blanko_id', $evaluasiBlanko->id)->get();
 
-    $evaluasiBlanko = EvaluasiBlanko::where('tahapan_id', $tahapan->id)->where('jenis_blanko', 'Blanko 1C')->first();
-
-    if (!$evaluasiBlanko) {
-        return redirect()->back()->with('error', 'Evaluasi Blanko 1C tidak ditemukan.');
-    }
-
-    $items = ItemBlanko::where('evaluasi_blanko_id', $evaluasiBlanko->id)->get();
-
-    return view('evaluasi.blanko1c', compact('jaringan', 'items', 'evaluasiBlanko'));
+        return view('evaluasi.blanko1c', compact('jaringan', 'items', 'evaluasiBlanko'));
 }
 
     public function prasaranaAirBakuProses(Request $request, Jaringan $jaringan)
