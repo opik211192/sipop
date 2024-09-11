@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
@@ -18,16 +19,86 @@ class RoleAndPermissionSeeder extends Seeder
     {
         // Create roles
         $adminRole = Role::create(['name' => 'admin']);
-        $userRole = Role::create(['name' => 'user']);
+        $pembinaRole = Role::create(['name' => 'Tim Pembina']);
+        $pelaksanaRole = Role::create(['name' => 'Tim Pelaksana']);
 
         // Create permissions
-        $manageUsers = Permission::create(['name' => 'manage users']);
-        $managePosts = Permission::create(['name' => 'manage posts']);
+        $permissions = [
+            'manage users',
+            'manage blanko',
+            'view blanko',
+            'create upload',
+            'edit upload',
+            'view upload',
+            'create paket',
+            'edit paket',
+            'delete paket',
+            'view paket',
+            'ba akhir upload'
+        ];
+
+       foreach ($permissions as $permission) {
+            Permission::create(['name' => $permission]);
+        }
 
         // Assign permissions to roles
-        $adminRole->givePermissionTo($manageUsers);
-        $adminRole->givePermissionTo($managePosts);
+        // Admin has access to all permissions
+        $adminRole->givePermissionTo($permissions);
 
-        $userRole->givePermissionTo($managePosts);   
+         $timPembinaPermissions = [
+            'view blanko',
+            'view upload',
+            'view paket'
+        ];
+
+         $pembinaRole->givePermissionTo($timPembinaPermissions);
+
+         // Tim Pelaksana has almost all permissions except manage users
+        $timPelaksanaPermissions = [
+            'manage blanko',
+            'view blanko',
+            'create upload',
+            'edit upload',
+            'view upload',
+            'create paket',
+            'edit paket',
+            'delete paket',
+            'view paket',
+            'ba akhir upload'
+        ];
+        $pelaksanaRole->givePermissionTo($timPelaksanaPermissions);
+
+             // Create users and assign roles
+        $users = [
+            [
+                'name' => 'Admin',
+                'email' => 'admin@gmail.com',
+                'password' => bcrypt('password'), // Ganti dengan password yang sesuai
+                'role' => 'admin'
+            ],
+            [
+                'name' => 'Opik',
+                'email' => 'opik@mail.com',
+                'password' => bcrypt('password'), // Ganti dengan password yang sesuai
+                'role' => 'Tim Pembina'
+            ],
+            [
+                'name' => 'Taofik',
+                'email' => 'taofik@mail.com',
+                'password' => bcrypt('password'), // Ganti dengan password yang sesuai
+                'role' => 'Tim Pelaksana'
+            ]
+        ];
+
+        foreach ($users as $userData) {
+            $user = User::create([
+                'name' => $userData['name'],
+                'email' => $userData['email'],
+                'password' => $userData['password']
+            ]);
+
+            // Assign role to user
+            $user->assignRole($userData['role']);
+        }
     }
 }

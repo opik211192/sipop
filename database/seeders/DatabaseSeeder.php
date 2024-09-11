@@ -27,9 +27,10 @@ class DatabaseSeeder extends Seeder
             MasterBobotBlanko3BSeeder::class,
             MasterBobotBlanko3CSeeder::class,
             MasterBobotBlanko3DSeeder::class,
-            UserSeeder::class,
-            RoleAndPermissionSeeder::class,
+            //UserSeeder::class,
             JaringanSeeder::class,
+            JabatanSeeder::class,
+            RoleAndPermissionSeeder::class,
         ]);
     }
 }
