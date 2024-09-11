@@ -22,3 +22,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //data penyususan BA Hasil Evaluasi Awal Kesiapan OP
 Route::get('/ba-awal-kesiapan-op/{id}', [JaringanController::class, 'apiPenyusunanBaEvaluasiAwal'])->name('api.ba-awal-kesiapan-op');
 
+Route::get('api/penyusunan-ba-evaluasi-awal-history/{id}', [JaringanController::class, 'apiPenyusunanBaEvaluasiAwalHistory'])->name('api.ba-awal-kesiapan-op-history');

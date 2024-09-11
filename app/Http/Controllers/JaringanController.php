@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 
 use App\Models\Dokumen;
+use App\Models\History;
 use App\Models\Tahapan;
 use App\Models\Jaringan;
 use Illuminate\Http\Request;
@@ -188,8 +189,8 @@ class JaringanController extends Controller
  public function pembentukanTim(Request $request, Jaringan $jaringan)
     {
         $request->validate([
-            'sk_tim_pembina' => 'required|file|mimes:pdf|max:3072',  // Max size 3MB
-            'sk_tim_pelaksana' => 'required|file|mimes:pdf|max:3072', // Max size 3MB
+            'sk_tim_pembina' => 'required|file|mimes:pdf|max:5024',  // Max size 3MB
+            'sk_tim_pelaksana' => 'required|file|mimes:pdf|max:5024', // Max size 3MB
         ]);
 
         $tahapan = $jaringan->tahapans()->where('nama_tahapan', 'Pembentukan Tim')->first();
@@ -384,34 +385,63 @@ class JaringanController extends Controller
         // Menentukan rekomendasi berdasarkan hasil
         $recommendation = 'Belum SIAP OP'; // Default
 
-       if (
-    $hasil_ada_tidak_ada_1 >= 80 &&
-    $hasil_kondisi_1 >= 80 &&
-    $hasil_fungsi_1 >= 80 &&
-    $hasil_ada_tidak_ada_2 >= 80 &&
-    ($blanko3A->hasil_ada_tidak_ada ?? 0) >= 80 &&
-    ($blanko3B->hasil_ada_tidak_ada ?? 0) >= 80 &&  // Sesuaikan menjadi >= 80 untuk hijau penuh
-    ($blanko3C->hasil_ada_tidak_ada ?? 0) >= 80 &&
-    ($blanko3D->hasil_ada_tidak_ada ?? 0) >= 80
-) {
-    $recommendation = 'SIAP OP';
-} elseif (
-    $hasil_ada_tidak_ada_1 >= 70 &&
-    $hasil_kondisi_1 >= 70 &&
-    $hasil_fungsi_1 >= 70 &&
-    $hasil_ada_tidak_ada_2 >= 70 &&
-    ($blanko3A->hasil_ada_tidak_ada ?? 0) >= 70 && // Sesuaikan menjadi >= 70 untuk catatan kuning
-    ($blanko3B->hasil_ada_tidak_ada ?? 0) >= 60 &&
-    ($blanko3C->hasil_ada_tidak_ada ?? 0) >= 60 &&
-    ($blanko3D->hasil_ada_tidak_ada ?? 0) >= 60
-) {
-    $recommendation = 'SIAP OP dengan Catatan';
-} else {
-    $recommendation = 'Belum SIAP OP';
-}
+        if (
+            $hasil_ada_tidak_ada_1 >= 80 &&
+            $hasil_kondisi_1 >= 80 &&
+            $hasil_fungsi_1 >= 80 &&
+            $hasil_ada_tidak_ada_2 >= 80 &&
+            ($blanko3A->hasil_ada_tidak_ada ?? 0) >= 80 &&
+            ($blanko3B->hasil_ada_tidak_ada ?? 0) >= 80 &&
+            ($blanko3C->hasil_ada_tidak_ada ?? 0) >= 80 &&
+            ($blanko3D->hasil_ada_tidak_ada ?? 0) >= 80
+        ) {
+            $recommendation = 'SIAP OP';
+        } elseif (
+            $hasil_ada_tidak_ada_1 >= 70 &&
+            $hasil_kondisi_1 >= 70 &&
+            $hasil_fungsi_1 >= 70 &&
+            $hasil_ada_tidak_ada_2 >= 70 &&
+            ($blanko3A->hasil_ada_tidak_ada ?? 0) >= 70 &&
+            ($blanko3B->hasil_ada_tidak_ada ?? 0) >= 60 &&
+            ($blanko3C->hasil_ada_tidak_ada ?? 0) >= 60 &&
+            ($blanko3D->hasil_ada_tidak_ada ?? 0) >= 60
+        ) {
+            $recommendation = 'SIAP OP dengan Catatan';
+        } else {
+            $recommendation = 'Belum SIAP OP';
+        }
 
+        // Cek apakah sudah ada history yang disimpan dengan status ini
+        $existingHistory = History::where('jaringan_id', $jaringan->id)
+                                ->where('tahapan_id', $tahapan->id)
+                                ->where('recommendation', $recommendation)
+                                ->exists();
 
-        // Mengembalikan hasil dalam JSON format
+        // Jika belum ada history dengan rekomendasi ini, simpan ke dalam history
+        if (!$existingHistory) {
+            History::create([
+                'jaringan_id' => $jaringan->id,
+                'tahapan_id' => $tahapan->id,
+                'tanggal' => now(),
+                'data' => json_encode([
+                    'blanko1' => [
+                        'hasil_ada_tidak_ada' => $hasil_ada_tidak_ada_1,
+                        'hasil_kondisi' => $hasil_kondisi_1,
+                        'hasil_fungsi' => $hasil_fungsi_1,
+                    ],
+                    'blanko2' => ['hasil_ada_tidak_ada' => $hasil_ada_tidak_ada_2],
+                    'blanko3' => [
+                        'blanko3A' => ['hasil_ada_tidak_ada' => $blanko3A->hasil_ada_tidak_ada ?? 0],
+                        'blanko3B' => ['hasil_ada_tidak_ada' => $blanko3B->hasil_ada_tidak_ada ?? 0],
+                        'blanko3C' => ['hasil_ada_tidak_ada' => $blanko3C->hasil_ada_tidak_ada ?? 0],
+                        'blanko3D' => ['hasil_ada_tidak_ada' => $blanko3D->hasil_ada_tidak_ada ?? 0],
+                    ]
+                ]),
+                'recommendation' => $recommendation
+            ]);
+        }
+
+        // Mengembalikan hasil dalam format JSON
         return response()->json([
             'blanko1' => [
                 'hasil_ada_tidak_ada' => $hasil_ada_tidak_ada_1,
@@ -439,6 +469,29 @@ class JaringanController extends Controller
         ]);
     }
 
+    public function apiPenyusunanBaEvaluasiAwalHistory($id)
+    {
+        // Ambil history terbaru berdasarkan jaringan_id
+        $history = History::where('jaringan_id', $id)->latest()->first();
+
+        // Periksa apakah data history ditemukan
+        if (!$history) {
+            return response()->json([
+                'success' => false,
+                'message' => 'History tidak ditemukan'
+            ], 404);
+        }
+
+        // Urai (parse) JSON string dari kolom data
+        $data = json_decode($history->data, true);
+
+        // Kembalikan data dalam format JSON
+        return response()->json([
+            'success' => true,
+            'data' => $data,
+            'recommendation' => $history->recommendation
+        ]);
+    }
 
 
     //Penyusunan BA Evaluasi Awal Kesiapan OP
@@ -462,7 +515,7 @@ class JaringanController extends Controller
         ]);
 
         // Update tahapan di jaringan
-        $jaringan->update(['tahapan' => 'BA Hasil Evaluasi Awal Kesiapan OP']);
+        $jaringan->update(['tahapan' => 'Evaluasi Awal Kesiapan OP']);
 
         return response()->json(['success' => true]);
     }
@@ -509,7 +562,7 @@ class JaringanController extends Controller
             'path_dokumen' => $file,
         ]);
 
-        $jaringan->update(['tahapan' => 'Evaluasi Akhir Kesiapan']);
+        $jaringan->update(['tahapan' => 'Evaluasi Akhir Kesiapan OP']);
 
         return response()->json(['success' => true]);
     }
@@ -537,52 +590,52 @@ class JaringanController extends Controller
         return response()->json(['success' => 'Dokumen Evaluasi Akhir Kesiapan OP berhasil diupdate.']);
     }
 
-    public function uploadBAEvaluasiAkhir(Request $request, Jaringan $jaringan)
-    {
-        $request->validate([
-            'dokumen_ba_evaluasi_akhir' => 'required|file|mimes:pdf|max:3072', // Max size 3MB
-        ]);
+    // public function uploadBAEvaluasiAkhir(Request $request, Jaringan $jaringan)
+    // {
+    //     $request->validate([
+    //         'dokumen_ba_evaluasi_akhir' => 'required|file|mimes:pdf|max:3072', // Max size 3MB
+    //     ]);
 
-        // Cari tahapan berdasarkan nama_tahapan 'BA Hasil Evaluasi Awal Kesiapan OP'
-        $tahapan = $jaringan->tahapans()->where('nama_tahapan', 'BA Hasil Evaluasi Akhir Kesiapan OP')->first();
+    //     // Cari tahapan berdasarkan nama_tahapan 'BA Hasil Evaluasi Awal Kesiapan OP'
+    //     $tahapan = $jaringan->tahapans()->where('nama_tahapan', 'BA Hasil Evaluasi Akhir Kesiapan OP')->first();
 
-        // Simpan file dengan nama unik
-        $file = $request->file('dokumen_ba_evaluasi_akhir')->storeAs('public/ba_evaluasi_akhir', uniqid() . '.' . $request->file('dokumen_ba_evaluasi_akhir')->getClientOriginalExtension());
+    //     // Simpan file dengan nama unik
+    //     $file = $request->file('dokumen_ba_evaluasi_akhir')->storeAs('public/ba_evaluasi_akhir', uniqid() . '.' . $request->file('dokumen_ba_evaluasi_akhir')->getClientOriginalExtension());
 
-        // Buat entri baru di tabel dokumens
-        Dokumen::create([
-            'tahapan_id' => $tahapan->id,
-            'nama_dokumen' => 'BA Hasil Evaluasi Akhir Kesiapan OP',
-            'path_dokumen' => $file,
-        ]);
+    //     // Buat entri baru di tabel dokumens
+    //     Dokumen::create([
+    //         'tahapan_id' => $tahapan->id,
+    //         'nama_dokumen' => 'BA Hasil Evaluasi Akhir Kesiapan OP',
+    //         'path_dokumen' => $file,
+    //     ]);
 
-        $jaringan->update(['tahapan' => 'BA Hasil Evaluasi Akhir Kesiapan OP']);
+    //     //$jaringan->update(['tahapan' => 'BA Hasil Evaluasi Akhir Kesiapan OP']);
 
-        return response()->json(['success' => true]);
-    }
+    //     return response()->json(['success' => true]);
+    // }
 
-    public function updateBAEvaluasiAkhir(Request $request, Jaringan $jaringan)
-    {
-        $request->validate([
-            'dokumen_ba_evaluasi_akhir' => 'file|mimes:pdf|max:3072',
-        ]);
+    // public function updateBAEvaluasiAkhir(Request $request, Jaringan $jaringan)
+    // {
+    //     $request->validate([
+    //         'dokumen_ba_evaluasi_akhir' => 'file|mimes:pdf|max:3072',
+    //     ]);
 
-        // Cari tahapan berdasarkan nama_tahapan 'BA Hasil Evaluasi Awal Kesiapan OP'
-        $tahapan = $jaringan->tahapans()->where('nama_tahapan', 'BA Hasil Evaluasi Akhir Kesiapan OP')->first();
+    //     // Cari tahapan berdasarkan nama_tahapan 'BA Hasil Evaluasi Awal Kesiapan OP'
+    //     $tahapan = $jaringan->tahapans()->where('nama_tahapan', 'BA Hasil Evaluasi Akhir Kesiapan OP')->first();
 
-        if ($request->hasFile('dokumen_ba_evaluasi_akhir')) {
-            // Simpan file baru dengan nama unik
-            $file = $request->file('dokumen_ba_evaluasi_akhir')->storeAs('public/ba_evaluasi_akhir', uniqid() . '.' . $request->file('dokumen_ba_evaluasi_akhir')->getClientOriginalExtension());
+    //     if ($request->hasFile('dokumen_ba_evaluasi_akhir')) {
+    //         // Simpan file baru dengan nama unik
+    //         $file = $request->file('dokumen_ba_evaluasi_akhir')->storeAs('public/ba_evaluasi_akhir', uniqid() . '.' . $request->file('dokumen_ba_evaluasi_akhir')->getClientOriginalExtension());
 
-            // Update atau buat baru entri di tabel dokumens
-            Dokumen::updateOrCreate(
-                ['tahapan_id' => $tahapan->id, 'nama_dokumen' => 'BA Hasil Evaluasi Akhir Kesiapan OP'],
-                ['path_dokumen' => $file]
-            );
-        }
+    //         // Update atau buat baru entri di tabel dokumens
+    //         Dokumen::updateOrCreate(
+    //             ['tahapan_id' => $tahapan->id, 'nama_dokumen' => 'BA Hasil Evaluasi Akhir Kesiapan OP'],
+    //             ['path_dokumen' => $file]
+    //         );
+    //     }
 
-        return response()->json(['success' => 'Dokumen BA Hasil Evaluasi Akhir Kesiapan OP berhasil diupdate.']);
-    }
+    //     return response()->json(['success' => 'Dokumen BA Hasil Evaluasi Akhir Kesiapan OP berhasil diupdate.']);
+    // }
 
     public function uploadSerahTerimaOP(Request $request, Jaringan $jaringan)
     {

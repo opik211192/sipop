@@ -36,7 +36,6 @@ class InventarisasiDataEvaluasiAwal extends Controller
 
         // Ambil items dari evaluasi blanko
         $items = ItemBlanko::where('evaluasi_blanko_id', $evaluasiBlanko->id)->get();
-
         //dd($evaluasiBlanko);
 
         return view('evaluasi.blanko1a', compact('jaringan', 'items', 'evaluasiBlanko'));
@@ -77,7 +76,13 @@ class InventarisasiDataEvaluasiAwal extends Controller
         }
 
         // Panggil fungsi untuk memeriksa apakah semua blanko sudah terisi
-        $this->checkAllBlankosFilled($jaringan);
+    $this->checkAllBlankosFilled($jaringan);
+
+    // Hanya set tahapan ke 'Inventarisasi Data dan Informasi' jika tahapan saat ini masih 'Sosialisasi dan Koordinasi'
+    if ($jaringan->tahapan === 'Sosialisasi dan Koordinasi') {
+        $jaringan->update(['tahapan' => 'Inventarisasi Data dan Informasi']);
+    }
+
 
         return redirect()->back()->with('success', 'Data evaluasi blanko 1A berhasil disimpan.');
     }
@@ -210,9 +215,13 @@ class InventarisasiDataEvaluasiAwal extends Controller
             }
         }
 
-        // Panggil fungsi untuk memeriksa apakah semua blanko sudah terisi
-        $this->checkAllBlankosFilled($jaringan);
+         // Panggil fungsi untuk memeriksa apakah semua blanko sudah terisi
+    $this->checkAllBlankosFilled($jaringan);
 
+    // Hanya set tahapan ke 'Inventarisasi Data dan Informasi' jika tahapan saat ini masih 'Sosialisasi dan Koordinasi'
+    if ($jaringan->tahapan === 'Sosialisasi dan Koordinasi') {
+        $jaringan->update(['tahapan' => 'Inventarisasi Data dan Informasi']);
+    }
         return redirect()->back()->with('success', 'Data evaluasi blanko 1B berhasil disimpan.');
     }
 
@@ -343,7 +352,12 @@ class InventarisasiDataEvaluasiAwal extends Controller
         }
 
         // Panggil fungsi untuk memeriksa apakah semua blanko sudah terisi
-        $this->checkAllBlankosFilled($jaringan);
+    $this->checkAllBlankosFilled($jaringan);
+
+    // Hanya set tahapan ke 'Inventarisasi Data dan Informasi' jika tahapan saat ini masih 'Sosialisasi dan Koordinasi'
+    if ($jaringan->tahapan === 'Sosialisasi dan Koordinasi') {
+        $jaringan->update(['tahapan' => 'Inventarisasi Data dan Informasi']);
+    }
 
         return redirect()->back()->with('success', 'Data evaluasi blanko 1C berhasil disimpan.');
     }
@@ -532,8 +546,13 @@ class InventarisasiDataEvaluasiAwal extends Controller
         $evaluasiBlanko->hasil_ada_tidak_ada = $request->input('hasil_ada_tidak_ada');
         $evaluasiBlanko->save();
 
-        //  // Panggil fungsi untuk memeriksa apakah semua blanko sudah terisi
-        $this->checkAllBlankosFilled($jaringan);
+        // Panggil fungsi untuk memeriksa apakah semua blanko sudah terisi
+    $this->checkAllBlankosFilled($jaringan);
+
+    // Hanya set tahapan ke 'Inventarisasi Data dan Informasi' jika tahapan saat ini masih 'Sosialisasi dan Koordinasi'
+    if ($jaringan->tahapan === 'Sosialisasi dan Koordinasi') {
+        $jaringan->update(['tahapan' => 'Inventarisasi Data dan Informasi']);
+    }
 
         return redirect()->back()->with('success', 'Data evaluasi blanko 2 berhasil disimpan.');
 
@@ -726,8 +745,13 @@ class InventarisasiDataEvaluasiAwal extends Controller
             }
         }
 
-        // Panggil fungsi untuk memeriksa apakah semua blanko sudah terisi
-        $this->checkAllBlankosFilled($jaringan);
+         // Panggil fungsi untuk memeriksa apakah semua blanko sudah terisi
+    $this->checkAllBlankosFilled($jaringan);
+
+    // Hanya set tahapan ke 'Inventarisasi Data dan Informasi' jika tahapan saat ini masih 'Sosialisasi dan Koordinasi'
+    if ($jaringan->tahapan === 'Sosialisasi dan Koordinasi') {
+        $jaringan->update(['tahapan' => 'Inventarisasi Data dan Informasi']);
+    }
 
         return redirect()->back()->with('success', 'Data evaluasi blanko 3A berhasil disimpan.');
     }
@@ -858,7 +882,12 @@ class InventarisasiDataEvaluasiAwal extends Controller
         }
 
         // Panggil fungsi untuk memeriksa apakah semua blanko sudah terisi
-        $this->checkAllBlankosFilled($jaringan);
+    $this->checkAllBlankosFilled($jaringan);
+
+    // Hanya set tahapan ke 'Inventarisasi Data dan Informasi' jika tahapan saat ini masih 'Sosialisasi dan Koordinasi'
+    if ($jaringan->tahapan === 'Sosialisasi dan Koordinasi') {
+        $jaringan->update(['tahapan' => 'Inventarisasi Data dan Informasi']);
+    }
 
         return redirect()->back()->with('success', 'Data evaluasi blanko 3B berhasil disimpan.');
 
@@ -989,8 +1018,12 @@ class InventarisasiDataEvaluasiAwal extends Controller
         }
 
         // Panggil fungsi untuk memeriksa apakah semua blanko sudah terisi
-        $this->checkAllBlankosFilled($jaringan);
+    $this->checkAllBlankosFilled($jaringan);
 
+    // Hanya set tahapan ke 'Inventarisasi Data dan Informasi' jika tahapan saat ini masih 'Sosialisasi dan Koordinasi'
+    if ($jaringan->tahapan === 'Sosialisasi dan Koordinasi') {
+        $jaringan->update(['tahapan' => 'Inventarisasi Data dan Informasi']);
+    }
         return redirect()->back()->with('success', 'Data evaluasi blanko 3C berhasil disimpan.');
     }
 
@@ -1118,9 +1151,13 @@ class InventarisasiDataEvaluasiAwal extends Controller
             }
         }
 
-        // Panggil fungsi untuk memeriksa apakah semua blanko sudah terisi
-        $this->checkAllBlankosFilled($jaringan);
+         // Panggil fungsi untuk memeriksa apakah semua blanko sudah terisi
+    $this->checkAllBlankosFilled($jaringan);
 
+    // Hanya set tahapan ke 'Inventarisasi Data dan Informasi' jika tahapan saat ini masih 'Sosialisasi dan Koordinasi'
+    if ($jaringan->tahapan === 'Sosialisasi dan Koordinasi') {
+        $jaringan->update(['tahapan' => 'Inventarisasi Data dan Informasi']);
+    }
          return redirect()->back()->with('success', 'Data evaluasi blanko 3D berhasil disimpan.');
     }
 
@@ -1198,56 +1235,94 @@ class InventarisasiDataEvaluasiAwal extends Controller
 
 
     //cek blanko untuk status tahapan
-    private function checkAllBlankosFilled(Jaringan $jaringan)
-    {
-        // Daftar tahapan berurutan
-        $tahapanList = [
-            'Pembentukan Tim',
-            'Penyusunan Rencana Kerja',
-            'Sosialisasi dan Koordinasi',
-            'Evaluasi Awal Kesiapan',
-            'BA Hasil Evaluasi Awal Kesiapan OP',
-            'Evaluasi Akhir Kesiapan',
-            'BA Hasil Evaluasi Akhir Kesiapan OP',
-            'Serah Terima hasil OP'
-        ];
+   private function checkAllBlankosFilled(Jaringan $jaringan)
+{
+    // Daftar tahapan berurutan
+    $tahapanList = [
+        'Pembentukan Tim',
+        'Penyusunan Rencana Kerja',
+        'Sosialisasi dan Koordinasi',
+        'Inventarisasi Data dan Informasi',
+        'Evaluasi Awal Kesiapan OP',
+        'Evaluasi Akhir Kesiapan OP',
+        'Serah Terima hasil OP'
+    ];
 
-        // Ambil tahapan saat ini
-        $currentTahapan = $jaringan->tahapan;
+    // Ambil tahapan saat ini
+    $currentTahapan = $jaringan->tahapan;
 
-        // Cari indeks tahapan saat ini dalam daftar tahapan
-        $currentIndex = array_search($currentTahapan, $tahapanList);
+    // Cari indeks tahapan saat ini dalam daftar tahapan
+    $currentIndex = array_search($currentTahapan, $tahapanList);
 
-        // Pastikan tidak mundur dari tahapan saat ini
-        if ($currentIndex !== false && $currentIndex < count($tahapanList) - 1) {
-            // Logika untuk memeriksa apakah semua kriteria terpenuhi untuk maju ke tahap selanjutnya
-            $allFilled = $this->areAllBlankosFilled($jaringan); // Implementasikan fungsi ini untuk memeriksa validasi
+    // Pastikan tidak mundur dari tahapan saat ini
+    if ($currentIndex !== false && $currentIndex < count($tahapanList) - 1) {
+        // Logika untuk memeriksa apakah semua kriteria terpenuhi untuk maju ke tahap selanjutnya
+        $allFilled = $this->areAllBlankosFilled($jaringan); // Implementasikan fungsi ini untuk memeriksa validasi
 
-            // Jika semua kriteria terpenuhi, maju ke tahapan berikutnya
-            if ($allFilled) {
-                $nextTahapan = $tahapanList[$currentIndex + 1];
+        // Jika semua kriteria terpenuhi, maju ke tahapan berikutnya
+        if ($allFilled) {
+            // Periksa apakah jaringan belum pernah melewati tahapan 'Inventarisasi Data dan Informasi'
+            if ($currentTahapan === 'Sosialisasi dan Koordinasi') {
+                $nextTahapan = 'Inventarisasi Data dan Informasi';
                 $jaringan->update(['tahapan' => $nextTahapan]);
+            } else {
+                // Jangan ubah tahapan jika sudah melewati 'Inventarisasi Data dan Informasi'
+                if ($currentTahapan !== 'Inventarisasi Data dan Informasi') {
+                    $nextTahapan = $tahapanList[$currentIndex + 1];
+                    $jaringan->update(['tahapan' => $nextTahapan]);
+                }
             }
         }
     }
+}
 
-    // Fungsi untuk memeriksa apakah semua blanko telah terisi
-    private function areAllBlankosFilled(Jaringan $jaringan)
-    {
-        // Implementasikan logika untuk memeriksa apakah semua Blanko telah terisi
-        // Contoh sederhana: cek apakah semua item blanko telah diisi
-        // return true jika semua terisi, jika tidak return false
-
-        // Contoh: Periksa apakah semua blanko pada tahap "Evaluasi Awal Kesiapan" sudah terisi
-        $tahapan = $jaringan->tahapans()->where('nama_tahapan', 'Evaluasi Awal Kesiapan')->first();
-        if ($tahapan) {
-            $allBlankosFilled = EvaluasiBlanko::where('tahapan_id', $tahapan->id)->get()->every(function ($evaluasiBlanko) {
-                return $evaluasiBlanko->hasil_ada_tidak_ada >= 1; // Misal jika hasil ada_tidak_ada lebih dari 1 maka dianggap terisi
-            });
-
-            return $allBlankosFilled;
+private function areAllBlankosFilled(Jaringan $jaringan)
+{
+    // Ambil tahapan 'Evaluasi Awal Kesiapan'
+    $tahapan = $jaringan->tahapans()->where('nama_tahapan', 'Evaluasi Awal Kesiapan')->first();
+    
+    if ($tahapan) {
+        // Cek apakah semua blanko yang relevan telah terisi berdasarkan jenis jaringan
+        switch ($jaringan->jenis) {
+            case 'Air Tanah':
+                return $this->checkBlankosFilledForAirTanah($tahapan);
+            case 'Air Baku':
+            case 'Embung':
+                return $this->checkBlankosFilledForAirBakuOrEmbung($tahapan);
+            default:
+                return false;
         }
-
-        return false;
     }
+
+    return false;
+}
+
+private function checkBlankosFilledForAirTanah($tahapan)
+{
+    $blankos = ['Blanko 1A', 'Blanko 1B', 'Blanko 2', 'Blanko 3A', 'Blanko 3B', 'Blanko 3C', 'Blanko 3D'];
+    
+    foreach ($blankos as $blanko) {
+        $evaluasiBlanko = EvaluasiBlanko::where('tahapan_id', $tahapan->id)->where('jenis_blanko', $blanko)->first();
+        if (!$evaluasiBlanko || $evaluasiBlanko->hasil_ada_tidak_ada < 1) {
+            return false; // Jika ada blanko yang belum terisi, kembalikan false
+        }
+    }
+
+    return true; // Semua blanko terisi
+}
+
+private function checkBlankosFilledForAirBakuOrEmbung($tahapan)
+{
+    $blankos = ['Blanko 1C', 'Blanko 2', 'Blanko 3A', 'Blanko 3B', 'Blanko 3C', 'Blanko 3D'];
+
+    foreach ($blankos as $blanko) {
+        $evaluasiBlanko = EvaluasiBlanko::where('tahapan_id', $tahapan->id)->where('jenis_blanko', $blanko)->first();
+        if (!$evaluasiBlanko || $evaluasiBlanko->hasil_ada_tidak_ada < 1) {
+            return false; // Jika ada blanko yang belum terisi, kembalikan false
+        }
+    }
+
+    return true; // Semua blanko terisi
+}
+
 }

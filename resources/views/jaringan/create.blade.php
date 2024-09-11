@@ -18,7 +18,7 @@
             <div class="form-group row">
                 <label for="nama" class="col-sm-2 col-form-label">Nama</label>
                 <div class="col-sm-10">
-                    <input type="text" name="nama" id="nama" class="form-control" value="{{ old('nama') }}" required>
+                    <input type="text" name="nama" id="nama" class="form-control" value="{{ old('nama') }}" placeholder="Nama Paket" required>
                     @error('nama')
                     <div class="text-danger">{{ $message }}</div>
                     @enderror
@@ -40,7 +40,7 @@
                 <label for="longitude" class="col-sm-2 col-form-label">Longitude</label>
                 <div class="col-sm-10">
                     <input type="text" name="longitude" id="longitude" class="form-control"
-                        value="{{ old('longitude') }}" required>
+                        value="{{ old('longitude') }}" placeholder="106.816666" required>
                     @error('longitude')
                     <div class="text-danger">{{ $message }}</div>
                     @enderror

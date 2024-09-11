@@ -41,4 +41,10 @@ class Jaringan extends Model
     {
         return $this->hasMany(Tahapan::class);
     }
+
+    public function history()
+    {
+        return $this->hasOne(History::class);
+    }
+
 }

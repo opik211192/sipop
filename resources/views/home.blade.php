@@ -201,45 +201,88 @@
 
 @section('js')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script> <!-- Tambahkan ini -->
+
 <script>
     @if($selectedSatker == 'PJPA')
     document.addEventListener('DOMContentLoaded', function () {
         var ctx = document.getElementById('tahapanChart').getContext('2d');
+
+        // Daftar tahapan yang ingin ditampilkan di sumbu Y
+        var tahapan = [
+            'Persiapan',
+            'Pembentukan Tim',
+            'Penyusunan Rencana Kerja',
+            'Sosialisasi dan Koordinasi',
+            'Penyusunan Lembar Evaluasi Kesiapan OP',
+            'Inventarisasi Data dan Informasi',
+            'Evaluasi Awal Kesiapan OP',
+            'Evaluasi Akhir Kesiapan OP',
+            'Serah Terima hasil OP'
+        ];
+
+        // Data tahapan
+        var data = {!! json_encode($data) !!};
+        var ids = {!! json_encode($jaringanIds) !!};
+        
+
+        // Hitung persentase untuk setiap data
+        var percentages = data.map(function(value) {
+            if (value === tahapan.length - 1) {
+            return 100; // Jika "Serah Terima hasil OP", set ke 100%
+            } else if (value > 0) {
+            return (value / (tahapan.length - 1)) * 100; // Hitung persentase berdasarkan posisi tahapan
+            } else {
+            return 0; // Jika "Persiapan" atau belum mulai
+            }
+        });
+
         var tahapanChart = new Chart(ctx, {
             type: 'bar',
             data: {
                 labels: {!! json_encode($labels) !!}, // Nama jaringan
                 datasets: [{
                     label: 'Tahapan Pelaksanaan',
-                    data: {!! json_encode($data) !!}, // Data tahapan
+                    data: data, // Data tahapan
                     backgroundColor: {!! json_encode($colors) !!}, // Warna sesuai jenis jaringan
                     borderColor: {!! json_encode($borderColors) !!}, // Warna border sesuai jenis jaringan
                     borderWidth: 1
                 }]
             },
             options: {
+                layout: {
+                    padding: {
+                        top: 20 // Tambahkan padding di atas untuk memberi ruang bagi label
+                    }
+                },
                 scales: {
                     y: {
                         beginAtZero: true,
+                        min: 0,
+                        max: tahapan.length - 1, // Pastikan semua tahapan muncul
+                        stepSize: 1,
                         ticks: {
+                            callback: function(value) {
+                                return tahapan[value]; // Tampilkan nama tahapan
+                            },
                             font: {
                                 weight: 'bold',
                                 size: 12
-                            },
-                            callback: function(value) {
-                                return {!! json_encode($tahapan) !!}[value]; // Tampilkan nama tahapan
                             }
-                        }
-                    },
-                    x: {
-                        beginAtZero: true,
+                        },
                         title: {
                             display: true,
-                            text: ''
+                            text: 'Tahapan'
+                        }   
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Paket'
                         },
                         ticks: {
                             font: {
-                                weight: 'bold', // Buat label pada sumbu x menjadi tebal
+                                weight: 'bold',
                                 size: 11
                             }
                         }
@@ -255,12 +298,35 @@
                         callbacks: {
                             label: function(tooltipItem) {
                                 var value = tooltipItem.raw;
-                                return 'Tahapan: ' + {!! json_encode($tahapan) !!}[value]; // Menampilkan nama tahapan di tooltip
+                                return 'Tahapan: ' + tahapan[value]; // Menampilkan nama tahapan di tooltip
                             }
                         }
+                    },
+                    datalabels: {
+                        anchor: 'end', // Semua label diatur ke 'end' untuk menempatkannya di atas batang
+                        align: 'start', // Semua label diatur ke 'start' agar muncul di atas batang
+                        formatter: function(value, context) {
+                            return percentages[context.dataIndex] + '%'; // Tampilkan persentase di atas batang
+                        },
+                        font: {
+                            weight: 'bold',
+                            size: 12
+                        },
+                        color: '#000',
+                        // Offset the label to move it further above the bar
+                        offset: -20 // Menggeser label sedikit lebih tinggi di atas batang
+                    }
+                },
+                onClick: function (event, elements) {
+                    if (elements.length > 0) {
+                        var index = elements[0].index;
+                        var id = ids[index];
+                        var url = `http://127.0.0.1:8000/jaringan-atab/${id}/show`;
+                        window.location.href = url; // Arahkan ke URL berdasarkan ID
                     }
                 }
-            }
+            },
+            plugins: [ChartDataLabels] // Aktifkan plugin ChartDataLabels
         });
     });
     @endif

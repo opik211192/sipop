@@ -231,7 +231,7 @@
                 </tr>
                 <tr>
                     <td class="bg-white">
-                        <i class="fas fa-handshake fa-lg text-success mr-2"></i>
+                        <i class="fas fa-comments fa-lg text-success mr-2"></i>
                         <span class="font-weight-bold text-dark">Sosialisasi dan Koordinasi</span>
                     </td>
                     <td>
@@ -274,7 +274,7 @@
                     @if ($dokumenPenyusunanRencanaKerja)
                     <!-- Jika dokumen Penyusunan Rencana Kerja ada, tombol upload aktif -->
                     <button type="button" class="btn bg-gradient-primary btn-sm" data-toggle="modal"
-                        data-target="#sosialisasi-dan-koordinasi-upload">
+                        data-target="#sosialisai-dan-koordiansi">
                         <span class="fas fa-upload" title="Upload Dokumen"></span>
                     </button>
                     @else
@@ -288,10 +288,17 @@
                 </td>
                 </tr>
                 <tr>
-                    <td colspan="3">
+                    <td>
                         <i class="fas fa-tasks fa-lg text-primary mr-2"></i>
                         <span class="font-weight-bold text-dark">Penyusunan Lembar Evaluasi Kesiapan OP</span>
                     </td>
+                    <td></td>
+                  <td>
+                    <a href="{{ asset('download/lembar_evaluasi_kesiapan.xlsx') }}" class="btn bg-gradient-success text-white btn-sm"
+                        title="Download Lembar Evaluasi Kesiapan OP">
+                        <i class="fas fa-download mr-2"></i>
+                    </a>
+                </td>
                 </tr>
                 <tr>
                     <td colspan="3">
@@ -327,10 +334,10 @@
                                                     role="tab" aria-controls="v-tabs-messages" aria-selected="false">
                                                     <i class="fas fa-cogs mr-2"></i> Sarana dan Prasarana Pendukung
                                                 </a>
-                                                <a class="nav-link bg-light text-dark d-flex align-items-center" id="v-tabs-hasil-evaluasi-tab" data-toggle="pill"
+                                                {{-- <a class="nav-link bg-light text-dark d-flex align-items-center" id="v-tabs-hasil-evaluasi-tab" data-toggle="pill"
                                                     href="#v-tabs-hasil-evaluasi" role="tab" aria-controls="v-tabs-hasil-evaluasi" aria-selected="false">
-                                                    <i class="fas fa-check-circle mr-2"></i> Hasil Evaluasi Awal Kesiapan OP
-                                                </a>
+                                                    <i class="fas fa-check-circle mr-2"></i> Hasil
+                                                </a> --}}
                                             </div>
                                         </div>
                                         <div class="col-md-8">
@@ -725,7 +732,7 @@
                                                         <thead class="bg-gradient-primary text-white">
                                                             <tr>
                                                                 <th class="text-center border-bottom border-light">
-                                                                    <i class="fas fa-check-circle mr-2"></i> Hasil Evaluasi Awal Kesiapan OP
+                                                                    <i class="fas fa-check-circle mr-2"></i> Hasil
                                                                 </th>
                                                             </tr>
                                                         </thead>
@@ -734,8 +741,8 @@
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
                                                                         <!-- Tombol untuk melihat modal BA Evaluasi Awal -->
-                                                                            <button class="btn btn-sm bg-gradient-success" data-toggle="modal" data-target="#modal-ba-evaluasi-{{ $jaringan->id }}">
-                                                                                <span class="fas fa-file-signature" title="Lihat Penyusunan BA Hasil Evaluasi Awal Kesiapan OP"></span> Lihat Hasil Evalusai Kesiapan OP
+                                                                            <button class="btn btn-sm bg-gradient-success" data-toggle="modal" data-target="#modal-ba-evaluasi-history-{{ $jaringan->id }}">
+                                                                                <span class="fas fa-file-signature" title="Lihat Penyusunan BA Hasil Evaluasi Awal Kesiapan OP"></span> Lihat Hasil
                                                                             </button>
                                                                     </div>
                                                                 </td>
@@ -752,64 +759,143 @@
                         </div>
                     </td>
                 </tr>
-                @php
-                    // Ambil status apakah semua Blanko sudah terisi
-                    $allBlankoCompleted = ($isBlanko1APartiallyFilled || $isBlanko1BPartiallyFilled ||
-                    $isBlanko1CPartiallyFilled || $isBlanko2PartiallyFilled ||
-                    $isBlanko3APartiallyFilled || $isBlanko3BPartiallyFilled ||
-                    $isBlanko3CPartiallyFilled || $isBlanko3DPartiallyFilled);
-                @endphp
-                
-                <tr>
-                    <td class="bg-white">
-                        <i class="fas fa-file-signature fa-lg text-primary mr-2"></i>
-                        <span class="font-weight-bold text-dark">BA Hasil Evaluasi Awal Kesiapan OP</span>
+                {{-- <tr>
+                    <td>
+                        <button class="btn btn-sm bg-gradient-primary" data-toggle="modal" data-target="#modal-ba-evaluasi-history-{{ $jaringan->id }}">
+                            <span class="fas fa-file-signature" title="Lihat Hasil Evaluasi Awal Kesiapan OP History"></span>
+                        </button>
                     </td>
+                </tr> --}}
+                @php
+                // Inisialisasi variabel untuk menyimpan status
+                $history = $jaringan->history()->latest()->first();
+                $result = $history ? $history->recommendation : null;
+                $skipToSerahTerima = $result === 'SIAP OP';
+                $allBlankoCompleted = false;
                 
+                // Inisialisasi variabel dokumen
+                $dokumenEvaluasiAwal = null;
+                $dokumenEvaluasiAkhir = null;
+                $dokumenBAEvaluasiAwal = null;
+                $dokumenBAEvaluasiAkhir = null;
+                $dokumenSerahTerima = null;
+                
+                // Cek jenis jaringan
+                if ($jaringan->jenis == 'Air Tanah') {
+                // Untuk Air Tanah, semua Blanko 1A, 1B, 2, 3A, 3B, 3C, 3D harus terisi
+                $allBlankoCompleted = $isBlanko1APartiallyFilled && $isBlanko1BPartiallyFilled &&
+                $isBlanko2PartiallyFilled && $isBlanko3APartiallyFilled &&
+                $isBlanko3BPartiallyFilled && $isBlanko3CPartiallyFilled &&
+                $isBlanko3DPartiallyFilled;
+                } elseif ($jaringan->jenis == 'Air Baku' || $jaringan->jenis == 'Embung') {
+                // Untuk Air Baku atau Embung, semua Blanko 1C, 2, 3A, 3B, 3C, 3D harus terisi
+                $allBlankoCompleted = $isBlanko1CPartiallyFilled &&
+                $isBlanko2PartiallyFilled && $isBlanko3APartiallyFilled &&
+                $isBlanko3BPartiallyFilled && $isBlanko3CPartiallyFilled &&
+                $isBlanko3DPartiallyFilled;
+                }
+                
+                // Ambil tahapan yang sesuai dengan nama_tahapan
+                $tahapanBAEvaluasiAwal = $jaringan->tahapans->where('nama_tahapan', 'BA Hasil Evaluasi Awal Kesiapan OP')->first();
+                $tahapanEvaluasiAkhir = $jaringan->tahapans->where('nama_tahapan', 'Evaluasi Akhir Kesiapan')->first();
+                $tahapanBAEvaluasiAkhir = $jaringan->tahapans->where('nama_tahapan', 'BA Hasil Evaluasi Akhir Kesiapan OP')->first();
+                $tahapanSerahTerima = $jaringan->tahapans->where('nama_tahapan', 'Serah Terima hasil OP')->first();
+                
+                // Cek apakah dokumen terkait sudah ada
+                $dokumenEvaluasiAwal = $tahapanBAEvaluasiAwal ? $tahapanBAEvaluasiAwal->dokumens->where('nama_dokumen', 'BA Evaluasi
+                Awal Kesiapan OP')->first() : null;
+                $dokumenEvaluasiAkhir = $tahapanEvaluasiAkhir ? $tahapanEvaluasiAkhir->dokumens->where('nama_dokumen', 'Evaluasi Akhir
+                Kesiapan')->first() : null;
+                $dokumenBAEvaluasiAwal = $tahapanBAEvaluasiAwal ? $tahapanBAEvaluasiAwal->dokumens->where('nama_dokumen', 'BA Evaluasi
+                Awal Kesiapan OP')->first() : null;
+                $dokumenBAEvaluasiAkhir = $tahapanBAEvaluasiAkhir ? $tahapanBAEvaluasiAkhir->dokumens->where('nama_dokumen', 'BA Hasil
+                Evaluasi Akhir Kesiapan OP')->first() : null;
+                $dokumenSerahTerima = $tahapanSerahTerima ? $tahapanSerahTerima->dokumens->where('nama_dokumen', 'Serah Terima hasil
+                OP')->first() : null;
+                @endphp
+                <tr>
+                    @php
+                    // Ambil status apakah semua Blanko sudah terisi
+                   // Inisialisasi variabel untuk menyimpan status apakah semua blanko sudah terisi
+                    $history = $jaringan->history()->latest()->first();
+                    
+                    // Cek apakah hasil evaluasi ada dan sesuaikan tahapan berdasarkan hasilnya
+                    $result = $history ? $history->recommendation : null;
+                    $skipToSerahTerima = $result === 'SIAP OP';
+                    $allBlankoCompleted = false;
+
+                    $allBlankoCompleted = false;
+                    
+                    
+                    // Cek jenis jaringan
+                    if ($jaringan->jenis == 'Air Tanah') {
+                        // Untuk Air Tanah, semua Blanko 1A, 1B, 2, 3A, 3B, 3C, 3D harus terisi
+                        $allBlankoCompleted = $isBlanko1APartiallyFilled && $isBlanko1BPartiallyFilled &&
+                        $isBlanko2PartiallyFilled && $isBlanko3APartiallyFilled &&
+                        $isBlanko3BPartiallyFilled && $isBlanko3CPartiallyFilled &&
+                        $isBlanko3DPartiallyFilled;
+                    } elseif ($jaringan->jenis == 'Air Baku' || $jaringan->jenis == 'Embung') {
+                        // Untuk Air Baku atau Embung, semua Blanko 1C, 2, 3A, 3B, 3C, 3D harus terisi
+                        $allBlankoCompleted = $isBlanko1CPartiallyFilled &&
+                        $isBlanko2PartiallyFilled && $isBlanko3APartiallyFilled &&
+                        $isBlanko3BPartiallyFilled && $isBlanko3CPartiallyFilled &&
+                        $isBlanko3DPartiallyFilled;
+                    }
+                    
+                    @endphp
                     <td class="bg-white">
+                        <i class="fas fa-check-circle fa-lg text-primary mr-1"></i>
+                        <span class="font-weight-bold text-dark">Evaluasi Awal Kesiapan OP</span>
+                    </td>
+
+                   <td class="bg-white">
                         @php
                         // Ambil tahapan yang sesuai dengan nama_tahapan 'BA Hasil Evaluasi Awal Kesiapan OP'
                         $tahapanBAEvaluasi = $jaringan->tahapans->where('nama_tahapan', 'BA Hasil Evaluasi Awal Kesiapan OP')->first();
-                
+                    
                         // Cek apakah dokumen terkait dengan nama 'BA Evaluasi Awal Kesiapan OP' sudah ada
                         $dokumenEvaluasiAwal = $tahapanBAEvaluasi ?
                         $tahapanBAEvaluasi->dokumens->where('nama_dokumen', 'BA Evaluasi Awal Kesiapan OP')->first()
                         : null;
                         @endphp
-                
+                    
                         @if($dokumenEvaluasiAwal)
                         <span class="badge badge-success"><i class="fas fa-check-circle"></i> Selesai</span>
                         @else
                         <span class="badge badge-warning"><i class="fas fa-exclamation-circle"></i> Pending</span>
                         @endif
                     </td>
-                
-                  <td class="bg-white">
-                    @if($dokumenEvaluasiAwal)
-                    {{-- Tombol untuk melihat Dokumen BA Evaluasi Awal (Hanya untuk pengguna dengan 'view blanko') --}}
-                    @can('view blanko')
-                    <button class="btn btn-sm bg-gradient-primary" data-toggle="modal" data-target="#show-ba-evaluasi-awal">
-                        <span class="fas fa-eye" title="Lihat Dokumen Penyusunan BA Hasil Evaluasi Awal Kesiapan OP"></span>
-                    </button>
-                    @endcan
-                
-                    {{-- Tombol untuk mengelola Dokumen BA Evaluasi Awal (Hanya untuk pengguna dengan 'manage blanko') --}}
-                    @can('manage blanko')
-                    <!-- Tombol untuk membuka modal edit BA Evaluasi Awal -->
-                    <button class="btn btn-sm bg-gradient-primary" data-toggle="modal" data-target="#edit-ba-evaluasi-awal">
-                        <span class="fas fa-edit" title="Edit Penyusunan BA Hasil Evaluasi Awal Kesiapan OP"></span>
-                    </button>
-                    @endcan
-                    @else
-                    {{-- Tombol untuk meng-upload Dokumen BA Evaluasi Awal (Hanya untuk pengguna dengan 'manage blanko') --}}
-                    @can('manage blanko')
-                    <button class="btn btn-sm bg-gradient-primary" data-toggle="modal" data-target="#upload-ba-evaluasi-awal"
-                        @if(!$allBlankoCompleted) disabled @endif>
-                        <span class="fas fa-upload" title="Upload Penyusunan BA Hasil Evaluasi Awal Kesiapan OP"></span>
-                    </button>
-                    @endcan
-                    @endif
-                </td>
+
+                    <td class="bg-white">
+                       <button class="btn btn-sm bg-gradient-success" data-toggle="modal" data-target="#modal-ba-evaluasi-{{ $jaringan->id }}"
+                            @if(!$allBlankoCompleted) disabled @endif>
+                            <span class="fas fa-file-signature" title="Lihat Hasil Evaluasi Awal Kesiapan OP"></span>
+                        </button>
+                        @if($dokumenEvaluasiAwal)
+                        {{-- Tombol untuk melihat Dokumen BA Evaluasi Awal (Hanya untuk pengguna dengan 'view blanko') --}}
+                        @can('view blanko')
+                        <button class="btn btn-sm bg-gradient-primary" data-toggle="modal" data-target="#show-ba-evaluasi-awal">
+                            <span class="fas fa-eye" title="Lihat Dokumen Penyusunan BA Hasil Evaluasi Awal Kesiapan OP"></span>
+                        </button>
+                        @endcan
+                    
+                        {{-- Tombol untuk mengelola Dokumen BA Evaluasi Awal (Hanya untuk pengguna dengan 'manage blanko') --}}
+                        @can('manage blanko')
+                        <!-- Tombol untuk membuka modal edit BA Evaluasi Awal -->
+                        <button class="btn btn-sm bg-gradient-primary" data-toggle="modal" data-target="#edit-ba-evaluasi-awal">
+                            <span class="fas fa-edit" title="Edit Penyusunan BA Hasil Evaluasi Awal Kesiapan OP"></span>
+                        </button>
+                        @endcan
+                        @else
+                        {{-- Tombol untuk meng-upload Dokumen BA Evaluasi Awal (Hanya untuk pengguna dengan 'manage blanko') --}}
+                        @can('manage blanko')
+                        <button class="btn btn-sm bg-gradient-primary" data-toggle="modal" data-target="#upload-ba-evaluasi-awal"
+                            @if(!$allBlankoCompleted) disabled @endif>
+                            <span class="fas fa-upload" title="Upload BA Hasil Evaluasi Awal Kesiapan OP"></span>
+                        </button>
+                        @endcan
+                        @endif
+                    </td>
                 </tr>
                 @php
                      // Ambil tahapan untuk BA Hasil Evaluasi Awal Kesiapan OP
@@ -819,6 +905,7 @@
                      $dokumenBAEvaluasiAwal = $tahapanBAEvaluasiAwal ?
                      $tahapanBAEvaluasiAwal->dokumens->where('nama_dokumen', 'BA Evaluasi Awal Kesiapan OP')->first() : null;
                 @endphp
+                @if (!$skipToSerahTerima)
                 <tr>
                     <td class="bg-white">
                         <i class="fas fa-clipboard-check fa-lg text-primary mr-2"></i>
@@ -868,48 +955,8 @@
                     @endif
                 </td>
                 </tr>
-                <tr>
-                    <td class="bg-white">
-                        <i class="fas fa-file-alt fa-lg text-primary mr-2"></i>
-                        <span class="font-weight-bold text-dark">Penyusunan BA Hasil Evaluasi Akhir Kesiapan OP</span>
-                    </td>
-                    <td class="bg-white">
-                        <?php
-                        //cari tahaapan evaluasi akhir kesiapan OP
-                        $tahapanBAEvaluasiAkhir = $jaringan->tahapans->where('nama_tahapan', 'BA Hasil Evaluasi Akhir Kesiapan OP')->first();
-                        
-                        //cek apakah dokumen Evaluasi Akhir Kesiapan sudah ada
-                        $dokumenBAEvaluasiAkhir = $tahapanBAEvaluasiAkhir ?
-                        $tahapanBAEvaluasiAkhir->dokumens->where('nama_dokumen', 'BA Hasil Evaluasi Akhir Kesiapan OP')->first() : null;
-                        ?>
-
-                        @if($dokumenBAEvaluasiAkhir)
-                        <span class="badge badge-success"><i class="fas fa-check-circle"></i> Selesai</span>
-                        @else
-                        <span class="badge badge-warning"><i class="fas fa-exclamation-circle"></i> Pending</span>
-                        @endif
-                    </td>
-                    <td class="bg-white">
-                        @can('ba akhir upload')
-                        @if ($dokumenBAEvaluasiAkhir)
-                        {{-- Tombol untuk membuka modal show --}}
-                        <button class="btn btn-sm bg-gradient-primary" data-toggle="modal" data-target="#show-ba-evaluasi-akhir">
-                            <span class="fas fa-eye" title="Lihat Penyusunan BA Hasil Evaluasi Akhir Kesiapan OP"></span>
-                        </button>
-                        <!-- Tombol untuk membuka modal edit BA Evaluasi Akhir -->
-                        <button class="btn btn-sm bg-gradient-primary" data-toggle="modal" data-target="#edit-ba-evaluasi-akhir">
-                            <span class="fas fa-edit" title="Edit Penyusunan BA Hasil Evaluasi Akhir Kesiapan OP"></span>
-                        </button>
-                        @else
-                        <!-- Tombol untuk membuka modal upload BA Evaluasi Akhir -->
-                        <button class="btn btn-sm bg-gradient-primary" data-toggle="modal" data-target="#upload-ba-evaluasi-akhir"
-                            @if(!$dokumenEvaluasiAkhir) disabled @endif>
-                            <span class="fas fa-upload" title="Upload Penyusunan BA Hasil Evaluasi Akhir Kesiapan OP"></span>
-                        </button>
-                        @endif
-                        @endcan
-                    </td>
-                </tr>
+                
+                @endif
                 <tr>
                     <td class="bg-white">
                         <i class="fas fa-handshake fa-lg text-success mr-2"></i>
@@ -950,10 +997,19 @@
                     </button>
                     @else
                     <!-- Tombol untuk membuka modal upload Serah Terima -->
-                    <button class="btn btn-sm bg-gradient-primary" data-toggle="modal" data-target="#upload-serah-terima-op"
-                        @if(!$dokumenBAEvaluasiAkhir) disabled @endif>
-                        <span class="fas fa-upload" title="Upload Serah Terima Hasil OP"></span>
-                    </button>
+                        @if($skipToSerahTerima)
+                        <!-- Jika skipToSerahTerima true, tombol aktif jika dokumen Evaluasi Akhir sudah ada -->
+                        <button class="btn btn-sm bg-gradient-primary" data-toggle="modal" data-target="#upload-serah-terima-op"
+                            @if(!$dokumenEvaluasiAwal) disabled @endif>
+                            <span class="fas fa-upload" title="Upload Serah Terima Hasil OP"></span>
+                        </button>
+                        @else
+                        <!-- Jika skipToSerahTerima false, tombol aktif jika dokumen BA Evaluasi Akhir sudah ada -->
+                        <button class="btn btn-sm bg-gradient-primary" data-toggle="modal" data-target="#upload-serah-terima-op"
+                            @if(!$dokumenEvaluasiAkhir) disabled @endif>
+                            <span class="fas fa-upload" title="Upload Serah Terima Hasil OP"></span>
+                        </button>
+                        @endif
                     @endif
                     @endcan
                 </td>
@@ -1759,6 +1815,223 @@
                         </div>
                         
                     
+                        {{-- <p>Upload BA Hasil Evaluasi Awal Kesiapan OP</p> --}}
+                    </div>
+                </div>
+                <div class="text-right mt-5">
+                    <button type="button" class="btn bg-gradient-danger text-white btn-sm" data-dismiss="modal">
+                        <i class="fas fa-times mr-2"></i> Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- Modal penyusunan BA Evaluasi Awal kesiapan OP History--}}
+<div class="modal fade" id="modal-ba-evaluasi-history-{{ $jaringan->id }}" tabindex="-1"
+    aria-labelledby="modalBAEvaluasiHistoryLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-gradient-primary text-white">
+                <h5 class="modal-title" id="modalBAEvaluasiHistoryLabel">
+                    <i class="fas fa-info-circle mr-2"></i> History Evaluasi Awal Kesiapan OP: <strong>{{$jaringan->nama
+                        }}</strong>
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body bg-light">
+                <div class="row">
+                    <div class="col-md-12">
+                        <table class="table table-bordered">
+                            <thead class="bg-gradient-primary text-white table-sm text-center">
+                                <tr>
+                                    <th>No.</th>
+                                    <th>Kriteria dan Rekomendasi</th>
+                                    <th class="w-25">SIAP OP (Dengan Catatan)</th>
+                                    <th class="w-25">SIAP OP</th>
+                                    <th class="w-25">Hasil</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="bg-light">
+                                    <td>1</td>
+                                    <td class="text-bold">KESIAPAN DATA DAN INFORMASI PEKERJAAN FISIK</td>
+                                    <td>
+                                        <ul>
+                                            <li>Keberadaannya: 100%</li>
+                                            <li>Kondisi: > 70%</li>
+                                            <li>Fungsi: > 70%</li>
+                                        </ul>
+                                    </td>
+                                    <td>
+                                        <ul>
+                                            <li>Keberadaannya: > 100%</li>
+                                            <li>Kondisi: > 80%</li>
+                                            <li>Fungsi: > 80%</li>
+                                        </ul>
+                                    </td>
+                                    <td>
+                                        <ul>
+                                            <li id="hasil-ada-tidak-ada-1-history">Keberadaannya:</li>
+                                            <li id="hasil-kondisi-1-history">Kondisi:</li>
+                                            <li id="hasil-fungsi-1-history">Fungsi:</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <tr class="bg-light">
+                                    <td>2</td>
+                                    <td class="text-bold">KESIAPAN DATA DAN INFORMASI PEKERJAAN NON-FISIK</td>
+                                    <td>
+                                        <ul>
+                                            <li>Keberadaannya: > 70%</li>
+                                            <li>Kondisi: > 70%</li>
+                                            <li>Fungsi: > 70%</li>
+                                        </ul>
+                                    </td>
+                                    <td>
+                                        <ul>
+                                            <li>Keberadaannya: > 80%</li>
+                                            <li>Kondisi: > 80%</li>
+                                            <li>Fungsi: > 80%</li>
+                                        </ul>
+                                    </td>
+                                    <td>
+                                        <ul>
+                                            <li id="hasil-ada-tidak-ada-2-history">Keberadaannya:</li>
+                                            <li>Kondisi: -</li>
+                                            <li>Fungsi: -</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <tr class="bg-light">
+                                    <td rowspan="6">3</td>
+                                    <td class="text-bold border-right-0">KESIAPAN SARANA DAN PRASARANA PENDUKUNG
+                                        PENGELOLA AIR TANAH DAN AIR BAKU</td>
+                                    <td colspan="3"></td>
+                                </tr>
+                                <tr class="bg-light">
+                                    <td class="text-bold">a. SARANA PENUNJANG OP TERPENUHI</td>
+                                    <td>
+                                        <ul>
+                                            <li>Keberadaannya: > 80%</li>
+                                            <li>Kondisi: > 70%</li>
+                                            <li>Fungsi: > 70%</li>
+                                        </ul>
+                                    </td>
+                                    <td>
+                                        <ul>
+                                            <li>Keberadaannya: > 100%</li>
+                                            <li>Kondisi: > 80%</li>
+                                            <li>Fungsi: > 80%</li>
+
+                                        </ul>
+                                    </td>
+                                    <td>
+                                        <ul>
+                                            <li id="hasil-ada-tidak-ada-3A-history">Keberadaannya:</li>
+                                            <li>Kondisi: -</li>
+                                            <li>Fungsi: -</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <tr class="bg-light">
+                                    <td class="text-bold">b. KELEMBAGAAN DAN SDM TERPENUHI</td>
+                                    <td>
+                                        <ul>
+                                            <li>Keberadaannya: > 60%</li>
+                                            <li>Kondisi: > 60%</li>
+                                            <li>Fungsi: > 60%</li>
+                                        </ul>
+                                    </td>
+                                    <td>
+                                        <ul>
+                                            <li>Keberadaannya: > 80%</li>
+                                            <li>Kondisi: > 80%</li>
+                                            <li>Fungsi: > 80%</li>
+                                        </ul>
+                                    </td>
+                                    <td>
+                                        <ul>
+                                            <li id="hasil-ada-tidak-ada-3B-history">Keberadaannya:</li>
+                                            <li>Kondisi: -</li>
+                                            <li>Fungsi: -</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <tr class="bg-light">
+                                    <td class="text-bold">c. MANAJEMEN TERPENUHI</td>
+                                    <td>
+                                        <ul>
+                                            <li>Keberadaannya: > 60%</li>
+                                            <li>Kondisi: > 60%</li>
+                                            <li>Fungsi: > 60%</li>
+                                        </ul>
+                                    </td>
+                                    <td>
+                                        <ul>
+                                            <li>Keberadaannya: > 80%</li>
+                                            <li>Kondisi: > 80%</li>
+                                            <li>Fungsi: > 80%</li>
+                                        </ul>
+                                    </td>
+                                    <td>
+                                        <ul>
+                                            <li id="hasil-ada-tidak-ada-3C-history">Keberadaannya:</li>
+                                            <li>Kondisi: -</li>
+                                            <li>Fungsi: -</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <tr class="bg-light">
+                                    <td class="text-bold">d. KONSERVASI TERPENUHI</td>
+                                    <td>
+                                        <ul>
+                                            <li>Keberadaannya: > 60%</li>
+                                            <li>Kondisi: > 60%</li>
+                                            <li>Fungsi: > 60%</li>
+                                        </ul>
+                                    </td>
+                                    <td>
+                                        <ul>
+                                            <li>Keberadaannya: > 80%</li>
+                                            <li>Kondisi: > 80%</li>
+                                            <li>Fungsi: > 80%</li>
+
+                                        </ul>
+                                    </td>
+                                    <td>
+                                        <ul>
+                                            <li id="hasil-ada-tidak-ada-3D-history">Keberadaannya:</li>
+                                            <li>Kondisi: -</li>
+                                            <li>Fungsi: -</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <!-- Alerts for recommendations -->
+                        <div class="mt-5">
+                            <div id="recommendation-success-history" class="d-none">
+                                Rekomendasi: SIAP OP
+                            </div>
+                            <div id="recommendation-warning-history" class="d-none">
+                                Rekomendasi: SIAP OP dengan Catatan
+                            </div>
+                            <div id="recommendation-failure-history" class="d-none">
+                                Rekomendasi: Belum SIAP OP
+                            </div>
+                            <div id="download-history" class="d-none text-center mt-2">
+                                <a href="{{ asset('download/Format_BA_Evaluasi_Awal_POP.pdf') }}"
+                                    class="btn bg-gradient-success text-white btn-sm" target="_blank">
+                                    <i class="fas fa-download mr-2"></i> Download Format BA
+                                </a>
+                            </div>
+                        </div>
+
+
                         {{-- <p>Upload BA Hasil Evaluasi Awal Kesiapan OP</p> --}}
                     </div>
                 </div>
@@ -2801,6 +3074,10 @@
 {{-- ini untuk penyusunan BA Evaluasi Awal Kesiapan OP --}}
 <script>
     $(document).ready(function () {
+        $('#modal-ba-evaluasi-{{ $jaringan->id }}').on('hidden.bs.modal', function () {
+            location.reload();
+        });
+
         $('#modal-ba-evaluasi-{{ $jaringan->id }}').on('shown.bs.modal', function () {
             // Kosongkan elemen-elemen yang akan diisi ulang
             $('#hasil-ada-tidak-ada-1 span').remove();
@@ -2902,6 +3179,113 @@
             });
         });
 });
+
+</script>
+
+<script>
+    $(document).ready(function () {
+    $('#modal-ba-evaluasi-history-{{ $jaringan->id }}').on('shown.bs.modal', function () {
+        // Kosongkan elemen-elemen yang akan diisi ulang
+        $('#hasil-ada-tidak-ada-1-history span').remove();
+        $('#hasil-kondisi-1-history span').remove();
+        $('#hasil-fungsi-1-history span').remove();
+        $('#hasil-ada-tidak-ada-2-history span').remove();
+        $('#hasil-ada-tidak-ada-3A-history span').remove();
+        $('#hasil-ada-tidak-ada-3B-history span').remove();
+        $('#hasil-ada-tidak-ada-3C-history span').remove();
+        $('#hasil-ada-tidak-ada-3D-history span').remove();
+
+        // Reset tampilan download section
+        var downloadSection = document.getElementById('download-history');
+        downloadSection.classList.add('d-none');
+
+        $.ajax({
+            url: "{{ route('api.ba-awal-kesiapan-op-history', $jaringan) }}",
+            type: "GET",
+            success: function (response) {
+                var data = response.data; // Ambil data dari response API
+                
+                // Function to determine badge color based on value and thresholds
+                function getBadgeColor(value, catatanThreshold, siapThreshold) {
+                    if (value >= siapThreshold) {
+                        return 'badge-success'; // Hijau
+                    } else if (value >= catatanThreshold && value < siapThreshold) {
+                        return 'badge-warning'; // Kuning
+                    } else {
+                        return 'badge-danger'; // Merah
+                    }
+                }
+
+                // Function to add badge with appropriate color and value
+                function addBadge(elementId, value, catatanThreshold, siapThreshold) {
+                    let badgeColor = getBadgeColor(value, catatanThreshold, siapThreshold);
+                    let titleText = `${value}%`;
+
+                    $(`#${elementId}`).append(`<span class="badge ${badgeColor} ml-2" style="font-size: 15px;" title="${titleText}">${value}%</span>`);
+                }
+
+                // Tampilkan hasil Blanko 1
+                addBadge('hasil-ada-tidak-ada-1-history', data.blanko1.hasil_ada_tidak_ada || 0, 70, 80);
+                addBadge('hasil-kondisi-1-history', data.blanko1.hasil_kondisi || 0, 70, 80);
+                addBadge('hasil-fungsi-1-history', data.blanko1.hasil_fungsi || 0, 70, 80);
+
+                // Tampilkan hasil Blanko 2
+                addBadge('hasil-ada-tidak-ada-2-history', data.blanko2.hasil_ada_tidak_ada || 0, 70, 80);
+
+                // Tampilkan hasil Blanko 3A, 3B, 3C, 3D
+                addBadge('hasil-ada-tidak-ada-3A-history', data.blanko3.blanko3A.hasil_ada_tidak_ada || 0, 70, 80);
+                addBadge('hasil-ada-tidak-ada-3B-history', data.blanko3.blanko3B.hasil_ada_tidak_ada || 0, 60, 80);
+                addBadge('hasil-ada-tidak-ada-3C-history', data.blanko3.blanko3C.hasil_ada_tidak_ada || 0, 60, 80);
+                addBadge('hasil-ada-tidak-ada-3D-history', data.blanko3.blanko3D.hasil_ada_tidak_ada || 0, 60, 80);
+
+                // Tampilkan rekomendasi
+                if (response.recommendation === 'SIAP OP') {
+                    $('#recommendation-success-history')
+                        .removeClass('d-none')
+                        .show()
+                        .css({
+                            'background-color': '#28a745', // hijau
+                            'color': '#ffffff', // teks putih
+                            'padding': '10px', // padding
+                            'border-radius': '5px', // border radius
+                            'font-weight': 'bold', // teks tebal
+                            'text-align': 'center' // teks tengah
+                        });
+                } else if (response.recommendation === 'SIAP OP dengan Catatan') {
+                    $('#recommendation-warning-history')
+                        .removeClass('d-none')
+                        .show()
+                        .css({
+                            'background-color': '#ffc107', // kuning
+                            'color': '#000000', // teks hitam
+                            'padding': '10px', // padding
+                            'border-radius': '5px', // border radius
+                            'font-weight': 'bold', // teks tebal
+                            'text-align': 'center' // teks tengah
+                        });
+                } else if (response.recommendation === 'Belum SIAP OP') {
+                    $('#recommendation-failure-history')
+                        .removeClass('d-none')
+                        .show()
+                        .css({
+                            'background-color': '#dc3545', // merah
+                            'color': '#ffffff', // teks putih
+                            'padding': '10px', // padding
+                            'border-radius': '5px', // border radius
+                            'font-weight': 'bold', // teks tebal
+                            'text-align': 'center' // teks tengah
+                        });
+                }
+
+                // Cek kondisi rekomendasi dan tampilkan tombol download jika diperlukan
+                if (!$('#recommendation-success-history').hasClass('d-none') || !$('#recommendation-warning-history').hasClass('d-none')) {
+                    downloadSection.classList.remove('d-none');
+                }
+            }
+        });
+    });
+});
+</script>
 
 </script>
 @stop
